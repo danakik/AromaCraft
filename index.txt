@@ -1,0 +1,26 @@
+temp cube 0
+temp cargi 1
+temp def 2
+temp woter 3
+hand work 11 
+error hand 15 
+hand power 36 
+hand percent 37 
+hand temp select 38
+hand temp gyst 39
+hand woter error 40
+hand temp woter error 41
+hand level error 42
+hand temp cube error 43
+version 93
+hand ten 95
+hand k1 96
+hand k2 97
+hand k3 98
+hand pin 101
+hand pin 102
+selection 109
+selection speed 110
+hand speed tail 113
+hand k4 114
+switch body 121
