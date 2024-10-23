@@ -33,9 +33,6 @@ jest/
 jest.config.js
 jest.config.ts
 
-# Webpack
-webpack.config.js
-
 # TypeScript
 *.tsbuildinfo
 
