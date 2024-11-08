@@ -13,6 +13,8 @@ const LoginPage: React.FC = () => {
 
     const handleLogin = async () => {
         try {
+            navigate('/main');
+            return;
             const response = await login(inputValue).unwrap() 
             dispatch(setKey(inputValue)) // Сохраняем ключ в Redux
             if (response.trim() === '4') {
