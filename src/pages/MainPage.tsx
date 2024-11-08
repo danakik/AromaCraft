@@ -4,7 +4,7 @@ import { Button } from 'primereact/button'
 
 const MainPage = () => {
     return (
-        <div className="p-m-6">
+        <div style={{position: "absolute"}}>
             <h1>Hello, Electron!</h1>
             <p>Welcome to Main Page.</p>
             <Link to="/second">
