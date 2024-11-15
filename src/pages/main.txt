@@ -1,0 +1,138 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { useGetDataQuery } from '../api/mainApi';
+import { toast } from 'react-toastify';
+
+import '../styles/main_page.css';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.min.css';
+
+const MainPage = () => {
+    const key = useSelector((state: RootState) => state.key.key);
+    const { data, error, isLoading } = useGetDataQuery(key!);
+    const navigate = useNavigate();
+    
+    const [visible, setVisible] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+
+    if (isLoading) return <p>Завантаження...</p>;
+
+    if (error) {
+        toast.error('Ошибка при получении данных');
+        return <p>Помилка при завантаженні даних.</p>;
+    }
+
+    if (!data || data.length === 0) {
+        return <p>Немає доступних даних.</p>;
+    }
+
+    const handleButtonClick = (itemKey: string) => {
+        localStorage.setItem('samogonKey', itemKey);
+        navigate('/manualprocess');
+    };
+
+    const openDialog = () => {
+        setVisible(true);
+    };
+
+    const onHide = () => {
+        setVisible(false);
+        setInputValue('');
+    };
+
+    const handleConfirm = () => {
+        console.log(inputValue); // Виводимо введене значення в консоль
+        setVisible(false); // Закриваємо діалог
+        setInputValue(''); // Очищаємо введене значення
+    };
+
+    return (
+        <div className="p-d-flex p-jc-center p-ai-center" style={{ height: '100vh', width: '100%' }}>
+            <div className="p-card p-p-4 main-container">
+                <div className="data-container">
+                    {data.map(item => (
+                        <div key={item.key} className="data-block">
+                            <table>
+                                <tbody>
+                                <tr className="data-row">
+                                    <td className="item-name">
+                                        <h3>{item.name}</h3>
+                                    </td>
+                                    <td className="item-id">
+                                        <p className="item-key">{item.key}</p>
+                                    </td>
+                                    <td className="item-action">
+                                        <Button className="button button-delete" label="Видалити" />
+                                    </td>
+                                    <td className="item-action">
+                                        <Button className="button button-enter" label="Увійти" onClick={() => handleButtonClick(item.key)} />
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table> 
+                        </div>
+                    ))}
+                </div>
+                <Button className="button button-add" label="Додати пристрій" onClick={openDialog} />
+
+                <Dialog
+                    header="Додайте ID пристрою"
+                    visible={visible}
+                    style={{width: '350px'}}
+                    className="custom-dialog" 
+                    onHide={onHide}
+                    footer={
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Button
+                            label="Скасувати"
+                            icon="pi pi-times"
+                            onClick={onHide}
+                            className="p-button-text button button-cancel"
+                            style={{ width: '150px' }}
+                        />
+                        <Button
+                            label="Підтвердити"
+                            icon="pi pi-check"
+                            onClick={handleConfirm}
+                            className="p-button-text button button-confirm"
+                            style={{ width: '150px' }}
+                            autoFocus
+                        />
+                        </div>
+                    }
+                >
+                    <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+                        <InputText
+                            id="inputField"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            style={{ width: '80%' }}
+                        />
+                    </div>
+                </Dialog>
+            </div>
+        </div>
+    );
+};
+
+export default MainPage; Допоможи переписати код так, щоб на натиснення на кнопку "Видалити" , яка відноситься до певного об'єкту item з'являлось діалогове вікно із заколовком Видалити {item.name}? (замість {item.name} підставляється значення цього об'єкту) і у футері були кнопки <Button 
+                            label="Скасувати"
+                            icon="pi pi-times"
+                            onClick={onHide}
+                            className="p-button-text button button-cancel"
+                            style={{ width: '150px' }}
+                        />
+                        <Button
+                            label="Підтвердити"
+                            icon="pi pi-check"
+                            onClick={onHide}
+                            className="p-button-text button button-confirm"
+                            style={{ width: '150px' }}
+                            autoFocus
+                        />
+                        </div>

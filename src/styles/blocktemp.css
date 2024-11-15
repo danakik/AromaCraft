@@ -1,0 +1,41 @@
+@font-face {
+    font-family: 'Fixel Variable';
+    src: url('../fonts/FixelVariable.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+/*Block*/
+
+.blockTemp { 
+    background: #111828;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.imgBlockTemp {
+    margin: 6px;
+}
+
+.tempBlockTemp {
+    color: white;
+    font-family: 'Fixel Variable', sans-serif !important; 
+    font-weight: 400 !important; 
+    font-size: 36px !important; 
+    text-anchor: left !important; 
+    margin-top: 0; 
+    margin-bottom: 0; 
+   
+}
+
+.textBlockTemp {
+    font-size: 20px; 
+    color: white;
+    text-align: left;
+    font-weight: 400; 
+    font-family: 'Fixel Variable', sans-serif !important; 
+    margin-top: 0; 
+    margin-bottom: 0; 
+    
+}
+
+

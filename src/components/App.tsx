@@ -1,24 +1,37 @@
-import React from 'react'
+import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { Navigate } from 'react-router-dom'
 import MainPage from '../pages/MainPage'
-import SecondPage from '../pages/SecondPage'
+import ManualProcessPage from '../pages/ManualProcessPage'
 import LoginPage from '../pages/LoginPage'
 import '../styles/styles.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Layout } from './Layout/Layout'
+import DistillationProcessPage from '../pages/DistillationProcessPage';
+import RectificationProcessPage from '../pages/RectificationProcessPage';
 
 
 const App: React.FC = () => {
+
     return (
         <HashRouter>
-            <Routes>
+             <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/main" element={<MainPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/second" element={<SecondPage />} />
+                <Route path="/" element={<Layout />}>
+                    <Route path="/main" element={<MainPage />} />
+                </Route>
+
+                <Route path="/" element={<Layout />}>
+                    <Route path="manualprocess" element={<ManualProcessPage />} />
+                    <Route path="distillationprocess" element={<DistillationProcessPage />} />
+                    <Route path="rectificationprocess" element={<RectificationProcessPage />} />
+                    <Route path="login" element={<LoginPage />} />
+                </Route>
             </Routes>
             <ToastContainer />
+            
         </HashRouter>
     )
 }

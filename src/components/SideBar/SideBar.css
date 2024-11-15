@@ -1,0 +1,122 @@
+
+.p-panelmenu {
+    margin-top: 50px !important;
+    width: 190px !important;
+    background-color: #111828 !important;
+}
+
+.p-panelmenu-header-content {
+    background-color: #111828;
+    border: 0;
+    border-radius: 8px;
+}
+
+.p-menuitem-text {
+    margin-left: 4px;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.p-menuitem-content {
+    background-color: #111828;
+    border-radius: 8px;
+}
+
+.p-panelmenu-content {
+    border: 0;
+    padding: 0;
+}
+
+.p-panelmenu-content:hover {
+    background-color: #1c2641;
+}
+
+.p-panelmenu-header-content:hover {
+    background-color: #1c2641;
+}
+
+.p-panelmenu-header-content:focus-within {
+    background-color: #6749ae;
+}
+
+.p-menuitem-content:hover {
+    background-color: #1c2641;
+}
+
+.p-menuitem {
+    background-color: #111828;
+}
+
+.p-panelmenu .p-menuitem-link.active {
+    background-color: #6749ae !important; 
+    color: white !important; 
+    border: 2px solid #6749ae !important;  
+    border-radius: 8px; 
+}
+
+.p-panelmenu .p-menuitem-link.active .pi {
+    color: white !important;  
+}
+
+.p-submenu-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    background-color: #1c2641 !important; 
+}
+
+.p-panelmenu .p-menuitem-link:focus {
+    outline: none !important; 
+}
+
+.p-submenu-list .p-menuitem-link:focus,
+.p-submenu-list .p-menuitem-link.active {
+    background-color: #1c2641 !important;
+    color: #6749ae !important;
+}
+
+.p-panelmenu .p-submenu-list.active {
+    background-color: #1c2641 !important;
+    color: #6749ae !important;
+    border: 2px solid #6749ae !important;  
+    border-radius: 8px !important;   
+}
+
+.p-panelmenu .p-menuitem-link.active .p-menuitem-content {
+    background-color: #1c2641 !important;
+    color: #6749ae !important;
+}
+
+
+.p-submenu-list .p-menuitem-link.active {
+    background-color: #1c2641 !important;
+    color: #6749ae !important;
+}
+
+
+.p-submenu-list .p-menuitem-link.active:hover {
+    background-color: #444965 !important; 
+}
+
+
+.p-panelmenu .p-menuitem-link:focus {
+    outline: 2px solid #6749ae !important;  
+}
+
+.p-panelmenu .p-panelmenu-content .p-menuitem.p-highlight > .p-menuitem-content {
+    color: #6749ae !important;
+    background: #1c2641 !important;
+  }
+
+
+.p-panelmenu .focus {
+    color: #6749ae !important;
+    background: #1c2641 !important;
+}
+
+
+.p-panelmenu .highlight {
+    color: #6749ae !important;
+    background: #1c2641 !important;
+}

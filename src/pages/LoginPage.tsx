@@ -4,6 +4,11 @@ import { useDispatch } from 'react-redux'
 import { setKey } from '../store/keySlice'
 import { useLoginMutation } from '../api/loginApi'
 import { toast } from 'react-toastify';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import '../styles/login_page.css';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.min.css';
 
 const LoginPage: React.FC = () => {
     const [inputValue, setInputValue] = useState('')
@@ -14,7 +19,7 @@ const LoginPage: React.FC = () => {
     const handleLogin = async () => {
         try {
             const response = await login(inputValue).unwrap() 
-            dispatch(setKey(inputValue)) // Сохраняем ключ в Redux
+            dispatch(setKey(inputValue)) 
             if (response.trim() === '4') {
                 navigate('/main')
             } else {
@@ -26,21 +31,26 @@ const LoginPage: React.FC = () => {
     }
 
     return (
-        <div className="login-container">
-            <h2>Login</h2>
-            <input
+        <div className="p-d-flex p-jc-center p-ai-center" style={{ height: '100vh', width: '100%' }}>
+        <div className="p-card p-p-4 login-container">
+        <h2 className="p-text-center login-header">Авторизація</h2>
+        <span className="p-input-icon-left">
+            <i className="pi pi-user" style={{ marginLeft: '7px' }} />
+            <InputText
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Devaic ID"
-                className="login-input"
-            />
-            <button onClick={handleLogin} className="login-button" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Login'}
-            </button>
-            <p>20111111111111</p>
-        </div>
+                placeholder="ID пристрою"
+                className="p-inputtext-sm login-input" />
+        </span>
+        <br />
+        <Button onClick={handleLogin} className="p-button-primary p-button-block login-button" disabled={isLoading}>
+            {isLoading ? 'Вхід в систему...' : 'Увійти'}
+        </Button>
+        <p>20111111111111</p>
+    </div>
+    </div>
     )
 }
 
-export default LoginPage
+export default LoginPage;
