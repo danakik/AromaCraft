@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'Fixel Variable';
+    src: url('../fonts/FixelVariable.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.serial-number {
+    font-family: 'Fixel Variable', sans-serif; 
+    color: #6C7593; 
+    font-size: 16px;
+}
+
+.ac-user-comp {
+    margin: 4px 20px 0 0; 
+    float: right;
+}

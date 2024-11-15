@@ -1,0 +1,121 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+/* Checkbox */
+
+.custom-checkbox {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Розміри чекбокса */
+.custom-checkbox.small .custom-checkbox-input {
+    width: 16px;
+    height: 16px;
+    font-size: 0.6em; 
+}
+
+.custom-checkbox.mid .custom-checkbox-input {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8em; 
+}
+
+.custom-checkbox.big .custom-checkbox-input {
+    width: 24px;
+    height: 24px;
+    font-size: 1em; 
+}
+
+/* Стилі для input */
+.custom-checkbox-input {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    background-color: #f0f0f0;
+    transition: background-color 0.2s, border-color 0.2s;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Стиль при наведенні */
+.custom-checkbox-input:hover {
+    background-color: #b0b0b0;
+    border-color: #a0a0a0;
+}
+
+/* Стиль для вибраного стану */
+.custom-checkbox-input:checked {
+    background-color: #3F51B5;
+    border-color: #d3d5df;
+}
+
+/* Стиль для вибраного стану при наведенні */
+.custom-checkbox-input:checked:hover {
+    background-color: #324090;
+    border-color: #a0a0a0;
+}
+
+/* Галочка */
+.custom-checkbox-input:checked::after {
+    content: '✓'; 
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Стиль для label */
+.custom-checkbox-label {
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Визначення стилів для label залежно від розміру чекбокса */
+.custom-checkbox.small .custom-checkbox-label {
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.custom-checkbox.mid .custom-checkbox-label {
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.custom-checkbox.big .custom-checkbox-label {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+/* Стилі для заблокованого чекбокса */
+.custom-checkbox-input:disabled {
+    background-color: #e0e0e0; 
+    border-color: #d0d0d0; 
+}
+
+/* Вимикаємо наведення для заблокованого чекбокса */
+.custom-checkbox-input:disabled:hover {
+    background-color: #e0e0e0; 
+    border-color: #d0d0d0; 
+}
+
+/* Змінюємо фон і колір галочки для вибраного та заблокованого чекбокса */
+.custom-checkbox-input:disabled:checked {
+    background-color: #9fa8da; 
+}
+.custom-checkbox-input:disabled:checked::after {
+    color: white; 
+}
+
+/* Світліший текст для заблокованого чекбокса */
+.custom-checkbox-label[disabled] {
+    color: #a0a0a0; 
+}

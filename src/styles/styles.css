@@ -1,7 +1,15 @@
+@font-face {
+    font-family: 'Fixel Variable';
+    src: url('../fonts/FixelVariable.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    background-color: #7ec1ee;
+    background: #030712;
+    color: white;
 }
 
 h1 {
-    color: #730080;
+    color: #ffffff;
 }

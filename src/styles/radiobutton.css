@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+
+/* Radiobutton */
+
+.custom-radiobutton {
+    position: relative;
+}
+
+.custom-radiobutton .p-radiobutton-box {
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    transition: background-color 0.2s, border-color 0.2s;
+    border-radius: 50%;
+}
+
+.custom-radiobutton .p-radiobutton-box:hover {
+    background-color: #aaaaaa!important;
+    border: 2px solid #a0a0a0!important;
+}
+
+.custom-radiobutton .p-radiobutton-input:checked + .p-radiobutton-box {
+    background-color: #3f51b5;
+    border-color: #d3d5df;
+}
+
+.custom-radiobutton .p-radiobutton-input:checked + .p-radiobutton-box:hover {
+    background-color: #1a235c !important;
+    border-color: #a0a0a0 !important;
+}
+
+.custom-radiobutton .p-radiobutton-input:checked + .p-radiobutton-box::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.custom-radiobutton label {
+    font-family: 'Inter', sans-serif; /* Встановлюємо шрифт */
+    transition: font-size 0.2s; /* Плавний перехід для зміни розміру */
+}
+
+/* Налаштування для розмірів */
+.custom-radiobutton.small label {
+    font-size: 12px; /* Мале значення шрифту */
+    margin-left: 4px; /* Відступ зліва від радіобатона */
+}
+
+.custom-radiobutton.mid label {
+    font-size: 14px; /* Середнє значення шрифту */
+    margin-left: 8px; /* Відступ зліва від радіобатона */
+}
+
+.custom-radiobutton.big label {
+    font-size: 16px; /* Велике значення шрифту */
+    margin-left: 12px; /* Відступ зліва від радіобатона */
+}
