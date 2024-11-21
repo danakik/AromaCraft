@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { InputNumber } from 'primereact/inputnumber';
 import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/counter.css';
@@ -50,12 +51,13 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(e.target.value);
-        if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-            setCount(newValue);
-        }
+    const handleInputChange = (e: any) => {
+        setCount(e.value);
     };
+
+    useEffect(() => {
+        setCount(value);
+    }, [value]);
 
     return (
         <div className="flex flex-wrap gap-3 justify-content-center align-items-center flex flex-vertical-center">
@@ -64,12 +66,14 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
                 className="custom-button" 
                 onClick={handleDecrement}
             />
-            <input 
-                type="text" 
-                value={parseFloat(count.toFixed(2))} 
-                onChange={handleInputChange} 
-                className="custom-input" 
-                
+            <input
+                type="text"
+                value={count}
+                onChange={handleInputChange}
+                min={min}
+                max={max}
+                step={step}
+                className="custom-input"
             />
             <span className="custom-label">{units}</span>
             <Button 
@@ -137,37 +141,36 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(e.target.value);
-        if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-            setCount(newValue);
-        }
+    const handleInputChange = (e: any) => {
+        setCount(e.value);
     };
 
     return (
         <div className="flex label-container">
             <p className="label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>{label}</p>
-        <div className="flex flex-wrap gap-3 justify-content-center align-items-center flex flex-vertical-center">
-            <Button 
-                icon="pi pi-minus" 
-                className="custom-button" 
-                onClick={handleDecrement}
-            />
-            <input 
-                type="text" 
-                value={parseFloat(count.toFixed(2))} 
-                onChange={handleInputChange} 
-                className="custom-input" 
-                
-            />
-            <span className="custom-label">{units}</span>
-            <Button 
-                icon="pi pi-plus" 
-                className="custom-button" 
-                onClick={handleIncrement}
-            />
-        </div>
-        <Dialog
+            <div className="flex flex-wrap gap-3 justify-content-center align-items-center flex flex-vertical-center">
+                <Button 
+                    icon="pi pi-minus" 
+                    className="custom-button" 
+                    onClick={handleDecrement}
+                />
+                <input
+                    type="text"
+                    value={count}
+                    onChange={handleInputChange}
+                    min={min}
+                    max={max}
+                    step={step}
+                    className="custom-input"
+                />
+                <span className="custom-label">{units}</span>
+                <Button 
+                    icon="pi pi-plus" 
+                    className="custom-button" 
+                    onClick={handleIncrement}
+                />
+            </div>
+            <Dialog
                 header={label}
                 visible={dialogVisible}
                 onHide={hideDialog}

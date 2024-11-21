@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Layout } from './Layout/Layout'
 import DistillationProcessPage from '../pages/DistillationProcessPage';
 import RectificationProcessPage from '../pages/RectificationProcessPage';
+import SettingPage from '../pages/SettingPage';
 
 
 const App: React.FC = () => {
@@ -27,6 +28,7 @@ const App: React.FC = () => {
                     <Route path="manualprocess" element={<ManualProcessPage />} />
                     <Route path="distillationprocess" element={<DistillationProcessPage />} />
                     <Route path="rectificationprocess" element={<RectificationProcessPage />} />
+                    <Route path="setting" element={<SettingPage />} />
                     <Route path="login" element={<LoginPage />} />
                 </Route>
             </Routes>

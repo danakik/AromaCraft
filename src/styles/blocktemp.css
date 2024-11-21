@@ -12,8 +12,17 @@
     padding: 16px;
 }
 
+.blockTemp-s { 
+    background: #111828;
+    border-radius: 12px;
+    padding: 8px;
+}
+
 .imgBlockTemp {
     margin: 6px;
+}
+.imgBlockTemp-s {
+    margin: 2px;
 }
 
 .tempBlockTemp {
@@ -35,7 +44,6 @@
     font-family: 'Fixel Variable', sans-serif !important; 
     margin-top: 0; 
     margin-bottom: 0; 
-    
 }
 
 

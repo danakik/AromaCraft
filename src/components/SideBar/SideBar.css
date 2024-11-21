@@ -66,57 +66,29 @@
     background-color: #1c2641 !important; 
 }
 
-.p-panelmenu .p-menuitem-link:focus {
-    outline: none !important; 
-}
-
-.p-submenu-list .p-menuitem-link:focus,
 .p-submenu-list .p-menuitem-link.active {
     background-color: #1c2641 !important;
     color: #6749ae !important;
 }
 
 .p-panelmenu .p-submenu-list.active {
-    background-color: #1c2641 !important;
+    background-color: #6749ae !important;
     color: #6749ae !important;
     border: 2px solid #6749ae !important;  
     border-radius: 8px !important;   
 }
 
-.p-panelmenu .p-menuitem-link.active .p-menuitem-content {
-    background-color: #1c2641 !important;
-    color: #6749ae !important;
-}
-
-
-.p-submenu-list .p-menuitem-link.active {
-    background-color: #1c2641 !important;
-    color: #6749ae !important;
-}
-
-
 .p-submenu-list .p-menuitem-link.active:hover {
     background-color: #444965 !important; 
 }
 
-
-.p-panelmenu .p-menuitem-link:focus {
-    outline: 2px solid #6749ae !important;  
+.custom-panelmenu .active {
+    background-color: #6749ae !important; 
+    color: white !important; 
+    border: 2px solid #6749ae !important;  
+    border-radius: 8px; 
 }
 
-.p-panelmenu .p-panelmenu-content .p-menuitem.p-highlight > .p-menuitem-content {
-    color: #6749ae !important;
-    background: #1c2641 !important;
-  }
-
-
-.p-panelmenu .focus {
-    color: #6749ae !important;
-    background: #1c2641 !important;
-}
-
-
-.p-panelmenu .highlight {
-    color: #6749ae !important;
-    background: #1c2641 !important;
+.p-submenu-list .p-menuitem .active {
+    background-color: #6749ae !important;
 }

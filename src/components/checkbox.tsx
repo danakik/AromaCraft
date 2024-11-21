@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Checkbox } from 'primereact/checkbox';
 import '../styles/checkbox.css';
 
 type CheckboxProps = {
-    label?: string; // Підпис
-    name?: string; // Ім'я
-    value: string; // Значення
-    size?: 'small' | 'mid' | 'big'; // Розмір
-    checked?: boolean; // Чекбокс вибраний чи ні
-    disabled?: boolean; // Заблокований чи ні
+    label?: string;
+    name?: string;
+    value: string;
+    checked?: boolean;
+    disabled?: boolean;
 };
 
 export const ACCheckbox: React.FC<CheckboxProps> = ({
     label,
     name = '',
     value,
-    size = 'big',
     checked = false,
     disabled = false
 }) => {
@@ -29,7 +28,7 @@ export const ACCheckbox: React.FC<CheckboxProps> = ({
     };
 
     return (
-        <div className={`custom-checkbox ${size}`}>
+        <div className={`custom-checkbox`}>
             <input
                 type="checkbox"
                 id={name}

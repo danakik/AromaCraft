@@ -21,7 +21,7 @@ const MainPage = () => {
 
 
     const [visible, setVisible] = useState(false);
-    const [visible2, setVisible2] = useState(false);
+    const [visible_delete, setvisible_delete] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [editingItemKey, setEditingItemKey] = useState<string | null>(null);
     const [newName, setNewName] = useState<string>('');
@@ -69,11 +69,11 @@ const MainPage = () => {
         console.log(machineNumber, key)
         console.log(createResponse); 
         if (createResponse.trim() === '3'){
-            toast.error('Кімната уже існує');
+            toast.error('Пристрій уже існує');
 
         }else{
             const saveResponse = await saveRoom({ machineNumber, key }).unwrap();
-            toast.success('Кімната успішно збережена');
+            toast.success('Пристрій успішно збережено');
             refetch();
 
         }
@@ -86,26 +86,23 @@ const MainPage = () => {
 
     const handleDeleteClick = async() =>{
         const response = await deleteRoom({ machineNumber: selectItemKey,  key  }).unwrap();
-        setVisible2(false);
+        setvisible_delete(false);
         refetch();
     }
 
     const OpenDialogKey = async(key: string) =>{
         setSelectItemKey(key);
-        setVisible2(true);
+        setvisible_delete(true);
     }
 
     return (
-        <div className="p-d-flex p-jc-center p-ai-center" style={{ height: '100vh', width: '100%' }}>
-            <div className="p-card p-p-4 main-container">
-                <h2 className="p-text-center main-header">Керування</h2>
-                <div className="data-container">
+        <div className="flex justify-content-center align-items-center h-screen w-full">
+            <div className="flex flex-column align-items-center p-4 w-800px min-h-10rem main-container">
+                <h2 className="text-center main-header">Керування</h2>
                     {data.map((item) => (
-                        <div key={item.key} className="data-block">
-                            <table>
-                                <tbody>
-                                <tr className="data-row">
-                                <td className="item-name">
+                        <div key={item.key} className="data-container w-full">
+                            <div className="flex align-items-center justify-content-between w-full data-row gap-0">
+                            <div className="flex flex-column item-name">
                                         {editingItemKey === item.key ? (
                                             <h3>{item.name}</h3>
                                         ) : (
@@ -113,10 +110,10 @@ const MainPage = () => {
                                                 {item.name}
                                             </h3>
                                         )}
-                                    </td>
-                                    <td className="item-rename">
+                                     </div>
+                                     <div className="flex flex-column item-rename">
                                         {editingItemKey === item.key ? (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div className="flex align-items-center">
                                                 <InputText
                                                     value={newName}
                                                     onChange={handleNameChange}
@@ -130,24 +127,19 @@ const MainPage = () => {
                                                 />
                                             </div>
                                         ) : null}
-                                    </td>
-                                    <td className="item-id">
+                                    </div>
+                                    <div className="flex flex-column align-items-start item-id">
                                         <p className="item-key">{item.key}</p>
-                                    </td>
-                                    <td className="item-action">
+                                    </div>
+                                    <div className="flex item-action">
                                         <Button className="button button-delete" label="Видалити" onClick={() => OpenDialogKey(item.key)} />
-                                    </td>
-                                    <td className="item-action">
                                         <Button className="button button-enter" label="Увійти" onClick={() => handleButtonClick(item.key)} />
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table> 
+                                    </div>
+                            </div>
                         </div>
                     ))}
+                     <Button className="button button-add mt-3" label="Додати пристрій" onClick={() => setVisible(true)} />
                 </div>
-                <Button className="button button-add" label="Додати пристрій" onClick={() => setVisible(true)} />
-
                 <Dialog
                     header="Додайте ID пристрою"
                     visible={visible}
@@ -175,27 +167,25 @@ const MainPage = () => {
                     }
                 >
                     <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-                        <input
+                        <InputText
                             id="inputField"
-                            type="number"
                             value={machineNumber}
                             onChange={(e) => setMachineNumber(e.target.value ? e.target.value.toString() : '')}
                             style={{ width: '80%' }}
                         />
                     </div>
                 </Dialog>
-
                 <Dialog
-                    header={`Видалити?`}
-                    visible={visible2}
+                    header={`Видалення пристрою`}
+                    visible={visible_delete}
                     style={{ width: '350px' }}
-                    onHide={() => {if (!visible2) return; setVisible2(false);}}
+                    onHide={() => {if (!visible_delete) return; setvisible_delete(false);}}
                     footer={
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <Button
                                 label="Скасувати"
                                 icon="pi pi-times"
-                                onClick={() => setVisible2(false)}
+                                onClick={() => setvisible_delete(false)}
                                 className="p-button-text button button-cancel"
                                 style={{ width: '150px' }}
                             />
@@ -213,7 +203,6 @@ const MainPage = () => {
                     <p>Ви впевнені, що хочете видалити цей пристрій?</p>
                 </Dialog>
             </div>
-        </div>
     );
 };
 

@@ -63,11 +63,11 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
                     </linearGradient>
                     <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style={{ stopColor: '#9e4ae7', stopOpacity: 1 }} />
-                        <stop offset="100%" style={{ stopColor: '#320380', stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: '#5514bc', stopOpacity: 1 }} />
                     </linearGradient>
                     <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style={{ stopColor: '#e74a4a', stopOpacity: 1 }} />
-                        <stop offset="100%" style={{ stopColor: '#820738', stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: '#a9124f', stopOpacity: 1 }} />
                     </linearGradient>
                 </defs>
             </svg>
@@ -109,39 +109,20 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
         setValue(initialValue);
     }, [initialValue]);
 
-    let class_name = 'custom-slider ';
-    let gradID;
-    switch(color){
-        case 'orange':
-            gradID = 'url(#gradient1)';
-            class_name += 'gradient1';
-            break;
-        case 'blue':
-            gradID = 'url(#gradient2)';
-            class_name += 'gradient2';
-            break;
-        case 'purple':
-            gradID = 'url(#gradient3)';
-            class_name += 'gradient3';
-            break;
-        case 'red':
-            gradID = 'url(#gradient4)';
-            class_name += 'gradient4';
-            break;
-        default:
-            gradID = 'url(#gradient1)';
-            class_name += 'gradient1';
-            break;
-    }
+    const gradientClass = (() => {
+        switch (color) {
+            case 'orange': return 'gradient1';
+            case 'blue': return 'gradient2';
+            case 'purple': return 'gradient3';
+            case 'red': return 'gradient4';
+            default: return 'gradient1';
+        }
+    })();
+
     const valueDisplay = typeof value === 'number' ? `${value.toString().replace('.', ',')}°C` : `${value[0]}, ${value[1]}°C`;
 
-    const handleLabelClick = () => {
-        setDialogVisible(true); 
-    };
-
-    const hideDialog = () => {
-        setDialogVisible(false); 
-    };
+    const handleLabelClick = () => setDialogVisible(true);
+    const hideDialog = () => setDialogVisible(false);
 
     return (
         <div className="card flex flex-column align-items-center justify-content-center">
@@ -157,11 +138,11 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
                     </linearGradient>
                     <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style={{ stopColor: '#9e4ae7', stopOpacity: 1 }} />
-                        <stop offset="100%" style={{ stopColor: '#320380', stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: '#5514bc', stopOpacity: 1 }} />
                     </linearGradient>
                     <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style={{ stopColor: '#e74a4a', stopOpacity: 1 }} />
-                        <stop offset="100%" style={{ stopColor: '#820738', stopOpacity: 1 }} />
+                        <stop offset="100%" style={{ stopColor: '#a9124f', stopOpacity: 1 }} />
                     </linearGradient>
                 </defs>
             </svg>
@@ -170,13 +151,9 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
                 <Slider
                     value={value}
                     onChange={(e) => setValue(e.value)}
-                    className={class_name}
+                    className={`unfilled custom-slider ${gradientClass}`}
                     max={120}
                     disabled={readonly}
-                    style={{
-                        '--filled-color': gradID,
-                        '--unfilled-color': '#999CA2',
-                    } as React.CSSProperties}
                 />
                 <div className="slider-temp">{valueDisplay}</div>
             </div>

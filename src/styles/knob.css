@@ -40,7 +40,6 @@
     font-weight: 400 !important;
     font-size: 18px !important; 
     text-anchor: middle !important; 
-    margin: 10px 0 0;
 }
 
 .card {
@@ -48,11 +47,8 @@
     flex-direction: column; 
     align-items: center; 
     justify-content: center; 
-    width: 100%; 
-    padding: 8px; 
     box-sizing: border-box; 
     height: auto; 
-    min-height: 0;
 }
 
 .knob-label {
@@ -72,7 +68,7 @@
     align-items: center; 
     justify-content: center; 
     width: 100%; 
-    padding: 16px; 
+    padding: 8px; 
     box-sizing: border-box;
 }
 
@@ -81,24 +77,37 @@
     max-width: 400px; 
     height: 20px; 
     position: relative; 
-    margin: 16px 0;
 }
 
-.ac-slider-container .custom-slider .p-slider-bar {
-    background-color: var(--unfilled-color);
+.ac-slider-container .custom-slider .p-slider-bar , .unfilled {
+    background: var(--unfilled-color, #999CA2);
+    border-radius: 15px;
 }
 
-.ac-slider-container .custom-slider .p-slider-range .gradient1 {
-    background-color: url(#gradient1) !important;
+.ac-slider-container .custom-slider .p-slider-range {
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    border-radius: 15px;
+    height: 100%;
 }
-.ac-slider-container .custom-slider .p-slider-range .gradient2 {
-    background-color: url(#gradient2) !important;
+
+.ac-slider-container .gradient1 .p-slider-range {
+    --gradient-start: #E7724A;
+    --gradient-end: #E84D4B;
 }
-.ac-slider-container .custom-slider .p-slider-range .gradient3 {
-    background-color: url(#gradient3) !important;
+
+.ac-slider-container .gradient2 .p-slider-range {
+    --gradient-start: #2A41E0;
+    --gradient-end: #6749AE;
 }
-.ac-slider-container .custom-slider .p-slider-range .gradient4 {
-    background-color: url(#gradient4) !important;
+
+.ac-slider-container .gradient3 .p-slider-range {
+    --gradient-start: #9e4ae7;
+    --gradient-end: #5514bc;
+}
+
+.ac-slider-container .gradient4 .p-slider-range {
+    --gradient-start: #e74a4a;
+    --gradient-end: #a9124f;
 }
 
 .slider-temp {
@@ -112,10 +121,12 @@
 }
 
 .ac-slider-container .custom-slider .p-slider-handle {
-    display: none;
+    height: 20px;
+    position: absolute; 
+    transition: left 0.2s ease, transform 0.2s ease;
+    opacity: 0%;
 }
 
-.ac-slider-container .custom-slider .p-slider-range, 
-.ac-slider-container .custom-slider .p-slider-bar {
-    border-radius: 6px;
+.ac-slider-container .custom-slider .p-slider-range {
+    position: relative; 
 }

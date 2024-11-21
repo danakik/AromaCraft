@@ -24,6 +24,5 @@
     margin-left: 220px; 
     width: calc(100% - 220px); 
     padding: 0 8px 0 8px;
-    overflow-x: hidden; 
     box-sizing: border-box; 
 }

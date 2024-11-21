@@ -5,10 +5,9 @@ import { RadioButton } from 'primereact/radiobutton';
 import '../styles/radiobutton.css';
 
 type RadiobuttonProps = {
-    label?: string; // Пропс для підпису
-    name?: string;   // Пропс для ім'я
-    value: string;  // Пропс для значення
-    size?: 'small' | 'mid' | 'big'; // Пропс для розміру
+    label?: string; 
+    name?: string;  
+    value: string;  
     checked?: boolean;
     disabled?: boolean;
 }
@@ -16,7 +15,6 @@ type RadiobuttonProps = {
 export const ACRadiobutton: React.FC<RadiobuttonProps> = ({
     name = '',
     value,
-    size = 'big',
     label,
     checked = false,
     disabled = false
@@ -28,7 +26,7 @@ export const ACRadiobutton: React.FC<RadiobuttonProps> = ({
     };
 
     return (
-        <div className={`custom-radiobutton ${size}`}>
+        <div className={`custom-radiobutton`}>
             <RadioButton
                 onChange={handleRadioChange}
                 checked={selectedValue === value} 
