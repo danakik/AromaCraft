@@ -1,94 +1,93 @@
-
 .p-panelmenu {
-    margin-top: 50px !important;
-    width: 190px !important;
-    background-color: #111828 !important;
+  margin-top: 50px !important;
+  width: 190px !important;
+  background-color: #111828 !important;
 }
 
 .p-panelmenu-header-content {
-    background-color: #111828;
-    border: 0;
-    border-radius: 8px;
+  background-color: #111828;
+  border: 0;
+  border-radius: 8px;
 }
 
 .p-menuitem-text {
-    margin-left: 4px;
-    color: white;
-    font-size: 16px;
-    font-weight: 400;
+  margin-left: 4px;
+  color: white;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .p-menuitem-content {
-    background-color: #111828;
-    border-radius: 8px;
+  background-color: #111828;
+  border-radius: 8px;
 }
 
 .p-panelmenu-content {
-    border: 0;
-    padding: 0;
+  border: 0;
+  padding: 0;
 }
 
 .p-panelmenu-content:hover {
-    background-color: #1c2641;
+  background-color: #1c2641;
 }
 
 .p-panelmenu-header-content:hover {
-    background-color: #1c2641;
+  background-color: #1c2641;
 }
 
 .p-panelmenu-header-content:focus-within {
-    background-color: #6749ae;
+  background-color: #6749ae;
 }
 
 .p-menuitem-content:hover {
-    background-color: #1c2641;
+  background-color: #1c2641;
 }
 
 .p-menuitem {
-    background-color: #111828;
+  background-color: #111828;
 }
 
 .p-panelmenu .p-menuitem-link.active {
-    background-color: #6749ae !important; 
-    color: white !important; 
-    border: 2px solid #6749ae !important;  
-    border-radius: 8px; 
+  background-color: #6749ae !important;
+  color: white !important;
+  border: 2px solid #6749ae !important;
+  border-radius: 8px;
 }
 
 .p-panelmenu .p-menuitem-link.active .pi {
-    background-color: #6749ae !important;
-    color: white !important;  
+  background-color: #6749ae !important;
+  color: white !important;
 }
 
 .p-submenu-list {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    background-color: #1c2641 !important; 
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  background-color: #1c2641 !important;
 }
 
 .p-submenu-list .p-menuitem-link.active {
-    background-color: #1c2641 !important;
-    color: #6749ae !important;
+  background-color: #1c2641 !important;
+  color: #6749ae !important;
 }
 
 .p-panelmenu .p-submenu-list.active {
-    background-color: #6749ae !important;
-    border: 2px solid #6749ae !important;  
-    border-radius: 8px !important;   
+  background-color: #6749ae !important;
+  border: 2px solid #6749ae !important;
+  border-radius: 8px !important;
 }
 
 .p-submenu-list .p-menuitem-link.active:hover {
-    background-color: #6749ae !important;
+  background-color: #6749ae !important;
 }
 
 .custom-panelmenu .active {
-    background-color: #6749ae !important; 
-    color: white !important; 
-    border: 2px solid #6749ae !important;  
-    border-radius: 8px; 
+  background-color: #6749ae !important;
+  color: white !important;
+  border: 2px solid #6749ae !important;
+  border-radius: 8px;
 }
 
 .p-submenu-list .p-menuitem .active {
-    background-color: #6749ae !important;
+  background-color: #6749ae !important;
 }
