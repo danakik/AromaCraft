@@ -10,7 +10,7 @@ const SortIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
         viewBox={viewBox}
         fill="none"
         >
-            <g clip-path="url(#clip0_157_1022)">
+            <g clipPath="url(#clip0_157_1022)">
             <path d="M4 15L7 18L10 15" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M7 6V18" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M17 14C17.5304 14 18.0391 14.2107 18.4142 14.5858C18.7893 14.9609 19 15.4696 19 16V19C19 19.5304 18.7893 20.0391 18.4142 20.4142C18.0391 20.7893 17.5304 21 17 21C16.4696 21 15.9609 20.7893 15.5858 20.4142C15.2107 20.0391 15 19.5304 15 19V16C15 15.4696 15.2107 14.9609 15.5858 14.5858C15.9609 14.2107 16.4696 14 17 14V14Z" 

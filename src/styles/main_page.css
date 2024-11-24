@@ -60,6 +60,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 4px 0 4px;
 }
 
 .button-enter, .button-confirm {
@@ -67,6 +68,9 @@
 }
 .button-enter, .button-rename{
     width: 80px !important;
+}
+.button-enter, .button-delete, .button-rename{
+    height: 36px;
 }
 .button-confirm, .button-cancel {
     width: 150px;

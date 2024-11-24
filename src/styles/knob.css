@@ -58,6 +58,7 @@
     font-weight: 600;
     font-family: 'Fixel Variable', sans-serif !important;
     margin-top: -20px;
+    text-wrap: pretty;
 }
 
 /* Slider */

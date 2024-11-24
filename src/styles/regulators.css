@@ -9,10 +9,11 @@
     height: 20px;
     object-fit: contain;
 }
-.label{
+.reg-label{
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 17px;
+    margin-left: 6px;
 }
 .ac-regulator {
     display: flex;
@@ -22,10 +23,14 @@
     border-radius: 8px;
     width: 400px;
     justify-content: space-between;
+    height: 32px;
+    margin: 6px;
 }
 .ac-left-content, .ac-right-content {
     display: flex;
+    flex-direction: row;
     align-items: top;
+    justify-content: center;
     gap: 2px;
 }
 .ac-right-content {

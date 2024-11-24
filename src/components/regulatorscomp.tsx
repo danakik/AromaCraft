@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/regulators.css';
-import { ACSwitch } from "./switch"
 import { ACCounter } from "./counter"
 import { Dialog } from 'primereact/dialog';
 import TenIcon from '../assets/icons/ten_icon'
@@ -30,20 +29,12 @@ type RegulatorProps = {
     color?: string;
     label: string;
     value?: number;
-    checked?: boolean;
-    disabled?: boolean;
     units?: string;
     help?: string;
 };
 
-export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, value, checked, disabled = false, units, help="" }) => {
-    const [isSwitchChecked, setSwitchChecked] = useState(checked);
+export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, value = null, units, help="" }) => {
     const [dialogVisible, setDialogVisible] = useState(false); 
-
-    // Функція для обробки змін в ACSwitch
-    const handleSwitchChange = (checkedStatus: boolean) => {
-        setSwitchChecked(checkedStatus);
-    };
 
     const handleClick = () => {
         setDialogVisible(true); 
@@ -129,11 +120,10 @@ export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, valu
             <div className="ac-left-content">
             {IconComponent && (
                 <IconComponent className="icon" color={iconColor} onClick={handleClick} style={{ cursor: 'pointer' }} /> )}
-            <span className="label" onClick={handleClick} style={{ cursor: 'pointer' }}>{label}</span>
+            <span className="reg-label" onClick={handleClick} style={{ cursor: 'pointer' }}>{label}</span>
             </div>
             <div className="ac-right-content">
                 {units != null && value != null && <ACCounter value={value} units={units} />}
-            <ACSwitch checked={isSwitchChecked} onChange={handleSwitchChange} disabled={disabled}/>
             </div>
             <Dialog
                 header={label}

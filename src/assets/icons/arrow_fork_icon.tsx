@@ -10,7 +10,7 @@ const ArrowForkIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
         viewBox={viewBox}
         fill="none"
         >
-            <g clip-path="url(#clip0_159_1221)">
+            <g clipPath="url(#clip0_159_1221)">
             <path d="M16 3H21V8" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M8 3H3V8" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M21 3L13.464 10.536C12.5269 11.4734 12.0003 12.7445 12 14.07V21" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

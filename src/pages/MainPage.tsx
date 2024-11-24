@@ -13,6 +13,7 @@ import { useDeleteRoomMutation } from '../api/deleteRoomApi';
 import '../styles/main_page.css';
 import 'primeflex/primeflex.css';
 import 'primereact/resources/primereact.min.css';
+import { useChangeNameMutation } from '../api/changeNameApi';
 
 const MainPage = () => {
     const key = useSelector((state: RootState) => state.key.key) as string;
@@ -30,6 +31,7 @@ const MainPage = () => {
     const [saveRoom, { isLoading: isSaving }] = useSaveRoomMutation();
     const [deleteRoom] = useDeleteRoomMutation();
     const [selectItemKey, setSelectItemKey] = useState('');
+    const [changeName, { isLoading: isChanging }] = useChangeNameMutation();
 
     if (isLoading) return <p>Завантаження...</p>;
 
@@ -56,11 +58,12 @@ const MainPage = () => {
         setNewName(e.target.value); 
     };
 
-    const handleSaveName = (itemKey: string) => {
+    const handleSaveName = async(itemKey: string) => {
         toast.success(`Збережена нова назва для ${itemKey}: ${newName}`);
-
+        const response = await changeName({key,c:itemKey, n: newName});
         setEditingItemKey(null); 
-        setNewName('');          
+        setNewName('');      
+        refetch();    
     };
 
     const handleCreateMachine = async () => {

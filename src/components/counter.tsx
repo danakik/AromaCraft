@@ -21,14 +21,34 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
             max = 100;
             break;
         case 'л/г':
-            step = 0.1;
+            step = 0.01;
             min = 0;
-            max = 2;
+            max = 1;
             break;
         case '°C':
             step = 1;
             min = 0;
             max = 120;
+            break;
+        case ' °C': //гістерезис
+            step = 0.1;
+            min = 0;
+            max = 1;
+            break;
+        case '°C ': //зміна температури в налаштуваннях
+            step = 0.1;
+            min = -10;
+            max = 1;
+            break;
+        case 'хв':
+            step = 1;
+            min = 1;
+            max = 60;
+            break;
+        case 'Вт':
+            step = 100;
+            min = 0;
+            max = 3000;
             break;
         default:
             step = 1;
@@ -66,19 +86,19 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
                 className="custom-button" 
                 onClick={handleDecrement}
             />
-            <input
-                type="text"
-                value={count}
-                onChange={handleInputChange}
-                min={min}
-                max={max}
-                step={step}
-                className="custom-input"
-            />
-            <span className="custom-label">{units}</span>
+                <div className="custom-input">
+                <InputNumber
+                    suffix={units}
+                    value={count}
+                    onChange={handleInputChange}
+                    min={min}
+                    max={max}
+                    step={step}
+                />
+                </div>
             <Button 
                 icon="pi pi-plus" 
-                className="custom-button" 
+                className="custom-button right-b" 
                 onClick={handleIncrement}
             />
         </div>
@@ -111,14 +131,34 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
             max = 100;
             break;
         case 'л/г':
-            step = 0.1;
+            step = 0.01;
             min = 0;
-            max = 2;
+            max = 1;
             break;
         case '°C':
             step = 1;
             min = 0;
             max = 120;
+            break;
+        case ' °C': //гістерезис
+            step = 0.1;
+            min = 0;
+            max = 1;
+            break;
+        case '°C ': //зміна температури в налаштуваннях
+            step = 0.1;
+            min = -10;
+            max = 1;
+            break;
+        case 'хв':
+            step = 1;
+            min = 1;
+            max = 60;
+            break;
+        case 'Вт':
+            step = 100;
+            min = 0;
+            max = 3000;
             break;
         default:
             step = 1;
@@ -154,19 +194,19 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
                     className="custom-button" 
                     onClick={handleDecrement}
                 />
-                <input
-                    type="text"
+                <div className="custom-input">
+                <InputNumber
+                    suffix={units}
                     value={count}
                     onChange={handleInputChange}
                     min={min}
                     max={max}
                     step={step}
-                    className="custom-input"
                 />
-                <span className="custom-label">{units}</span>
+                </div>
                 <Button 
                     icon="pi pi-plus" 
-                    className="custom-button" 
+                    className="custom-button right-b" 
                     onClick={handleIncrement}
                 />
             </div>

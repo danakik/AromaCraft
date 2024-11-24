@@ -10,7 +10,7 @@ const ABarsIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
         viewBox={viewBox}
         fill="none"
         >
-            <g clip-path="url(#clip0_159_1242)">
+            <g clipPath="url(#clip0_159_1242)">
             <path d="M6 18V15" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M10 18V12" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M14 18V9" stroke={props.color || "white"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
