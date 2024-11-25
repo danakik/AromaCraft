@@ -9,9 +9,10 @@ import '../styles/counter.css';
 type CounterProps = {
   value: number;
   units: string;
+  onChange?: (e: { value: number }) => void;
 };
 
-export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
+export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange }) => {
   let min = 0,
     max = 100,
     step = 1;
@@ -63,17 +64,20 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units }) => {
   const handleIncrement = () => {
     if (count < max) {
       setCount((prevCount) => prevCount + step);
+      onChange && onChange({ value: count + step });
     }
   };
 
   const handleDecrement = () => {
     if (count > min) {
       setCount((prevCount) => prevCount - step);
+      onChange && onChange({ value: count - step });
     }
   };
 
   const handleInputChange = (e: any) => {
     setCount(e.value);
+    onChange && onChange({ value: e.value });
   };
 
   useEffect(() => {
@@ -96,9 +100,10 @@ type CounterProps2 = {
   units: string;
   label: string;
   help: string;
+  onChange?: (e: { value: number }) => void;
 };
 
-export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help }) => {
+export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help, onChange }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleLabelClick = () => {
@@ -160,17 +165,20 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
   const handleIncrement = () => {
     if (count < max) {
       setCount((prevCount) => prevCount + step);
+      onChange && onChange({ value: count + step });
     }
   };
 
   const handleDecrement = () => {
     if (count > min) {
       setCount((prevCount) => prevCount - step);
+      onChange && onChange({ value: count - step });
     }
   };
 
   const handleInputChange = (e: any) => {
     setCount(e.value);
+    onChange && onChange({ value: e.value });
   };
 
   return (

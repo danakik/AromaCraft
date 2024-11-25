@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -11,6 +11,26 @@ import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
+import { useForm, Controller } from 'react-hook-form';
+
+type FormData = {
+  tempSelect: number;
+  handPercent: number;
+  handTempGyst: number;
+  handSpeedTail: number;
+  handTen: boolean;
+  handPower: number;
+  handPin1: number;
+  handPin2: boolean;
+  handK1: boolean;
+  handK2: boolean;
+  handK3: boolean;
+  handK4: boolean;
+  handWoterError: boolean;
+  handLevelError: boolean;
+  handTempWoterError: number;
+  handTempCubeError: number;
+};
 
 const ManualProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -20,10 +40,35 @@ const ManualProcessPage = () => {
     error,
   } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
 
+  const { control, watch, reset } = useForm<FormData>({
+    values: {
+      tempSelect: data.handTempSelect,
+      handPercent: data.handPercent,
+      handTempGyst: data.handTempGyst,
+      handSpeedTail: data.handSpeedTail,
+      handTen: !!data.handTen,
+      handPower: data.handPower,
+      handPin1: data.handPin1,
+      handPin2: !!data.handPin2,
+      handK1: !!data.handK1,
+      handK2: !!data.handK2,
+      handK3: !!data.handK3,
+      handK4: !!data.handK4,
+      handWoterError: !!data.handWoterError,
+      handLevelError: !!data.handLevelError,
+      handTempWoterError: data.handTempWoterError,
+      handTempCubeError: data.handTempCubeError,
+    },
+  });
+
+  const formValues = watch();
+
+  useEffect(() => {
+    console.log(formValues);
+  }, [formValues]);
+
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
-
-  console.log(data);
 
   return (
     <>
@@ -54,31 +99,60 @@ const ManualProcessPage = () => {
 
           <div className="flex flex-row gap-3 p-2 w-full -mt-2">
             <div className="block p-2 flex-1 col-6">
-              <ACKnob
-                label="Температура відбору"
-                color="orange"
-                initialValue={data.handTempSelect}
-                help={helpM.temp_selection_m}
+              <Controller
+                name="tempSelect"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACKnob
+                    label="Температура відбору"
+                    color="orange"
+                    initialValue={value}
+                    help={helpM.temp_selection_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
-              <ACCounterLabel
-                units="л/г"
-                value={data.handPercent}
-                label="Швидкість відбору"
-                help={helpM.speed_selection_m}
+              <Controller
+                name="handPercent"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="л/г"
+                    label="Швидкість відбору"
+                    help={helpM.speed_selection_m}
+                    value={value}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
             </div>
             <div className="block p-2 flex-1 col-6">
-              <ACKnob
-                label="Гістерезіс відбору"
-                color="blue"
-                initialValue={data.handTempGyst}
-                help={helpM.gist_selection_m}
+              <Controller
+                name="handTempGyst"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACKnob
+                    label="Гістерезіс відбору"
+                    color="blue"
+                    initialValue={value}
+                    help="helpM.gist_selection_m"
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
-              <ACCounterLabel
-                units="л/г"
-                value={data.handSpeedTail}
-                label="Швидкість відбору хвостів"
-                help={helpM.speed_selection_tails_m}
+              <br />
+              <Controller
+                name="handSpeedTail"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="л/г"
+                    label="Швидкість відбору хвостів"
+                    help={helpM.speed_selection_tails_m}
+                    value={value}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
             </div>
           </div>
@@ -87,65 +161,149 @@ const ManualProcessPage = () => {
           <div className="block p-3  w-full">
             <h3>Нагрівач/Регулятор</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator
-                icon="ten"
-                label="Електронагрівач (ТЕН)"
-                value={data.handPower}
-                units="%"
-                help={helpM.ten_m}
+              <Controller
+                name="handPower"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="ten"
+                    label="Електронагрівач (ТЕН)"
+                    value={value}
+                    units="%"
+                    help={helpM.ten_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
-              <ACSwitch checked={!!data.handTen} />
+              <Controller
+                name="handTen"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="pid" label="ПІД-регулятор" value={data.handPin1} units="°C" help={helpM.pid_m} />
-              <ACSwitch checked={!!data.handPin2} />
+              <Controller
+                name="handPin1"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="pid"
+                    label="ПІД-регулятор"
+                    value={value}
+                    units="°C"
+                    help={helpM.pid_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+
+              <Controller
+                name="handPin2"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
           </div>
           <div className="block p-4  w-full">
             <h3>Механізми/Клапани</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="water" label="Подача води" help={helpM.water_m} />
-              <ACSwitch checked={!!data.handK1} />
+
+              <Controller
+                name="handK1"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="select_valve" label="Клапан відбору" help={helpM.selection_m} />
-              <ACSwitch checked={!!data.handK2} />
+              <Controller
+                name="handK2"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="valve_heads" label="Клапан голів" help={helpM.heads_m} />
-              <ACSwitch checked={!!data.handK3} />
+              <Controller
+                name="handK3"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="valve_tails" label="Клапан хвостів" help={helpM.tails_m} />
-              <ACSwitch checked={!!data.handK4} />
+              <Controller
+                name="handK4"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
           </div>
           <div className="block p-3  w-full">
             <h3>Аварії</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator
-                icon="breakdown"
-                color="white"
-                label="Аварія води"
-                value={data.handTempWoterError}
-                units="°C"
-                help={helpM.water_break_m}
+              <Controller
+                name="handTempWoterError"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="breakdown"
+                    color="white"
+                    label="Аварія води"
+                    value={value}
+                    units="°C"
+                    help={helpM.water_break_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
-              <ACSwitch checked={!!data.handWoterError} />
+              <Controller
+                name="handWoterError"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2 pl-2">
-              <ACRegulator
-                icon="breakdown"
-                color="purple"
-                label="Аварія куб"
-                value={data.handTempCubeError}
-                units="°C"
-                help={helpM.cube_break_m}
+              <Controller
+                name="handTempCubeError"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="breakdown"
+                    color="purple"
+                    label="Аварія куб"
+                    value={value}
+                    units="°C"
+                    help={helpM.cube_break_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="breakdown" color="orange" label="Аварія рівень" help={helpM.level_break_m} />
-              <ACSwitch checked={!!data.handLevelError} />
+              <Controller
+                name="handLevelError"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
           </div>
         </div>

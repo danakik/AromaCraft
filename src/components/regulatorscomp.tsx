@@ -29,9 +29,10 @@ type RegulatorProps = {
   value?: number;
   units?: string;
   help?: string;
+  onChange?: (e: { value: number }) => void;
 };
 
-export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, value = null, units, help = '' }) => {
+export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, value = null, units, help = '', onChange }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleClick = () => {
@@ -123,7 +124,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({ icon, color, label, valu
         </span>
       </div>
       <div className="ac-right-content">
-        {units != null && value != null && <ACCounter value={value} units={units} />}
+        {units != null && value != null && <ACCounter value={value} units={units} onChange={onChange}/>}
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>

@@ -12,9 +12,10 @@ type KnobProps = {
   color: 'orange' | 'blue' | 'purple' | 'red';
   readonly?: boolean;
   help?: string;
+  onChange?: (e: { value: number }) => void;
 };
 
-export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '' }) => {
+export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange }) => {
   const [value, setValue] = useState<number>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -74,7 +75,10 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
 
       <Knob
         value={value}
-        onChange={(e) => setValue(e.value)}
+        onChange={(e) => {
+          setValue(e.value);
+          if (onChange) onChange(e);
+        }}
         className="custom-knob"
         valueColor={gradID}
         rangeColor="#999CA2"
