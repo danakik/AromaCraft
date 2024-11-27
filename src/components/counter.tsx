@@ -125,8 +125,8 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
       break;
     case 'л/г':
       step = 0.01;
-      min = 0;
-      max = 1;
+      min = 0.0;
+      max = 6;
       break;
     case '°C':
       step = 1;
@@ -135,23 +135,23 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
       break;
     case ' °C': //гістерезис
       step = 0.1;
-      min = 0;
-      max = 1;
+      min = 0.1;
+      max = 101;
       break;
     case '°C ': //зміна температури в налаштуваннях
       step = 0.1;
-      min = -10;
-      max = 1;
+      min = -20;
+      max = 101;
       break;
     case 'хв':
       step = 1;
       min = 1;
-      max = 60;
+      max = Number.MAX_VALUE;
       break;
     case 'Вт':
       step = 100;
       min = 0;
-      max = 3000;
+      max = 12000;
       break;
     default:
       step = 1;

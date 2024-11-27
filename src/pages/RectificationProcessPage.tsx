@@ -61,7 +61,7 @@ const RectificationProcessPage = () => {
               <ACBlockTempSmall
                 name="Вода"
                 color="blue"
-                temp={String(data.tempWoter)}
+                temp={String(data.tempWater)}
                 help={helpM.temp_water_m}
               />
             </div>

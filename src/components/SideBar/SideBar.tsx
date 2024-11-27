@@ -115,6 +115,11 @@ export const SideBar = (props: PanelMenuProps) => {
         className: location.pathname.startsWith('/data') ? 'active' : '',
         items: [
           {
+            label: 'Розрахунок параметрів колони',
+            command: () => navigate('/calculation'),
+            className: location.pathname === '/calculation' ? 'active' : '',
+          },
+          {
             label: 'Температури',
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',

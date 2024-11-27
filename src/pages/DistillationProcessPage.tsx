@@ -48,7 +48,7 @@ const DistillationProcessPage = () => {
               <ACBlockTemp name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWoter)} help={helpM.temp_water_m} />
+              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
 

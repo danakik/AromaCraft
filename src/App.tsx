@@ -13,6 +13,7 @@ import SettingPage from './pages/SettingPage';
 import DataTemperaturesPage from './pages/DataTemperaturesPage';
 import DataStatisticsPage from './pages/DataStatisticsPage';
 import { Layout } from './components/Layout/Layout';
+import CalculationPage from './pages/CalculationPage';
 
 const App: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const App: React.FC = () => {
           <Route path="manualprocess" element={<ManualProcessPage />} />
           <Route path="distillationprocess" element={<DistillationProcessPage />} />
           <Route path="rectificationprocess" element={<RectificationProcessPage />} />
+          <Route path="calculation" element={<CalculationPage />} />
           <Route path="datatemperatures" element={<DataTemperaturesPage />} />
           <Route path="datastatistics" element={<DataStatisticsPage />} />
           <Route path="setting" element={<SettingPage />} />

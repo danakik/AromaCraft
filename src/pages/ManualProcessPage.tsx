@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -12,24 +14,25 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 type FormData = {
-  tempSelect: number;
-  handPercent: number;
-  handTempGyst: number;
-  handSpeedTail: number;
-  handTen: boolean;
-  handPower: number;
-  handPin1: number;
-  handPin2: boolean;
-  handK1: boolean;
-  handK2: boolean;
-  handK3: boolean;
-  handK4: boolean;
-  handWoterError: boolean;
-  handLevelError: boolean;
-  handTempWoterError: number;
-  handTempCubeError: number;
+  tempSelect?: number;
+  handPercent?: number;
+  handTempGyst?: number;
+  handSpeedTail?: number;
+  handTen?: boolean;
+  handPower?: number;
+  handPin1?: number;
+  handPin2?: boolean;
+  handK1?: boolean;
+  handK2?: boolean;
+  handK3?: boolean;
+  handK4?: boolean;
+  handWaterError?: boolean;
+  handLevelError?: boolean;
+  handTempWaterError?: number;
+  handTempCubeError?: number;
 };
 
 const ManualProcessPage = () => {
@@ -40,7 +43,23 @@ const ManualProcessPage = () => {
     error,
   } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
 
-  const { control, watch, reset } = useForm<FormData>({
+  const schema = yup.object().shape({
+    tempSelect: yup.number().max(120, 'Максимальне значення 120').min(0, 'Мінімальне значення 0'),
+    handPercent: yup.number().max(6, 'Максимальне значення 6').min(0.06, 'Мінімальне значення 0.06'),
+    handTempGyst: yup.number().max(101, 'Максимальне значення 101').min(0.1, 'Мінімальне значення 0.1'),
+    handSpeedTail: yup.number().max(6, 'Максимальне значення 6').min(0.06, 'Мінімальне значення 0.06'),
+    handPower: yup.number().max(100, 'Максимальне значення 100').min(1, 'Мінімальне значення 1'),
+    handPin1: yup.number().max(101, 'Максимальне значення 101').min(1, 'Мінімальне значення 1'),
+    handTempWaterError: yup.number().max(120, 'Максимальне значення 120').min(1, 'Мінімальне значення 1'),
+    handTempCubeError: yup.number().max(120, 'Максимальне значення 120').min(1, 'Мінімальне значення 1'),
+  });
+
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
     values: {
       tempSelect: data.handTempSelect,
       handPercent: data.handPercent,
@@ -54,9 +73,9 @@ const ManualProcessPage = () => {
       handK2: !!data.handK2,
       handK3: !!data.handK3,
       handK4: !!data.handK4,
-      handWoterError: !!data.handWoterError,
+      handWaterError: !!data.handWaterError,
       handLevelError: !!data.handLevelError,
-      handTempWoterError: data.handTempWoterError,
+      handTempWaterError: data.handTempWaterError,
       handTempCubeError: data.handTempCubeError,
     },
   });
@@ -69,6 +88,7 @@ const ManualProcessPage = () => {
 
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
+
 
   return (
     <>
@@ -93,7 +113,7 @@ const ManualProcessPage = () => {
               <ACBlockTemp name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWoter)} help={helpM.temp_water_m} />
+              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
 
@@ -106,7 +126,7 @@ const ManualProcessPage = () => {
                   <ACKnob
                     label="Температура відбору"
                     color="orange"
-                    initialValue={value}
+                    initialValue={value ?? 0.06}
                     help={helpM.temp_selection_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -120,7 +140,7 @@ const ManualProcessPage = () => {
                     units="л/г"
                     label="Швидкість відбору"
                     help={helpM.speed_selection_m}
-                    value={value}
+                    value={value ?? 0.06}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -134,7 +154,7 @@ const ManualProcessPage = () => {
                   <ACKnob
                     label="Гістерезіс відбору"
                     color="blue"
-                    initialValue={value}
+                    initialValue={value ?? 0.1}
                     help="helpM.gist_selection_m"
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -149,7 +169,7 @@ const ManualProcessPage = () => {
                     units="л/г"
                     label="Швидкість відбору хвостів"
                     help={helpM.speed_selection_tails_m}
-                    value={value}
+                    value={value ?? 0.06}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -256,7 +276,7 @@ const ManualProcessPage = () => {
             <h3>Аварії</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller
-                name="handTempWoterError"
+                name="handTempWaterError"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
@@ -271,7 +291,7 @@ const ManualProcessPage = () => {
                 )}
               />
               <Controller
-                name="handWoterError"
+                name="handWaterError"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />

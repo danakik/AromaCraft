@@ -88,13 +88,13 @@ const SettingPage = () => {
                 <ACKnob
                   label="Темп. води"
                   color="blue"
-                  initialValue={Number(data.tempWoter)}
+                  initialValue={Number(data.tempWater)}
                   readonly
                   help={helpM.set_temp_water_m}
                 />
                 <ACCounterLabel
                   units="°C "
-                  value={Number(data.tempWoter)}
+                  value={Number(data.tempWater)}
                   label="Зміна темп. води"
                   help={helpM.set_temp_water_m}
                 />

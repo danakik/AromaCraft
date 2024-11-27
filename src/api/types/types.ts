@@ -2,15 +2,15 @@ export type SortedData = {
   tempCube: number;
   tempCargi: number;
   tempDef: number;
-  tempWoter: number;
+  tempWater: number;
   handWork: number;
   errorHand: number;
   handPower: number;
   handPercent: number;
   handTempSelect: number;
   handTempGyst: number;
-  handWoterError: number;
-  handTempWoterError: number;
+  handWaterError: number;
+  handTempWaterError: number;
   handLevelError: number;
   handTempCubeError: number;
   version: number;
