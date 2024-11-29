@@ -82,8 +82,8 @@ export const SideBar = (props: PanelMenuProps) => {
       {
         label: 'Головна',
         icon: homeIcon,
-        command: () => navigate('/main'),
-        className: location.pathname === '/main' ? 'active' : '',
+        command: () => navigate('/device'),
+        className: location.pathname === '/device' ? 'active' : '',
       },
       {
         key: 'process',
@@ -135,8 +135,8 @@ export const SideBar = (props: PanelMenuProps) => {
       {
         label: 'Вийти',
         icon: exitIcon,
-        command: () => navigate('/login'),
-        className: location.pathname === '/login' ? 'active' : '',
+        command: () => navigate('/main'),
+        className: location.pathname === '/main' ? 'active' : '',
       },
     ],
     [navigate, location.pathname, homeIcon, processIcon, dataIcon, settingsIcon, exitIcon],

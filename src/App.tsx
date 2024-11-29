@@ -12,6 +12,7 @@ import RectificationProcessPage from './pages/RectificationProcessPage';
 import SettingPage from './pages/SettingPage';
 import DataTemperaturesPage from './pages/DataTemperaturesPage';
 import DataStatisticsPage from './pages/DataStatisticsPage';
+import DevicePage from './pages/DevicePage';
 import { Layout } from './components/Layout/Layout';
 
 const App: React.FC = () => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
         </Route>
 
         <Route path="/" element={<Layout />}>
+          <Route path='device' element={<DevicePage/>}/>
           <Route path="manualprocess" element={<ManualProcessPage />} />
           <Route path="distillationprocess" element={<DistillationProcessPage />} />
           <Route path="rectificationprocess" element={<RectificationProcessPage />} />
