@@ -1,16 +1,16 @@
 @font-face {
-    font-family: 'Fixel Variable';
-    src: url('../fonts/FixelVariable.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Fixel Variable';
+  src: url('../fonts/FixelVariable.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-    background: #030712;
-    color: white;
-    overflow: hidden;
+  background: #030712;
+  color: white;
+  overflow: hidden;
 }
 
 h1 {
-    color: #ffffff;
+  color: #ffffff;
 }

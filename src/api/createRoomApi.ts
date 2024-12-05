@@ -12,8 +12,8 @@ export const createRoomApi = createApi({
         url: 'read_block_client.php',
         method: 'POST',
         body: new URLSearchParams({
-            key: machineNumber,
-            b: key 
+          key: machineNumber,
+          b: key,
         }),
       }),
     }),

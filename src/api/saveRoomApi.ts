@@ -12,8 +12,8 @@ export const saveRoomApi = createApi({
         url: 'save_block.php',
         method: 'POST',
         body: new URLSearchParams({
-            key: machineNumber,
-            b: key 
+          key: machineNumber,
+          b: key,
         }),
       }),
     }),

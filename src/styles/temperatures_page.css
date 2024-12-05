@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'Fixel Variable';
+    src: url('../fonts/FixelVariable.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.temp-list{
+    color: white;
+    font-family: 'Fixel Variable', sans-serif !important; 
+    font-weight: 400 !important; 
+    font-size: 18px !important; 
+}
+
+.temp-cube::marker {
+    color: #3a98b7;
+  } 
+
+.temp-cargi::marker {
+    color: #f6b15c;
+} 
+
+.temp-defl::marker {
+    color: #fd6868;
+} 
+
+.temp-water::marker {
+    color: #70d4cf;
+} 
