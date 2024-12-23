@@ -37,6 +37,30 @@ interface SortedData {
   distPowerBody: number,
   distTimeBody: number,
   distCubeHead: number,
+
+  rectAcceleration: number,
+  rectPower: number,
+  rectPowerBody: number,
+  prexid: number, /* пока не обноружен */
+  rectTempPower: number,
+  rectTempStop: number,
+  rectTempHead: number,
+  rectGystHead: number,
+  rectTempBody: number,
+  rectGystBody: number,
+  rectPercentHead: number, 
+  rectPercentBody: number,
+  rectDecreaseTemp: number,
+  rectDecreaseSpeed: number,
+  rectTempError: number,
+  rectTimeStab: number,
+  rectCubeTail: number,
+  rectSpeedTail: number,
+  rectSpeedCarge: number,
+  rectDecreaseCycle: number,
+  rectCyclesNumber: number,
+  rectEndCycle: number,
+  rectPowerTail: number,
 }
 
 const initialSortedData: SortedData = {
@@ -75,6 +99,30 @@ const initialSortedData: SortedData = {
   distPowerBody: 0,
   distTimeBody: 0,
   distCubeHead: 0,
+
+  rectAcceleration: 0,
+  rectPower: 0,
+  rectPowerBody: 0,
+  prexid: 0, /* пока не обноружен */
+  rectTempPower: 0,
+  rectTempStop: 0,
+  rectTempHead: 0,
+  rectGystHead: 0,
+  rectTempBody: 0,
+  rectGystBody: 0,
+  rectPercentHead: 0, 
+  rectPercentBody: 0,
+  rectDecreaseTemp: 0,
+  rectDecreaseSpeed: 0,
+  rectTempError: 0,
+  rectTimeStab: 0,
+  rectCubeTail: 0,
+  rectSpeedTail: 0,
+  rectSpeedCarge: 0,
+  rectDecreaseCycle: 0,
+  rectCyclesNumber: 0,
+  rectEndCycle: 0,
+  rectPowerTail: 0,
 };
 
 const useSortedData = (key: string | null) => {
@@ -131,6 +179,30 @@ const useSortedData = (key: string | null) => {
       distPowerBody: parseNumber(newData[124]),
       distTimeBody: parseNumber(newData[125]),
       distCubeHead: parseNumber(newData[135]),
+
+      rectAcceleration: parseNumber(newData[22]),
+      rectPower: parseNumber(newData[23]),
+      rectPowerBody: parseNumber(newData[115]),
+      prexid: parseNumber(newData[0]), /* пока не обноружен */
+      rectTempPower: parseNumber(newData[24]),
+      rectTempStop: parseNumber(newData[25]),
+      rectTempHead: parseNumber(newData[26]),
+      rectGystHead: parseNumber(newData[27]),
+      rectTempBody: parseNumber(newData[28]),
+      rectGystBody: parseNumber(newData[29]),
+      rectPercentHead: parseNumber(newData[30]), 
+      rectPercentBody: parseNumber(newData[21]),
+      rectDecreaseTemp: parseNumber(newData[102]),
+      rectDecreaseSpeed: parseNumber(newData[103]),
+      rectTempError: parseNumber(newData[32]),
+      rectTimeStab: parseNumber(newData[33]),
+      rectCubeTail: parseNumber(newData[117]),
+      rectSpeedTail: parseNumber(newData[118]),
+      rectSpeedCarge: parseNumber(newData[122]),
+      rectDecreaseCycle: parseNumber(newData[105]),
+      rectCyclesNumber: parseNumber(newData[34]),
+      rectEndCycle: parseNumber(newData[129]),
+      rectPowerTail: parseNumber(newData[131]),
     };
 
     setSortedData(newSortedData);

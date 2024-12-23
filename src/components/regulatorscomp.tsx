@@ -16,6 +16,7 @@ import SpeedIcon from '../assets/icons/speed_icon';
 import ListIcon from '../assets/icons/list_icon';
 import TimerIcon from '../assets/icons/timer_icon';
 import TempMIcon from '../assets/icons/temp_minus_icon';
+import TempPIcon from '../assets/icons/temp_plus_icon';
 import SortIcon from '../assets/icons/sort_icon';
 import ArrowCurveIcon from '../assets/icons/arrow_curve_icon';
 import ArrowForkIcon from '../assets/icons/arrow_fork_icon';
@@ -41,7 +42,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
   units,
   help = '',
   onChange,
-  disabled = false
+  disabled = false,
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -90,6 +91,9 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
       break;
     case 'temp_minus':
       IconComponent = TempMIcon;
+      break;
+    case 'temp_plus':
+      IconComponent = TempPIcon;
       break;
     case 'sort':
       IconComponent = SortIcon;

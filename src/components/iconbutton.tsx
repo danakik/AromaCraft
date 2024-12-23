@@ -11,21 +11,21 @@ type IconButtonProps = {
   onClick: () => void;
 };
 
-export const ACIconButton: React.FC<IconButtonProps> = ({ iconName, onClick }) => {
-  const renderIcon = () => {
-    switch (iconName) {
-      case 'edit':
-        return <PencilIcon />;
-      case 'doc_download':
-        return <DocDownloadIcon />;
-      case 'doc_add':
-        return <DocAddIconIcon />;
-      case 'delete':
-        return <TrashIcon />;
-      default:
-        return null;
-    }
-  };
+const renderIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'edit':
+      return <PencilIcon />;
+    case 'doc_download':
+      return <DocDownloadIcon />;
+    case 'doc_add':
+      return <DocAddIconIcon />;
+    case 'delete':
+      return <TrashIcon />;
+    default:
+      return null;
+  }
+};
 
-  return <Button icon={renderIcon()} className="p-button-rounded p-button-outlined icon-button" onClick={onClick} />;
+export const ACIconButton: React.FC<IconButtonProps> = ({ iconName, onClick }) => {
+  return <Button icon={renderIcon(iconName)} rounded text raised onClick={onClick} />;
 };

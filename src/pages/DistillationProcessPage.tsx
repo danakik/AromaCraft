@@ -5,7 +5,6 @@ import { ACStatusComp } from '../components/statuscomp';
 import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACKnob } from '../components/knob';
-import { ACCounterLabel } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import '../styles/process_page.css';
@@ -85,7 +84,7 @@ const DistillationProcessPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label="Температура переходу голів"
+                    label="Темп. переходу голів"
                     color="red"
                     initialValue={value}
                     help={helpM.temp_transition_m}
@@ -93,37 +92,38 @@ const DistillationProcessPage = () => {
                   />
                 )}
               />
-              
+
             </div>
             <div className="block flex-1 p-2 col-6">
-            <Controller
-                name="distCubeHead"
+              <Controller
+                name="distTempStop"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label="Температура переходу тіла"
                     color="purple"
+                    label="Температура зупинки"
                     initialValue={value}
-                    help={helpM.temp_transition_body_m}
+                    help={helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
               />
-              
             </div>
           </div>
         </div>
 
         <div className="flex flex-column gap-3 w-1/4 align-items-start justify-content-start ">
-          <div className="block p-3 w-full">
-           {/*  <h3>Сценарій</h3>
+          <div className="block p-4 w-full">
+            <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
+            </div>
+            <div className="flex align-items-center justify-content-center">
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
               <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
-            </div> */}
+            </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" style={{ backgroundColor: '#4980E5', borderColor: '#4980E5', color: '#fff' }} />
               <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
@@ -133,7 +133,7 @@ const DistillationProcessPage = () => {
           <div className="block p-4 w-full">
             <h3>Потужність</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="distAcceleration"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -149,7 +149,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="distPowerBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -165,7 +165,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="distPower"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -182,9 +182,25 @@ const DistillationProcessPage = () => {
             </div>
           </div>
           <div className="block p-4 w-full">
-            <h3>Аварія/Час</h3>
+            <h3>Інше</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
+                name="distCubeHead"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon='temp'
+                    label="Темп. переходу тіла"
+                    value={value}
+                    units='°C'
+                    help={helpM.temp_transition_body_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+              <Controller
                 name="distTimeBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -200,7 +216,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="distTempError"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -210,22 +226,6 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="°C"
                     help={helpM.temp_breakdown_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
-                name="distTempStop"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="temp"
-                    label="Температура зупинки"
-                    value={value}
-                    units="°C"
-                    help={helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}

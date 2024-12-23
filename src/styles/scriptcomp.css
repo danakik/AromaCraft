@@ -6,8 +6,7 @@
 }
 
 .span-script {
-    background-color: #4980E5;
-    border-color: #4980E5;
+    border:none;
     color: #fff;
     height: 25px;
     line-height: 25px; /* Центрування тексту по вертикалі */
@@ -17,21 +16,13 @@
     display: inline-block; /* Визначаємо ширину для span */
 }
 
-
 .button-arrow {
-    background-color: #4980E5 !important;
-    border-color: #4980E5 !important;
-    border: none !important;
-    padding: 0 !important;
-    font-size: 15px !important; /* Зменшення шрифта для іконки */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.button-arrow .pi {
-    font-size: 10px !important; /* Встановлюємо розмір іконки */
+    border:none !important;
+    color: #fff !important;
 }
 
-.icon-button{
-    border: none !important;
+.button-group{
+    height: 40px;
+    background-color: #4980E5;
+    border: 1px solid #4980E5;
 }

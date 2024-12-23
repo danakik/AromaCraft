@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
-import { ACCounterLabel, ACCounterSpeed } from '../components/counter';
+import { ACCounterSpeed } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { ACSwitch } from '../components/switch';
 import '../styles/process_page.css';
@@ -14,7 +13,6 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { calculateHandPercent } from '../utils/calculate';
 import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
@@ -243,7 +241,7 @@ const ManualProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACKnob
-                      label="Гістерезіс відбору"
+                      label="Гістерезис відбору"
                       color="blue"
                       initialValue={value}
                       help="helpM.gist_selection_m"
@@ -259,7 +257,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={simvol}
-                      label="Швидкість відбору хвостів"
+                      label="Швидкість відб. хвостів"
                       help={helpM.speed_selection_tails_m}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(

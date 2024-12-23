@@ -30,3 +30,40 @@ header{
     background: #111828;
     border-radius: 12px;
 }
+
+.p-togglebutton { 
+    width: 90px;
+    height: 30px;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.p-togglebutton .p-button-text{
+    margin: 0 !important;
+    padding: 1px !important;
+    font-size: 8px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    border-radius: 10px;
+  }
+
+  /* Стиль "доріжки" (фон стрічки гортання) */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #111828;
+    border-radius: 10px;
+  }
+  
+  /* Стиль "рухомого елемента" (самого повзунка) */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1e2944;
+    border-radius: 10px;
+  }
+  
+  /* Стиль повзунка при наведенні */
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #19233c;
+  }
+
+  .custom-scrollbar2::-webkit-scrollbar {
+    display: none;
+  }

@@ -12,7 +12,36 @@ type KnobProps = {
   color: 'orange' | 'blue' | 'purple' | 'red';
   readonly?: boolean;
   help?: string;
-  onChange?: (e: { value: number }) => void;
+  onChange?: (e: { value: number | [number, number] }) => void;
+};
+
+const getGradientClass = (color: 'orange' | 'blue' | 'purple' | 'red'): string => {
+  switch (color) {
+    case 'orange':
+      return 'url(#gradient1)';
+    case 'blue':
+      return 'url(#gradient2)';
+    case 'purple':
+      return 'url(#gradient3)';
+    case 'red':
+      return 'url(#gradient4)';
+    default:
+      return 'url(#gradient1)';
+  }
+};
+const getGradientClassSlider = (color: 'orange' | 'blue' | 'purple' | 'red'): string => {
+  switch (color) {
+    case 'orange':
+      return 'gradient1';
+    case 'blue':
+      return 'gradient2';
+    case 'purple':
+      return 'gradient3';
+    case 'red':
+      return 'gradient4';
+    default:
+      return 'gradient1';
+  }
 };
 
 export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange }) => {
@@ -22,24 +51,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
-  let gradID = color === 'blue' ? 'url(#gradient2)' : 'url(#gradient1)';
-  switch (color) {
-    case 'orange':
-      gradID = 'url(#gradient1)';
-      break;
-    case 'blue':
-      gradID = 'url(#gradient2)';
-      break;
-    case 'purple':
-      gradID = 'url(#gradient3)';
-      break;
-    case 'red':
-      gradID = 'url(#gradient4)';
-      break;
-    default:
-      gradID = 'url(#gradient1)';
-      break;
-  }
+  let gradID = getGradientClass(color);
   const valueTemp = `${value.toFixed(1).toString().replace('.', ',')}°C`;
 
   const handleLabelClick = () => {
@@ -100,7 +112,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
   );
 };
 
-export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '' }) => {
+export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange}) => {
   const [value, setValue] = useState<number | [number, number]>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -108,20 +120,7 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
     setValue(initialValue);
   }, [initialValue]);
 
-  const gradientClass = (() => {
-    switch (color) {
-      case 'orange':
-        return 'gradient1';
-      case 'blue':
-        return 'gradient2';
-      case 'purple':
-        return 'gradient3';
-      case 'red':
-        return 'gradient4';
-      default:
-        return 'gradient1';
-    }
-  })();
+  const gradientClass = getGradientClassSlider(color);
 
   const valueDisplay =
     typeof value === 'number' ? `${value.toString().replace('.', ',')}°C` : `${value[0]}, ${value[1]}°C`;
@@ -153,12 +152,14 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
       </svg>
 
       <div className="ac-slider-container">
-        <Slider
+      <Slider
           value={value}
-          onChange={(e) => setValue(e.value)}
+          onChange={(e) => {
+            setValue(e.value);
+            if (onChange) onChange(e);
+          }}
           className={`unfilled custom-slider ${gradientClass}`}
           max={120}
-          step={0.1}
           disabled={readonly}
         />
         <div className="slider-temp">{valueDisplay}</div>
