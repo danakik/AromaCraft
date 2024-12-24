@@ -329,7 +329,7 @@ const ManualProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-4  w-full">
+          <div className="block p-3  w-full">
             <h3>Механізми/Клапани</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="water" label="Подача води" help={helpM.water_m} />

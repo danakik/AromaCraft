@@ -80,7 +80,7 @@ const MashingProcessPage = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2" style={{ maxHeight: '300px', overflowY: 'auto', borderRadius: '24px' }} >
+                    <div className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2" style={{ maxHeight: '294px', overflowY: 'auto', borderRadius: '28px' }} >
                         <div className="flex flex-column align-items-center justify-content-center w-full">
                         <div className="grid grid-cols-2 w-full">
                             <div className="col-6" style={{maxWidth: '260px'}}>
@@ -166,7 +166,7 @@ const MashingProcessPage = () => {
                 </div>
             
             <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '658px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}  >
-                <div className="block p-4 w-full">
+                <div className="block p-3 w-full">
                     <h3>Автоматика</h3>
                     <div className="flex align-items-start justify-content-center">
                         <ACScriptComp />
@@ -182,13 +182,13 @@ const MashingProcessPage = () => {
                         <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
                     </div>
                 </div>
-                <div className="block p-4  w-full">
+                <div className="block p-3  w-full">
                     <h3>Паузи</h3>
                     <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
                         <ACRegulator icon="list" label="Кількість пауз" units=' ' value={1} help={helpM.pauses_m} />
                     </div>
                 </div>
-                <div className="block p-4  w-full">
+                <div className="block p-3  w-full">
                     <h3>Варка</h3>
                     <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
                         <ACRegulator icon="temp_plus" label="Варка" help={helpM.temp_brew_m} />
@@ -205,7 +205,7 @@ const MashingProcessPage = () => {
                         <ACRegulator icon="timer" label="Час варки" units='хв' value={10} help={helpM.time_brew_m} />
                     </div>
                 </div>
-                <div className="block p-4  w-full">
+                <div className="block p-3  w-full">
                     <h3>Охолодженння</h3>
                     <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
                         <ACRegulator icon="temp_minus" label="Охолодження" help={helpM.temp_freeze_m} />

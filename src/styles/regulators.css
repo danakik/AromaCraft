@@ -18,21 +18,20 @@
 .ac-regulator {
     display: flex;
     align-items: center; 
-    gap: 2px;
-    padding: 8px;
+    gap: 1px;
     border-radius: 8px;
     width: 400px;
     justify-content: space-between;
     height: 32px;
-    margin: 6px;
+    margin: 8px;
 }
 .ac-left-content, .ac-right-content {
     display: flex;
     flex-direction: row;
-    align-items: top;
+    align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 1px;
 }
-.ac-right-content {
+/* .ac-right-content {
     margin-left: auto;
-}
+} */

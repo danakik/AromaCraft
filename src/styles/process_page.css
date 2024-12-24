@@ -31,16 +31,14 @@ header{
     border-radius: 12px;
 }
 
-.p-togglebutton { 
-    width: 90px;
-    height: 30px;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-.p-togglebutton .p-button-text{
-    margin: 0 !important;
-    padding: 1px !important;
-    font-size: 8px !important;
+.custom-toggle-button .p-button {
+  width: 48px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 8px !important;
+  font-weight: 50 !important;
+  color: #111828 !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

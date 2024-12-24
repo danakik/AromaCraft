@@ -113,7 +113,7 @@ const DistillationProcessPage = () => {
         </div>
 
         <div className="flex flex-column gap-3 w-1/4 align-items-start justify-content-start ">
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
@@ -130,7 +130,7 @@ const DistillationProcessPage = () => {
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Потужність</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller
@@ -181,7 +181,7 @@ const DistillationProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Інше</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller

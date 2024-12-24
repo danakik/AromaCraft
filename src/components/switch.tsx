@@ -2,7 +2,7 @@ import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { InputSwitch } from 'primereact/inputswitch';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/themes/lara-light-purple/theme.css';
 
 type SwitchProps = {
   checked?: boolean;
