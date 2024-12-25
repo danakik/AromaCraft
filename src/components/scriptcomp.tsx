@@ -31,40 +31,10 @@ export const ACScriptComp: React.FC = () => {
   const selectedLabel = options.find((option) => option.value === selectedOption)?.label;
 
   return (
-    <div /* className="flex align-items-center" */>
-      {/* <div className="flex align-items-center">
-        <Button
-          icon="pi pi-chevron-left button-arrow"
-          onClick={handlePrev}
-          style={{ width: '25px', height: '25px', marginRight: '-15px' }}
-        />
-        <p className="mx-2 span-script">{selectedLabel}</p>
-        <Button
-          icon="pi pi-chevron-right button-arrow"
-          onClick={handleNext}
-          style={{ width: '25px', height: '25px', marginLeft: '-15px' }}
-        />
-      </div> */}
-      {/* <Toolbar 
-        start={<Button
-          icon="pi pi-chevron-left button-arrow"
-          onClick={handlePrev}
-          style={{ width: '25px', height: '25px' }}
-          rounded
-        />} 
-
-        center={<p className="mx-2 span-script">{selectedLabel}</p>}
-
-        end={<Button
-          icon="pi pi-chevron-right button-arrow"
-          onClick={handleNext}
-          style={{ width: '25px', height: '25px'}}
-          rounded
-        />} /> */}
-
+    <div>
       <ButtonGroup>
           <Button icon="pi pi-chevron-left button-arrow" onClick={handlePrev} rounded text className='button-arrow button-group'/>
-          <Button label={selectedLabel} className='button-group'/>
+          <Button label={selectedLabel} className='button-group button-script'/>
           <Button icon="pi pi-chevron-right button-arrow" onClick={handleNext} rounded text className='button-arrow button-group'/>
       </ButtonGroup>
     </div>

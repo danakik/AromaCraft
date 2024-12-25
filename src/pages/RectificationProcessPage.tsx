@@ -79,6 +79,15 @@ const RectificationProcessPage = () => {
   });
 
   const [checked, setChecked] = useState(false);
+  const [isTailMode, setIsTailMode] = useState(false);
+  const handleTailToggleChange = (e: boolean) => {
+    setIsTailMode(e);
+  };
+
+  const [isSpeedMode, setIsSpeedMode] = useState(false);
+  const handleSpeedToggleChange = (e: boolean) => {
+    setIsSpeedMode(e);
+  };
 
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -161,7 +170,7 @@ const RectificationProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACSlider
-                      label="Темп. відбору тіла"
+                      label="Темп.відбору тіла"
                       color="orange"
                       initialValue={value}
                       help={helpM.temp_selection_body_m}
@@ -177,7 +186,7 @@ const RectificationProcessPage = () => {
                     <ACCounterLabel
                       units=" °C"
                       value={value}
-                      label="Гістерезис відб. тіла"
+                      label="Гістерезис відб.тіла"
                       help={helpM.gist_selection_body_m}
                       onChange={(e) => onChangeForm(e.value)}
                     />
@@ -195,7 +204,7 @@ const RectificationProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACSlider
-                      label="Темп. відб. хвостів"
+                      label="Темп.відб.хвостів"
                       color="red"
                       initialValue={value}
                       help={helpM.temp_selection_tails_m}
@@ -214,6 +223,7 @@ const RectificationProcessPage = () => {
                       label="Швидкість"
                       help={helpM.speed_selection_tails_m}
                       onChange={(e) => onChangeForm(e.value)}
+                      disabled={isTailMode}
                     />
                   )}
                 />
@@ -256,16 +266,15 @@ const RectificationProcessPage = () => {
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
-            </div>
-            <div className="flex align-items-center justify-content-center">
+
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
               <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" style={{ backgroundColor: '#4980E5', borderColor: '#4980E5', color: '#fff' }} />
-              <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
+              <Button label="Пропуск" className="button-skip" />
+              <Button label="Старт" className="button-start" />
             </div>
           </div>
 
@@ -331,6 +340,7 @@ const RectificationProcessPage = () => {
                     units="%"
                     help={helpM.power_selection_tails_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={!isTailMode}
                   />
                 )}
               />
@@ -346,7 +356,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв. відбору (голів)"
+                    label="Шв.відбору(голів)"
                     value={value}
                     units="%"
                     help={helpM.speed_selection_heads_m}
@@ -362,7 +372,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв. відбору (тіла)"
+                    label="Шв.відбору(тіла)"
                     value={value}
                     units="%"
                     help={helpM.speed_selection_body_m}
@@ -388,7 +398,7 @@ const RectificationProcessPage = () => {
                     />
                   )}
                 />
-                <ToggleButton onLabel="Темп" offLabel="Авто" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <ToggleButton onLabel="Темп" offLabel="Авто" checked={isSpeedMode} onChange={(e) => handleSpeedToggleChange(e.value)} className="custom-toggle-button" />
               </div>
             </div>
           </div>
@@ -515,12 +525,12 @@ const RectificationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_minus" label="Темп.зм.по царзі" help={helpM.temp_selection_cargi_m} units='°C' value={0} disabled />
+              <ACRegulator icon="temp_minus" label="Темп.зм.по царзі" help={helpM.temp_selection_cargi_m} units='°C' value={0} disabled={!isSpeedMode} />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-6">
               <div className="flex flex-row align-items-center justify-content-center w-full">
                 <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
-                <ToggleButton onLabel="Вузол" offLabel="Рівень" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <ToggleButton onLabel="Колона" offLabel="Вузол" checked={isTailMode} onChange={(e) => handleTailToggleChange(e.value)} className="custom-toggle-button" />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">

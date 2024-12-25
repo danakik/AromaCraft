@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -6,6 +6,7 @@ import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACKnob } from '../components/knob';
 import { ACRegulator } from '../components/regulatorscomp';
+import { ToggleButton } from 'primereact/togglebutton';
 import { Button } from 'primereact/button';
 import '../styles/process_page.css';
 import * as helpM from '../components/help_messages';
@@ -46,6 +47,11 @@ const DistillationProcessPage = () => {
       distTempStop: data.distTempStop
     },
   });
+
+  const [isTempMode, setIsTempMode] = useState(false);
+  const handleToggleChange = (e: boolean) => {
+    setIsTempMode(e);
+  };
 
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -117,22 +123,21 @@ const DistillationProcessPage = () => {
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
-            </div>
-            <div className="flex align-items-center justify-content-center">
+            
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
               <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" style={{ backgroundColor: '#4980E5', borderColor: '#4980E5', color: '#fff' }} />
-              <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
+              <Button label="Пропуск" className="button-skip" />
+              <Button label="Старт" className="button-start" />
             </div>
           </div>
 
           <div className="block p-3 w-full">
             <h3>Потужність</h3>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distAcceleration"
                 control={control}
@@ -148,7 +153,7 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distPowerBody"
                 control={control}
@@ -164,7 +169,7 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distPower"
                 control={control}
@@ -183,7 +188,15 @@ const DistillationProcessPage = () => {
           </div>
           <div className="block p-3 w-full">
             <h3>Інше</h3>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+                <ACRegulator
+                  icon='arrow_fork'
+                  label="Перехід тіла"
+                  help={helpM.temp_transition_body_m}
+                />
+                <ToggleButton onLabel='Темп' offLabel='Час' checked={isTempMode} onChange={(e) => handleToggleChange(e.value)} className="custom-toggle-button" />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distCubeHead"
                 control={control}
@@ -195,11 +208,12 @@ const DistillationProcessPage = () => {
                     units='°C'
                     help={helpM.temp_transition_body_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={!isTempMode}
                   />
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distTimeBody"
                 control={control}
@@ -211,11 +225,12 @@ const DistillationProcessPage = () => {
                     units="хв"
                     help={helpM.time_body_transition_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={isTempMode}
                   />
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distTempError"
                 control={control}
