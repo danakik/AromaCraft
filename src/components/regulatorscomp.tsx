@@ -32,6 +32,7 @@ type RegulatorProps = {
   help?: string;
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
+  hint?: string;
 };
 
 export const ACRegulator: React.FC<RegulatorProps> = ({
@@ -43,6 +44,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
   help = '',
   onChange,
   disabled = false,
+  hint
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -140,7 +142,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
         </span>
       </div>
       <div className="ac-right-content">
-        {units != null && <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} />}
+        {units != null && <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint}/>}
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>

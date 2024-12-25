@@ -11,9 +11,10 @@ type CounterProps = {
   units: string;
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
+  hint?: string;
 };
 
-export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false }) => {
+export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false, hint }) => {
   let min = 0,
     max = 100,
     step = 1;
@@ -58,6 +59,13 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disa
       min = 0;
       max = 100;
       break;
+  }
+
+  switch(hint){
+    case 'pauses':
+      step = 1;
+      min = 1;
+      max = 10;
   }
 
   const [count, setCount] = useState(value);

@@ -374,7 +374,7 @@ const ManualProcessPage = () => {
           </div>
           <div className="block p-3  w-full">
             <h3>Аварії</h3>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start  justify-content-start w-full gap-2">
               <Controller
                 name="handTempWoterError"
                 control={control}
@@ -398,7 +398,7 @@ const ManualProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2 pl-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="handTempCubeError"
                 control={control}
@@ -415,7 +415,7 @@ const ManualProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start  justify-content-start  w-full gap-2">
               <ACRegulator icon="breakdown" color="orange" label="Аварія рівень" help={helpM.level_break_m} />
               <Controller
                 name="handLevelError"

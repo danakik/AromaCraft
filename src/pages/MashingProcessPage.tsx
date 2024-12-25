@@ -52,20 +52,40 @@ const MashingProcessPage = () => {
 
     const generatePauseBlocks = () => {
         const blocks = [];
+        let knobColor: "orange" | "blue" | "purple" | "red" = "orange";
+        let sliderColor: "orange" | "blue" | "purple" | "red" = "blue";
         for (let i = 1; i <= pauseCount; i++) {
+            
+            if( i == 1 || i == 5 || i == 9){
+                knobColor = 'orange';
+                sliderColor = 'purple';
+            }
+            else if( i == 2 || i == 6 || i == 10){
+                knobColor = 'blue';
+                sliderColor = 'orange';
+            }
+            else if( i == 3 || i == 7){
+                knobColor = 'purple';
+                sliderColor = 'red';
+            }
+            else{
+                knobColor = 'red';
+                sliderColor = 'blue';
+            }
+
             blocks.push(
                 <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
                     <div className="flex flex-column align-items-center justify-content-center block">
                         <ACKnob
                             label={`Температура паузи ${i}`}
-                            color={i % 2 === 0 ? 'blue' : 'orange'}
+                            color={knobColor}
                             initialValue={50}
                             help={helpM.temp_pause_m}
                             onChange={(e) => console.log(e)}
                         />
                         <ACSlider
                             label={`Гістерезис паузи ${i}`}
-                            color={i % 2 === 0 ? 'red' : 'purple'}
+                            color={sliderColor}
                             initialValue={10}
                             help={helpM.gist_pause_m}
                             onChange={(e) => console.log(e)}
@@ -139,7 +159,7 @@ const MashingProcessPage = () => {
                     <div className="block p-3  w-full">
                         <h3>Паузи</h3>
                         <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="list" label="Кількість пауз" units=' ' value={pauseCount} help={helpM.pauses_m} onChange={(e: { value: number }) => setPauseCount(e.value)} />
+                            <ACRegulator icon="list" label="Кількість пауз" units=' ' hint="pauses" value={pauseCount} help={helpM.pauses_m} onChange={(e: { value: number }) => setPauseCount(e.value)} />
                         </div>
                     </div>
                     <div className="block p-3  w-full">
