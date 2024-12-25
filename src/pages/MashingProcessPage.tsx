@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ACBlockTemp } from '../components/blocktemp';
+import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACScriptComp } from '../components/scriptcomp';
@@ -38,10 +38,45 @@ const MashingProcessPage = () => {
     console.log(data);
 
     const [checked, setChecked] = useState(false);
+    const [pauseCount, setPauseCount] = useState(1);
+
+    const generatePauseBlocks = () => {
+        const blocks = [];
+        for (let i = 1; i <= pauseCount; i++) {
+            blocks.push(
+                <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
+                    <div className="flex flex-column align-items-center justify-content-center block">
+                        <ACKnob
+                            label={`Температура паузи ${i}`}
+                            color={i % 2 === 0 ? 'blue' : 'orange'}
+                            initialValue={50}
+                            help={helpM.temp_pause_m}
+                            onChange={(e) => console.log(e)}
+                        />
+                        <ACSlider
+                            label={`Гістерезис паузи ${i}`}
+                            color={i % 2 === 0 ? 'red' : 'purple'}
+                            initialValue={10}
+                            help={helpM.gist_pause_m}
+                            onChange={(e) => console.log(e)}
+                        />
+                        <ACCounterLabel
+                            label={`Час паузи ${i}`}
+                            value={10}
+                            units="хв"
+                            help={helpM.temp_pause_m}
+                        />
+                    </div>
+                </div>
+            );
+        }
+        return blocks;
+    };
+
 
     return (
         <>
-            <header className="mb-3">
+            <header className="mb-1">
                 <div style={{ float: 'right' }}>
                     <ACUserComp serial_number={key || ''} />
                 </div>
@@ -53,119 +88,29 @@ const MashingProcessPage = () => {
                 <div className="flex flex-column w-3/4 ">
                     <div className="grid grid-cols-2 w-full">
                         <div className="col-6">
-                            <ACBlockTemp name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+                            <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
                         </div>
                         <div className="col-6">
-                            <ACBlockTemp
-                                name="Царга"
-                                color="orange"
-                                temp={String(data.tempCargi)}
-                                help={helpM.temp_cargi_m}
-                            />
+                            <ACBlockTempSmall name="Царга" color="orange"  temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
                         </div>
                         <div className="col-6">
-                            <ACBlockTemp
-                                name="Дефлегматор"
-                                color="red"
-                                temp={String(data.tempDef)}
-                                help={helpM.temp_defl_m}
-                            />
+                            <ACBlockTempSmall name="Дефлегматор"  color="red"  temp={String(data.tempDef)}  help={helpM.temp_defl_m} />
                         </div>
                         <div className="col-6">
-                            <ACBlockTemp
-                                name="Вода"
-                                color="blue"
-                                temp={String(data.tempWater)}
-                                help={helpM.temp_water_m}
-                            />
+                            <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
                         </div>
                     </div>
-                    <div className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2" style={{ maxHeight: '294px', overflowY: 'auto', borderRadius: '28px' }} >
+                    <div className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2" style={{ maxHeight: '400px', width: '522px', overflowY: 'auto', borderRadius: '28px' }} >
                         <div className="flex flex-column align-items-center justify-content-center w-full">
                         <div className="grid grid-cols-2 w-full">
-                            <div className="col-6" style={{maxWidth: '260px'}}>
-                                <div className="flex flex-column align-items-center justify-content-center block">
-                                    <ACKnob
-                                        label={"Температура паузи " + 1}
-                                        color="orange"
-                                        initialValue={50}
-                                        help={helpM.temp_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACSlider
-                                        label={"Гістерезис паузи " + 1}
-                                        color="purple"
-                                        initialValue={1}
-                                        help={helpM.gist_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACCounterLabel label={"Час паузи " + 1} value={10} units="хв" help={helpM.temp_pause_m} />
-                                </div>
-                            </div>
-                            <div className="col-6" style={{maxWidth: '260px'}}>
-                                <div className="flex flex-column align-items-center justify-content-center block">
-                                    <ACKnob
-                                        label={"Температура паузи " + 2}
-                                        color="blue"
-                                        initialValue={50}
-                                        help={helpM.temp_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACSlider
-                                        label={"Гістерезис паузи " + 2}
-                                        color="red"
-                                        initialValue={1}
-                                        help={helpM.gist_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACCounterLabel label={"Час паузи " + 2} value={10} units="хв" help={helpM.temp_pause_m} />
-                                </div>
-                            </div>
-                            <div className="col-6" style={{maxWidth: '260px'}}>
-                                <div className="flex flex-column align-items-center justify-content-center block">
-                                    <ACKnob
-                                        label={"Температура паузи " + 3}
-                                        color="purple"
-                                        initialValue={50}
-                                        help={helpM.temp_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACSlider
-                                        label={"Гістерезис паузи " + 3}
-                                        color="orange"
-                                        initialValue={1}
-                                        help={helpM.gist_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACCounterLabel label={"Час паузи " + 3} value={10} units="хв" help={helpM.temp_pause_m} />
-                                </div>
-                            </div>
-                            <div className="col-6" style={{maxWidth: '260px'}}>
-                                <div className="flex flex-column align-items-center justify-content-center block">
-                                    <ACKnob
-                                        label={"Температура паузи " + 4}
-                                        color="red"
-                                        initialValue={50}
-                                        help={helpM.temp_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACSlider
-                                        label={"Гістерезис паузи " + 4}
-                                        color="blue"
-                                        initialValue={1}
-                                        help={helpM.gist_pause_m}
-                                        onChange={(e) => console.log(e)}
-                                    />
-                                    <ACCounterLabel label={"Час паузи " + 4} value={10} units="хв" help={helpM.temp_pause_m} />
-                                </div>
-                            </div>
+                            {generatePauseBlocks()}
                         </div>
                         </div>
 
                     </div>
                 </div>
             
-            <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '658px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}  >
+            <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '650px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}  >
                 <div className="block p-3 w-full">
                     <h3>Автоматика</h3>
                     <div className="flex align-items-start justify-content-center">
@@ -185,7 +130,7 @@ const MashingProcessPage = () => {
                 <div className="block p-3  w-full">
                     <h3>Паузи</h3>
                     <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                        <ACRegulator icon="list" label="Кількість пауз" units=' ' value={1} help={helpM.pauses_m} />
+                        <ACRegulator icon="list" label="Кількість пауз" units=' ' value={pauseCount} help={helpM.pauses_m}  onChange={(e: { value: number }) => setPauseCount(e.value)}  />
                     </div>
                 </div>
                 <div className="block p-3  w-full">

@@ -52,7 +52,7 @@ const DistillationProcessPage = () => {
 
   return (
     <>
-      <header className="mb-3">
+      <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>

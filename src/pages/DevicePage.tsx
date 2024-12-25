@@ -20,111 +20,123 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useGetDataQuery } from '../api/samogonApi';
 import * as helpM from '../components/help_messages';
 import { Dialog } from 'primereact/dialog';
+import { ACUserComp } from '../components/usercomp';
+import { ACStatusComp } from '../components/statuscomp';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
   const { data = initialSortedData } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
 
   return (
-    <div className="relative w-full h-full">
-      <UnderTextIcon style={{ position: 'absolute', top: 140.5, left: 89 }} />
-      <UnderTextIcon style={{ position: 'absolute', top: 123, left: 818, transform: 'scaleX(-1)' }} />
-      <UnderTextIcon style={{ position: 'absolute', top: 309, left: 818, transform: 'scale(-1, -1)' }} />
-      <UnderTextIcon style={{ position: 'absolute', top: 567, left: 844, transform: 'scale(-1, -1)' }} />
+    <>
+      <header className="mb-1">
+        <div style={{ float: 'right' }}>
+          <ACUserComp serial_number={key || ''} />
+        </div>
+        <div style={{ float: 'left' }}>
+          <ACStatusComp status_text={'Очікування...'} />
+        </div>
+      </header>
+      <div className="relative w-full h-full">
+        <UnderTextIcon style={{ position: 'absolute', top: 140.5, left: 89 }} />
+        <UnderTextIcon style={{ position: 'absolute', top: 123, left: 818, transform: 'scaleX(-1)' }} />
+        <UnderTextIcon style={{ position: 'absolute', top: 309, left: 818, transform: 'scale(-1, -1)' }} />
+        <UnderTextIcon style={{ position: 'absolute', top: 567, left: 844, transform: 'scale(-1, -1)' }} />
 
-      {createExplainingDiv('#2942e1', String(data.tempWater), 'Вода', { top: 70, left: 84 }, helpM.temp_water_m)}
-      {createExplainingDiv('#e74a4a', String(data.tempDef), 'Дефлагматор', { top: 58, left: 816.5 }, helpM.temp_defl_m)}
-      {createExplainingDiv('#e7764a', String(data.tempCargi), 'Царга', { top: 271, left: 827 }, helpM.temp_cargi_m)}
-      {createExplainingDiv('#9e4ae7', String(data.tempCube), 'Куб', { top: 529, left: 860 }, helpM.temp_cube_m)}
-      <p
-        className="textBlockTemp"
-        style={{
-          position: 'absolute',
-          top: 351,
-          left: 368,
-          width: 114,
-          height: 52,
-          fontSize: 21.06,
-          fontWeight: 400,
-        }}
-      >
-        ПОДАЧА ВОДИ
-      </p>
-      <p
-        className="textBlockTemp"
-        style={{
-          position: 'absolute',
-          top: 41,
-          left: 546,
-          width: 73.06,
-          height: 23,
-          fontSize: 21.06,
-          fontWeight: 400,
-        }}
-      >
-        ВІДБІР
-      </p>
-      <p
-        className="textBlockTemp"
-        style={{
-          position: 'absolute',
-          top: 458,
-          left: 368,
-          width: 114,
-          height: 52,
-          fontSize: 21.06,
-          fontWeight: 400,
-        }}
-      >
-        КЛАПАН ГОЛІВ
-      </p>
+        {createExplainingDiv('#2942e1', String(data.tempWater), 'Вода', { top: 70, left: 84 }, helpM.temp_water_m)}
+        {createExplainingDiv('#e74a4a', String(data.tempDef), 'Дефлагматор', { top: 58, left: 816.5 }, helpM.temp_defl_m)}
+        {createExplainingDiv('#e7764a', String(data.tempCargi), 'Царга', { top: 271, left: 827 }, helpM.temp_cargi_m)}
+        {createExplainingDiv('#9e4ae7', String(data.tempCube), 'Куб', { top: 529, left: 860 }, helpM.temp_cube_m)}
+        <p
+          className="textBlockTemp"
+          style={{
+            position: 'absolute',
+            top: 351,
+            left: 368,
+            width: 114,
+            height: 52,
+            fontSize: 21.06,
+            fontWeight: 400,
+          }}
+        >
+          ПОДАЧА ВОДИ
+        </p>
+        <p
+          className="textBlockTemp"
+          style={{
+            position: 'absolute',
+            top: 41,
+            left: 546,
+            width: 73.06,
+            height: 23,
+            fontSize: 21.06,
+            fontWeight: 400,
+          }}
+        >
+          ВІДБІР
+        </p>
+        <p
+          className="textBlockTemp"
+          style={{
+            position: 'absolute',
+            top: 458,
+            left: 368,
+            width: 114,
+            height: 52,
+            fontSize: 21.06,
+            fontWeight: 400,
+          }}
+        >
+          КЛАПАН ГОЛІВ
+        </p>
 
-      <div
-        style={{
-          position: 'relative',
-          width: 663,
-          height: 644.47,
-          top: 51,
-          left: 188,
-        }}
-      >
-        <KotelIcon style={{ position: 'absolute', top: 489.53 }} />
-        <NagrevIcon style={{ position: 'absolute', top: 409.81, left: 408.69 }} />
-        <IngredientIcon style={{ position: 'absolute', top: 473.81, left: 446.3 }} />
-        <HeatIcon style={{ position: 'absolute', top: 606.3, left: 422.72 }} />
-        <BorderIcon style={{ position: 'absolute', top: 465.95, left: 422.72 }} />
-        <BarIcon style={{ position: 'absolute', top: 0, left: 490 }} />
-        <VidbirIcon style={{ position: 'absolute', top: 42.67, left: 326.73 }} />
-        <WaterBarIcon style={{ position: 'absolute', top: 42.67, left: 52.3 }} />
-        <FridgeIcon style={{ position: 'absolute', top: 273.936, left: 51.65 }} />
-        <KlapanIcon style={{ position: 'absolute', top: 426.66, left: 56.14 }} />
-        <KlapanIcon color="black" style={{ position: 'absolute', top: 318.87, left: 56.14 }} />
-        <EllipseIcon color="white" fill="black" style={{ position: 'absolute', top: 421.22, left: 90.77 }} />
-        <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 313.08, left: 90.77 }} />
-        <VectorIcon style={{ position: 'absolute', top: 357, left: 180 }} />
-        <VectorIcon style={{ position: 'absolute', top: 463, left: 180 }} />
-        <VectorIcon style={{ position: 'absolute', top: 19, left: 357 }} />
-        <KlapanIcon
-          width={83.09}
-          height={14.6}
-          color="black"
-          style={{ position: 'absolute', top: 84.2, left: 354.5, transform: 'rotate(90deg)' }}
-        />
-        <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 77.09, left: 383.6 }} />
-        <DashedIcon style={{ position: 'absolute', top: 13.47, left: 462.58 }} />
-        <OutsideSeparatorIcon style={{ position: 'absolute', top: 267.22, left: 24.7 }} />
-        <OutsideSeparatorIcon style={{ position: 'absolute', top: 230.17, left: 454.72 }} />
-        <OutsideSeparatorIcon style={{ position: 'absolute', top: 275.08, left: 454.72 }} />
-        <OutsideSeparatorIcon style={{ position: 'absolute', top: 90, left: 242.48, transform: 'rotate(90deg)' }} />
-        <SeparatorIcon style={{ position: 'absolute', top: 272.83, left: 51.65 }} />
-        <SeparatorIcon style={{ position: 'absolute', top: 235.73, left: 488.41 }} width={95.44} />
-        <SeparatorIcon style={{ position: 'absolute', top: 280.69, left: 488.41 }} width={95.44} />
-        <SeparatorIcon
-          style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }}
-          width={95.44}
-        />
+        <div
+          style={{
+            position: 'relative',
+            width: 663,
+            height: 644.47,
+            top: 51,
+            left: 188,
+          }}
+        >
+          <KotelIcon style={{ position: 'absolute', top: 489.53 }} />
+          <NagrevIcon style={{ position: 'absolute', top: 409.81, left: 408.69 }} />
+          <IngredientIcon style={{ position: 'absolute', top: 473.81, left: 446.3 }} />
+          <HeatIcon style={{ position: 'absolute', top: 606.3, left: 422.72 }} />
+          <BorderIcon style={{ position: 'absolute', top: 465.95, left: 422.72 }} />
+          <BarIcon style={{ position: 'absolute', top: 0, left: 490 }} />
+          <VidbirIcon style={{ position: 'absolute', top: 42.67, left: 326.73 }} />
+          <WaterBarIcon style={{ position: 'absolute', top: 42.67, left: 52.3 }} />
+          <FridgeIcon style={{ position: 'absolute', top: 273.936, left: 51.65 }} />
+          <KlapanIcon style={{ position: 'absolute', top: 426.66, left: 56.14 }} />
+          <KlapanIcon color="black" style={{ position: 'absolute', top: 318.87, left: 56.14 }} />
+          <EllipseIcon color="white" fill="black" style={{ position: 'absolute', top: 421.22, left: 90.77 }} />
+          <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 313.08, left: 90.77 }} />
+          <VectorIcon style={{ position: 'absolute', top: 357, left: 180 }} />
+          <VectorIcon style={{ position: 'absolute', top: 463, left: 180 }} />
+          <VectorIcon style={{ position: 'absolute', top: 19, left: 357 }} />
+          <KlapanIcon
+            width={83.09}
+            height={14.6}
+            color="black"
+            style={{ position: 'absolute', top: 84.2, left: 354.5, transform: 'rotate(90deg)' }}
+          />
+          <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 77.09, left: 383.6 }} />
+          <DashedIcon style={{ position: 'absolute', top: 13.47, left: 462.58 }} />
+          <OutsideSeparatorIcon style={{ position: 'absolute', top: 267.22, left: 24.7 }} />
+          <OutsideSeparatorIcon style={{ position: 'absolute', top: 230.17, left: 454.72 }} />
+          <OutsideSeparatorIcon style={{ position: 'absolute', top: 275.08, left: 454.72 }} />
+          <OutsideSeparatorIcon style={{ position: 'absolute', top: 90, left: 242.48, transform: 'rotate(90deg)' }} />
+          <SeparatorIcon style={{ position: 'absolute', top: 272.83, left: 51.65 }} />
+          <SeparatorIcon style={{ position: 'absolute', top: 235.73, left: 488.41 }} width={95.44} />
+          <SeparatorIcon style={{ position: 'absolute', top: 280.69, left: 488.41 }} width={95.44} />
+          <SeparatorIcon
+            style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }}
+            width={95.44}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
