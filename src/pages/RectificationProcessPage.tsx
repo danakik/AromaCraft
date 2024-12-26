@@ -385,20 +385,21 @@ const RectificationProcessPage = () => {
                     />
                   )}
                 />
+
+                <Controller
+                  name="rectSwitchCarge"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="ТЕМП"
+                      offLabel="АВТО"
+                    />
+                  )}
+                />
               </div>
-              <Controller
-                name="rectSwitchCarge"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ToggleButton
-                    className="custom-toggle-button"
-                    checked={value}
-                    onChange={(e) => onChangeForm(e.value)}
-                    onLabel="ТЕМП"
-                    offLabel="АВТО"
-                  />
-                )}
-              />
             </div>
           </div>
 
@@ -517,21 +518,23 @@ const RectificationProcessPage = () => {
                 disabled
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-6">
-              <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
-              <Controller
-                name="rectSwitchTail"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ToggleButton
-                    className="custom-toggle-button"
-                    checked={value}
-                    onChange={(e) => onChangeForm(e.value)}
-                    onLabel="КОЛОНА"
-                    offLabel="ВУЗОЛ"
-                  />
-                )}
-              />
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <div className="flex flex-row align-items-center justify-content-center w-full">
+                <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
+                <Controller
+                  name="rectSwitchTail"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="КОЛОНА"
+                      offLabel="ВУЗОЛ"
+                    />
+                  )}
+                />
+              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
