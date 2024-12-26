@@ -7,6 +7,7 @@ import ProcessIcon from '../../assets/icons/process_icon';
 import DataIcon from '../../assets/icons/data_icon';
 import SettingsIcon from '../../assets/icons/settings_icon';
 import ExitIcon from '../../assets/icons/exit_icon';
+import GlobeIcon from '../../assets/icons/globe_icon';
 import './SideBar.css';
 
 export const SideBar = (props: PanelMenuProps) => {
@@ -58,6 +59,7 @@ export const SideBar = (props: PanelMenuProps) => {
       }),
     [],
   );
+  const globeIcon = useMemo(() => GlobeIcon({ width: 24, height: 24, viewBox: '0 0 24 24' }), []);
 
   const mainPageMenuItems: MenuItem[] = useMemo(
     () => [
@@ -105,6 +107,11 @@ export const SideBar = (props: PanelMenuProps) => {
             command: () => navigate('/rectificationprocess'),
             className: location.pathname === '/rectificationprocess' ? 'active' : '',
           },
+          {
+            label: 'Затирання',
+            command: () => navigate('/mashingprocess'),
+            className: location.pathname === '/mashingprocess' ? 'active' : '',
+          },
         ],
       },
       {
@@ -117,11 +124,11 @@ export const SideBar = (props: PanelMenuProps) => {
             command: () => navigate('/calculation'),
             className: location.pathname === '/calculation' ? 'active' : '',
           },
-/*           {
+           {
             label: 'Температури',
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',
-          }, */
+          },
         ],
       },
       {

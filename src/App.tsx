@@ -9,6 +9,7 @@ import DevicePage from './pages/DevicePage';
 import ManualProcessPage from './pages/ManualProcessPage';
 import DistillationProcessPage from './pages/DistillationProcessPage';
 import RectificationProcessPage from './pages/RectificationProcessPage';
+import MashingProcessPage from './pages/MashingProcessPage';
 import SettingPage from './pages/SettingPage';
 import DataTemperaturesPage from './pages/DataTemperaturesPage';
 import CalculationPage from './pages/CalculationPage';
@@ -30,8 +31,9 @@ const App: React.FC = () => {
           <Route path="manualprocess" element={<ManualProcessPage />} />
           <Route path="distillationprocess" element={<DistillationProcessPage />} />
           <Route path="rectificationprocess" element={<RectificationProcessPage />} />
+          <Route path="mashingprocess" element={<MashingProcessPage />} />
           <Route path="calculation" element={<CalculationPage />} />
-          {/* <Route path="datatemperatures" element={<DataTemperaturesPage />} /> */}
+          <Route path="datatemperatures" element={<DataTemperaturesPage />} />
           <Route path="setting" element={<SettingPage />} />
           <Route path="login" element={<LoginPage />} />
         </Route>

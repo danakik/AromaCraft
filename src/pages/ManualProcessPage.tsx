@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
-import { ACCounterLabel, ACCounterSpeed } from '../components/counter';
+import { ACCounterSpeed } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { ACSwitch } from '../components/switch';
 import '../styles/process_page.css';
@@ -14,7 +13,6 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { calculateHandPercent } from '../utils/calculate';
 import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
@@ -180,7 +178,7 @@ const ManualProcessPage = () => {
 
   return (
     <>
-      <header className="mb-3">
+      <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
@@ -255,7 +253,7 @@ const ManualProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACKnob
-                      label="Гістерезіс відбору"
+                      label="Гістерезис відбору"
                       color="blue"
                       initialValue={value}
                       help="helpM.gist_selection_m"
@@ -271,7 +269,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={simvol}
-                      label="Швидкість відбору хвостів"
+                      label="Швидкість відб. хвостів"
                       help={helpM.speed_selection_tails_m}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
@@ -343,7 +341,7 @@ const ManualProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-4  w-full">
+          <div className="block p-3  w-full">
             <h3>Механізми/Клапани</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <ACRegulator icon="water" label="Подача води" help={helpM.water_m} />
@@ -388,7 +386,7 @@ const ManualProcessPage = () => {
           </div>
           <div className="block p-3  w-full">
             <h3>Аварії</h3>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start  justify-content-start w-full gap-2">
               <Controller
                 name="handTempWoterError"
                 control={control}
@@ -412,7 +410,7 @@ const ManualProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2 pl-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="handTempCubeError"
                 control={control}
@@ -429,7 +427,7 @@ const ManualProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start  justify-content-start  w-full gap-2">
               <ACRegulator icon="breakdown" color="orange" label="Аварія рівень" help={helpM.level_break_m} />
               <Controller
                 name="handLevelError"

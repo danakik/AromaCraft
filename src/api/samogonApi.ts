@@ -65,7 +65,9 @@ const samogonApi = createApi({
           rectAcceleration: parseNumber(data[22]),
           rectPower: parseNumber(data[23]),
           rectPowerBody: parseNumber(data[115]),
+
           prexid: parseNumber(data[0]) /* пока не обноружен */,
+
           rectTempPower: parseNumber(data[24]),
           rectTempStop: parseNumber(data[25]),
           rectTempHead: parseNumber(data[26]),
@@ -89,6 +91,7 @@ const samogonApi = createApi({
           rectSwitchTail: parseNumber(data[130]),
           rectSwitchCube: parseNumber(data[126]),
           rectSwitchCarge: parseNumber(data[127]),
+
         };
       },
     }),

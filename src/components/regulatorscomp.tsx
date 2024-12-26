@@ -16,6 +16,7 @@ import SpeedIcon from '../assets/icons/speed_icon';
 import ListIcon from '../assets/icons/list_icon';
 import TimerIcon from '../assets/icons/timer_icon';
 import TempMIcon from '../assets/icons/temp_minus_icon';
+import TempPIcon from '../assets/icons/temp_plus_icon';
 import SortIcon from '../assets/icons/sort_icon';
 import ArrowCurveIcon from '../assets/icons/arrow_curve_icon';
 import ArrowForkIcon from '../assets/icons/arrow_fork_icon';
@@ -31,6 +32,7 @@ type RegulatorProps = {
   help?: string;
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
+  hint?: string;
 };
 
 export const ACRegulator: React.FC<RegulatorProps> = ({
@@ -41,7 +43,8 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
   units,
   help = '',
   onChange,
-  disabled = false
+  disabled = false,
+  hint
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -91,6 +94,9 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
     case 'temp_minus':
       IconComponent = TempMIcon;
       break;
+    case 'temp_plus':
+      IconComponent = TempPIcon;
+      break;
     case 'sort':
       IconComponent = SortIcon;
       break;
@@ -136,7 +142,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
         </span>
       </div>
       <div className="ac-right-content">
-        {units != null && <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} />}
+        {units != null && <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint}/>}
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>

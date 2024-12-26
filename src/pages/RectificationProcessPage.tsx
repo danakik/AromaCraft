@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -9,7 +9,9 @@ import { ACCounterLabel } from '../components/counter';
 import { ACSwitch } from '../components/switch';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
+import { ToggleButton } from 'primereact/togglebutton';
 import '../styles/process_page.css';
+import 'primereact/resources/themes/lara-light-purple/theme.css';
 import * as helpM from '../components/help_messages';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
@@ -93,12 +95,13 @@ const RectificationProcessPage = () => {
     console.log(rectSwitchTail);
   }, [rectSwitchTail]); */
 
+
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
     <>
-      <header className="mb-3">
+      <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
@@ -159,7 +162,7 @@ const RectificationProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACSlider
-                      label="Темп. відбору тіла"
+                      label="Темп.відбору тіла"
                       color="orange"
                       initialValue={value}
                       help={helpM.temp_selection_body_m}
@@ -175,7 +178,7 @@ const RectificationProcessPage = () => {
                     <ACCounterLabel
                       units=" °C"
                       value={value}
-                      label="Гістерезис відб. тіла"
+                      label="Гістерезис відб.тіла"
                       help={helpM.gist_selection_body_m}
                       onChange={(e) => onChangeForm(e.value)}
                     />
@@ -193,7 +196,7 @@ const RectificationProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACSlider
-                      label="Темп. відб. хвостів"
+                      label="Темп.відб.хвостів"
                       color="red"
                       initialValue={value}
                       help={helpM.temp_selection_tails_m}
@@ -249,28 +252,24 @@ const RectificationProcessPage = () => {
           </div>
         </div>
 
-        <div
-          className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
-        >
-          <div className="block p-4 w-full">
+
+        <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }} >
+          <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
-            </div>
-            <div className="flex align-items-center justify-content-center">
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
               <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" style={{ backgroundColor: '#4980E5', borderColor: '#4980E5', color: '#fff' }} />
-              <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
+              <Button label="Пропуск" className="button-skip" />
+              <Button label="Старт" className="button-start" />
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Потужність</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
@@ -338,7 +337,7 @@ const RectificationProcessPage = () => {
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Швидкість</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
@@ -347,7 +346,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв. відбору (голів)"
+                    label="Шв.відбору(голів)"
                     value={value}
                     units="%"
                     help={helpM.speed_selection_heads_m}
@@ -363,7 +362,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв. відбору (тіла)"
+                    label="Шв.відбору(тіла)"
                     value={value}
                     units="%"
                     help={helpM.speed_selection_body_m}
@@ -372,8 +371,8 @@ const RectificationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-column align-items-start justify-content-start w-full gap-2">
-              <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <Controller
                   name="rectSpeedCarge"
                   control={control}
@@ -381,7 +380,7 @@ const RectificationProcessPage = () => {
                     <ACRegulator
                       icon="speed"
                       color="red"
-                      label="Зменшення шв.царзі"
+                      label="Зменш.шв.царзі"
                       value={value}
                       units="л/г"
                       help={helpM.decrease_speed_cargi_m}
@@ -406,7 +405,7 @@ const RectificationProcessPage = () => {
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Цикли</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
@@ -458,7 +457,7 @@ const RectificationProcessPage = () => {
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Інше</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller

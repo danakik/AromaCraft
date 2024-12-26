@@ -62,4 +62,5 @@ export type SortedData = {
   rectSwitchTail: number,
   rectSwitchCube: number,
   rectSwitchCarge: number,
+
 };

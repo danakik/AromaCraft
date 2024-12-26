@@ -66,4 +66,5 @@ export const initialSortedData: SortedData = {
   rectSwitchTail: 0,
   rectSwitchCube: 0,
   rectSwitchCarge: 0,
+
 };

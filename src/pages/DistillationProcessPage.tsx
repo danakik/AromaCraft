@@ -5,8 +5,8 @@ import { ACStatusComp } from '../components/statuscomp';
 import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACKnob } from '../components/knob';
-import { ACCounterLabel } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
+import { ToggleButton } from 'primereact/togglebutton';
 import { Button } from 'primereact/button';
 import '../styles/process_page.css';
 import * as helpM from '../components/help_messages';
@@ -65,7 +65,7 @@ const DistillationProcessPage = () => {
 
   return (
     <>
-      <header className="mb-3">
+      <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
@@ -105,7 +105,7 @@ const DistillationProcessPage = () => {
                   />
                 )}
               />
-              
+
             </div>
             <div className="block flex-1 p-2 col-6">
               <Controller
@@ -127,24 +127,25 @@ const DistillationProcessPage = () => {
 
         <div className="flex flex-column gap-3 w-1/4 align-items-start justify-content-start ">
           <div className="block p-3 w-full">
-           {/*  <h3>Сценарій</h3>
+            <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
+            
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
               <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
-            </div> */}
+            </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" style={{ backgroundColor: '#4980E5', borderColor: '#4980E5', color: '#fff' }} />
-              <Button label="Старт" style={{ backgroundColor: '#58AC43', borderColor: '#58AC43', color: '#fff' }} />
+              <Button label="Пропуск" className="button-skip" />
+              <Button label="Старт" className="button-start" />
             </div>
           </div>
 
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Потужність</h3>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
                 name="distAcceleration"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -159,8 +160,8 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
                 name="distPowerBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -174,8 +175,8 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
                 name="distPower"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -209,6 +210,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+
               <Controller
                 name="distTimeBody"
                 control={control}
@@ -224,6 +226,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+
               <Controller
                 name="distTempError"
                 control={control}

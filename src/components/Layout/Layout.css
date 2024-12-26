@@ -27,3 +27,13 @@
   height: 100vh;
   box-sizing: border-box;
 }
+
+
+.button-lang .active{
+  background-color: #6749ae !important;
+}
+
+.button-lang {
+  background: #111828 !important;
+}
+

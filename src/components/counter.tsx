@@ -11,9 +11,10 @@ type CounterProps = {
   units: string;
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
+  hint?: string;
 };
 
-export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false }) => {
+export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false, hint }) => {
   let min = 0,
     max = 100,
     step = 1;
@@ -60,6 +61,13 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disa
       break;
   }
 
+  switch(hint){
+    case 'pauses':
+      step = 1;
+      min = 1;
+      max = 10;
+  }
+
   const [count, setCount] = useState(value);
 
   const handleIncrement = () => {
@@ -102,9 +110,10 @@ type CounterProps2 = {
   label: string;
   help: string;
   onChange?: (e: { value: number }) => void;
+  disabled?: boolean;
 };
 
-export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help, onChange }) => {
+export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help, onChange, disabled = false }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleLabelClick = () => {
@@ -192,11 +201,11 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
         {label}
       </p>
       <div className="flex flex-wrap gap-3 justify-content-center align-items-center">
-        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} />
+        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled}/>
         <div className="custom-input flex justify-content-center align-items-center">
-           <InputNumber suffix={units} value={count} onChange={handleInputChange} min={min} max={max} step={step} mode="decimal" minFractionDigits={0} maxFractionDigits={2} />        
+           <InputNumber suffix={units} value={count} onChange={handleInputChange} min={min} max={max} step={step} mode="decimal" minFractionDigits={0} maxFractionDigits={2} disabled={disabled}/>        
         </div>
-        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} />
+        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled}/>
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>
@@ -211,10 +220,11 @@ type CounterProps3 = {
   units: string;
   label: string;
   help: string;
+  disabled?: boolean;
   onChange?: (e: { value: number }) => void;
 };
 
-export const ACCounterSpeed: React.FC<CounterProps3> = ({ value, true_value, units, label, help, onChange }) => {
+export const ACCounterSpeed: React.FC<CounterProps3> = ({ value, true_value, units, label, help, onChange, disabled = false }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleLabelClick = () => {
@@ -261,19 +271,17 @@ export const ACCounterSpeed: React.FC<CounterProps3> = ({ value, true_value, uni
     setT_count(true_value);
   }, [true_value]);
 
-
-
   return (
     <div className="flex flex-column justify-content-center  align-items-center">
       <p className="custom-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
         {label}
       </p>
       <div className="flex flex-wrap gap-3 justify-content-center align-items-center">
-        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} />
+        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled}/>
         <div className="custom-input flex justify-content-center align-items-center">
-          <InputNumber suffix={units} value={count} onChange={handleInputChange} min={min} max={max} step={step} mode="decimal" minFractionDigits={0} maxFractionDigits={2} />
+          <InputNumber suffix={units} value={count} onChange={handleInputChange} min={min} max={max} step={step} mode="decimal" minFractionDigits={0} maxFractionDigits={2} disabled={disabled}/>
         </div>
-        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} />
+        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled}/>
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
@@ -11,6 +11,7 @@ import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
+import { ToggleButton } from 'primereact/togglebutton';
 
 const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -23,9 +24,11 @@ const SettingPage = () => {
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
+  const [checked, setChecked] = useState(false);
+
   return (
     <>
-      <header className="mb-6">
+      <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
@@ -44,7 +47,7 @@ const SettingPage = () => {
                   initialValue={Number(data.tempCube)}
                   help={helpM.set_temp_cube_m}
                 />
-                 <ACCounterLabel
+                <ACCounterLabel
                   units="°C "
                   value={Number(1.1)}
                   label="Зміна темп. куба"
@@ -58,7 +61,7 @@ const SettingPage = () => {
                   initialValue={Number(data.tempCargi)}
                   help={helpM.set_temp_cargi_m}
                 />
-                 <ACCounterLabel
+                <ACCounterLabel
                   units="°C "
                   value={Number(1.1)}
                   label="Зміна темп. царги"
@@ -88,7 +91,7 @@ const SettingPage = () => {
                   initialValue={Number(data.tempWater)}
                   help={helpM.set_temp_water_m}
                 />
-                 <ACCounterLabel
+                <ACCounterLabel
                   units="°C "
                   value={Number(1.1)}
                   label="Зміна темп. води"
@@ -100,24 +103,24 @@ const SettingPage = () => {
         </div>
 
         <div className="flex flex-column align-items-start justify-content-start gap-3 w-1/4 -ml-3">
-          {/* <div className="block p-4 flex-1 w-full">
+          <div className="block p-2 flex-1 w-full">
             <h3>Повідомлення</h3>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Button
                 label="Зробити запит"
                 style={{ backgroundColor: '#9e4ae7', borderColor: '#9e4ae7', color: '#fff' }}
               />
-            </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <h3>Пристрій: </h3>
               <h3>DESKTOP-5253</h3>
             </div>
-          </div> */}
-          <div className="block p-4">
+          </div>
+          <div className="block p-2">
             <h3>Налаштування</h3>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="pid" label="Встановлення нагріву" help={helpM.set_warm_m} />
-              <ACSwitch />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <ACRegulator icon="pid" label="Встановлення нагріву" help={helpM.set_warm_m} />
+                <ToggleButton onLabel="Регул" offLabel="Розет" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <ACRegulator icon="ten" label="ТЕН" units="Вт" value={3000} help={helpM.set_ten_m} />
@@ -126,17 +129,23 @@ const SettingPage = () => {
               <ACRegulator icon="antena_bars" label="Барометр" help={helpM.barometer_m} />
               <ACSwitch />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
-              <ACSwitch checked />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
+                <ToggleButton onLabel="Рівень" offLabel="Час" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+              </div>
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="arrow_fork" label="Перемикач голів" help={helpM.set_change_heads_m} />
-              <ACSwitch />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <ACRegulator icon="arrow_fork" label="Перемикач голів" help={helpM.set_change_heads_m} />
+                <ToggleButton onLabel="Вбік" offLabel="Вниз" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+              </div>
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="select_valve" label="Встановлення відбору" help={helpM.set_selection_m} />
-              <ACSwitch checked />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <ACRegulator icon="select_valve" label="Встановлення відбору" help={helpM.set_selection_m} />
+                <ToggleButton onLabel="л/г" offLabel="%" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <ACRegulator
