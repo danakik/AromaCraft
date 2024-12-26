@@ -17,7 +17,6 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
-import { ToggleButton } from 'primereact/togglebutton';
 import { debounce } from 'lodash';
 
 type FormData = {
@@ -28,7 +27,6 @@ type FormData = {
   rectCubeTail: number;
   rectSpeedTail: number;
   rectDecreaseSpeed: number;
-  rectDecrease: number;
   rectAcceleration: number;
   rectPower: number;
   rectPowerBody: number;
@@ -67,7 +65,6 @@ const RectificationProcessPage = () => {
       rectCubeTail: data.rectCubeTail,
       rectSpeedTail: data.rectSpeedTail,
       rectDecreaseSpeed: data.rectDecreaseSpeed,
-      rectDecrease: 0, // найти
       rectAcceleration: data.rectAcceleration,
       rectPower: data.rectPower,
       rectPowerBody: data.rectPowerBody,
@@ -478,7 +475,7 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
-                name="rectDecreaseSpeed"
+                name="rectDecreaseTemp"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
@@ -555,7 +552,7 @@ const RectificationProcessPage = () => {
 
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
-                name="rectDecrease"
+                name="rectDecreaseSpeed"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
