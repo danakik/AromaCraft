@@ -42,7 +42,7 @@ export const initialSortedData: SortedData = {
   rectAcceleration: 0,
   rectPower: 0,
   rectPowerBody: 0,
-  prexid: 0,
+  prexid: 0, /* пока не обноружен */
   rectTempPower: 0,
   rectTempStop: 0,
   rectTempHead: 0,
@@ -62,4 +62,9 @@ export const initialSortedData: SortedData = {
   rectCyclesNumber: 0,
   rectEndCycle: 0,
   rectPowerTail: 0,
+  rectTimeBody: 0,
+  rectSwitchTail: 0,
+  rectSwitchCube: 0,
+  rectSwitchCarge: 0,
+
 };

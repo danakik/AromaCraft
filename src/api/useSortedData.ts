@@ -61,6 +61,11 @@ interface SortedData {
   rectCyclesNumber: number,
   rectEndCycle: number,
   rectPowerTail: number,
+  rectTimeBody: number,
+  rectSwitchTail: number,
+  rectSwitchCube: number,
+  rectSwitchCarge: number,
+
 }
 
 const initialSortedData: SortedData = {
@@ -123,6 +128,11 @@ const initialSortedData: SortedData = {
   rectCyclesNumber: 0,
   rectEndCycle: 0,
   rectPowerTail: 0,
+  rectTimeBody: 0,
+  rectSwitchTail: 0,
+  rectSwitchCube: 0,
+  rectSwitchCarge: 0,
+
 };
 
 const useSortedData = (key: string | null) => {
@@ -191,9 +201,10 @@ const useSortedData = (key: string | null) => {
       rectTempBody: parseNumber(newData[28]),
       rectGystBody: parseNumber(newData[29]),
       rectPercentHead: parseNumber(newData[30]), 
-      rectPercentBody: parseNumber(newData[21]),
-      rectDecreaseTemp: parseNumber(newData[102]),
-      rectDecreaseSpeed: parseNumber(newData[103]),
+      rectPercentBody: parseNumber(newData[31]),
+      rectDecreaseTemp: parseNumber(newData[103]),
+      rectDecreaseSpeed: parseNumber(newData[104]),
+
       rectTempError: parseNumber(newData[32]),
       rectTimeStab: parseNumber(newData[33]),
       rectCubeTail: parseNumber(newData[117]),
@@ -203,6 +214,11 @@ const useSortedData = (key: string | null) => {
       rectCyclesNumber: parseNumber(newData[34]),
       rectEndCycle: parseNumber(newData[129]),
       rectPowerTail: parseNumber(newData[131]),
+      rectTimeBody: parseNumber(newData[116]),
+      rectSwitchCube: parseNumber(newData[126]),
+      rectSwitchCarge: parseNumber(newData[127]),
+      rectSwitchTail: parseNumber(newData[130]),
+
     };
 
     setSortedData(newSortedData);

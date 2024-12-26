@@ -130,7 +130,7 @@ const ManualProcessPage = () => {
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
       console.log(formattedData);
-      save(formattedData);
+      /* save(formattedData); */
 
       setIsFormChanging(false);
     }, 5000);
@@ -158,6 +158,18 @@ const ManualProcessPage = () => {
     }
   }, [data]);
 
+  const [disabledK4, setdisabledK4] = useState(false);
+  const [disabledPID, setdisabledKPID] = useState(false);
+  useEffect(() => {
+    if (data.version !== 0) {
+      if (data.version >= 2.30 && data.version < 4) {
+        setdisabledK4(true);
+      } else if (data.version < 2.3) {
+        setdisabledKPID(true);
+        setdisabledK4(true);
+      }
+    }
+  }, [data]);
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -324,7 +336,7 @@ const ManualProcessPage = () => {
                 name="handPin2"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID}/>
                 )}
               />
             </div>
@@ -367,7 +379,7 @@ const ManualProcessPage = () => {
                 name="handK4"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledK4}/>
                 )}
               />
             </div>

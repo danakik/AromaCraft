@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -6,6 +6,7 @@ import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACSlider } from '../components/knob';
 import { ACCounterLabel } from '../components/counter';
+import { ACSwitch } from '../components/switch';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
@@ -16,6 +17,7 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
+import { ToggleButton } from 'primereact/togglebutton';
 import { debounce } from 'lodash';
 
 type FormData = {
@@ -41,6 +43,11 @@ type FormData = {
   rectTempStop: number;
   rectTempError: number;
   rectTimeStab: number;
+  rectDecreaseTemp: number;
+  rectTimeBody: number;
+  rectSwitchTail: boolean;
+  rectSwitchCube: boolean;
+  rectSwitchCarge: boolean;
 };
 
 const RectificationProcessPage = () => {
@@ -72,22 +79,22 @@ const RectificationProcessPage = () => {
       rectEndCycle: data.rectEndCycle,
       rectDecreaseCycle: data.rectDecreaseCycle,
       rectTempPower: data.rectTempPower,
-      rectTempStop: data.rectTempPower,
+      rectTempStop: data.rectTempStop,
       rectTempError: data.rectTempError,
       rectTimeStab: data.rectTimeStab,
+      rectDecreaseTemp: data.rectDecreaseTemp,
+      rectTimeBody: data.rectTimeBody,
+      rectSwitchTail: !!data.rectSwitchTail,
+      rectSwitchCube: !!data.rectSwitchCube,
+      rectSwitchCarge: !!data.rectSwitchCarge,
     },
   });
 
-  const [checked, setChecked] = useState(false);
-  const [isTailMode, setIsTailMode] = useState(false);
-  const handleTailToggleChange = (e: boolean) => {
-    setIsTailMode(e);
-  };
+  /*   const rectSwitchTail = watch('rectSwitchTail');
+  useEffect(() => {
+    console.log(rectSwitchTail);
+  }, [rectSwitchTail]); */
 
-  const [isSpeedMode, setIsSpeedMode] = useState(false);
-  const handleSpeedToggleChange = (e: boolean) => {
-    setIsSpeedMode(e);
-  };
 
   if (isLoading) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -109,28 +116,13 @@ const RectificationProcessPage = () => {
               <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall
-                name="Царга"
-                color="orange"
-                temp={String(data.tempCargi)}
-                help={helpM.temp_cargi_m}
-              />
+              <ACBlockTempSmall name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall
-                name="Дефлегматор"
-                color="red"
-                temp={String(data.tempDef)}
-                help={helpM.temp_defl_m}
-              />
+              <ACBlockTempSmall name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall
-                name="Вода"
-                color="blue"
-                temp={String(data.tempWater)}
-                help={helpM.temp_water_m}
-              />
+              <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 p-3">
@@ -151,7 +143,7 @@ const RectificationProcessPage = () => {
                 />
                 <br />
                 <Controller
-                  name="rectPercentHead"
+                  name="rectGystHead"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACCounterLabel
@@ -223,7 +215,6 @@ const RectificationProcessPage = () => {
                       label="Швидкість"
                       help={helpM.speed_selection_tails_m}
                       onChange={(e) => onChangeForm(e.value)}
-                      disabled={isTailMode}
                     />
                   )}
                 />
@@ -261,12 +252,12 @@ const RectificationProcessPage = () => {
           </div>
         </div>
 
+
         <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }} >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp />
-
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
@@ -340,7 +331,6 @@ const RectificationProcessPage = () => {
                     units="%"
                     help={helpM.power_selection_tails_m}
                     onChange={(e) => onChangeForm(e.value)}
-                    disabled={!isTailMode}
                   />
                 )}
               />
@@ -351,7 +341,7 @@ const RectificationProcessPage = () => {
             <h3>Швидкість</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
-                name="rectGystHead"
+                name="rectPercentHead"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
@@ -398,8 +388,20 @@ const RectificationProcessPage = () => {
                     />
                   )}
                 />
-                <ToggleButton onLabel="Темп" offLabel="Авто" checked={isSpeedMode} onChange={(e) => handleSpeedToggleChange(e.value)} className="custom-toggle-button" />
               </div>
+              <Controller
+                name="rectSwitchCarge"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ToggleButton
+                    className="custom-toggle-button"
+                    checked={value}
+                    onChange={(e) => onChangeForm(e.value)}
+                    onLabel="ТЕМП"
+                    offLabel="АВТО"
+                  />
+                )}
+              />
             </div>
           </div>
 
@@ -459,6 +461,23 @@ const RectificationProcessPage = () => {
             <h3>Інше</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
+                name="rectTempPower"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="temp"
+                    color="white"
+                    label="Темп. переходу"
+                    value={value}
+                    units="°C"
+                    help={helpM.temp_transition_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
                 name="rectDecreaseSpeed"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -473,41 +492,6 @@ const RectificationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full">
-              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <Controller
-                  name="rectDecrease"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACRegulator
-                      icon="speed"
-                      units="л/г"
-                      value={value}
-                      label="Зменш.шв.відбору"
-                      help={helpM.decrease_speed_selection_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <ToggleButton onLabel="Багат" offLabel="Однок" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
-              </div>
-            </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller
-                name="rectTempPower"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="temp"
-                    label="Темп. переходу"
-                    value={value}
-                    units="°C"
-                    help={helpM.temp_transition_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
-                )}
-              />
-            </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="rectTempError"
@@ -515,6 +499,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
+                    color="red"
                     label="Темп. аварії"
                     value={value}
                     units="°C"
@@ -524,17 +509,65 @@ const RectificationProcessPage = () => {
                 )}
               />
             </div>
+
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_minus" label="Темп.зм.по царзі" help={helpM.temp_selection_cargi_m} units='°C' value={0} disabled={!isSpeedMode} />
+              <ACRegulator
+                icon="temp_minus"
+                label="Темп. зм. по царзі"
+                help={helpM.temp_selection_cargi_m}
+                units="°C"
+                value={0}
+                disabled
+              />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-6">
-              <div className="flex flex-row align-items-center justify-content-center w-full">
-                <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
-                <ToggleButton onLabel="Колона" offLabel="Вузол" checked={isTailMode} onChange={(e) => handleTailToggleChange(e.value)} className="custom-toggle-button" />
-              </div>
+              <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
+              <Controller
+                name="rectSwitchTail"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ToggleButton
+                    className="custom-toggle-button"
+                    checked={value}
+                    onChange={(e) => onChangeForm(e.value)}
+                    onLabel="КОЛОНА"
+                    offLabel="ВУЗОЛ"
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="arrow_fork" label="Перехід відб.тіла" help={helpM.transition_select_body_m} units='' value={0} disabled />
+              <Controller
+                name="rectTimeBody"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="arrow_fork"
+                    label="Перехід на відбір тіла"
+                    value={value}
+                    units="хв"
+                    help={helpM.transition_select_body_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="rectDecrease"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="speed"
+                    units="л/г"
+                    value={value}
+                    label="Зменш.шв.відбору"
+                    help={helpM.decrease_speed_selection_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -48,12 +48,19 @@ const DistillationProcessPage = () => {
     },
   });
 
-  const [isTempMode, setIsTempMode] = useState(false);
-  const handleToggleChange = (e: boolean) => {
-    setIsTempMode(e);
-  };
+  const [disabledBody, setdisabledBody] = useState(false);
+  const [strHead, setstrHead] = useState(' голів');
 
-  if (isLoading) return <p>Завантаження...</p>;
+  useEffect(() => {
+    if (data.version !== 0) {
+      if (data.version < 3.3 || (data.version >= 4.0 && data.version < 4.3)) {
+        setdisabledBody(true)
+        setstrHead('')
+      }
+    }
+  }, [data]);
+
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -90,7 +97,7 @@ const DistillationProcessPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label="Темп. переходу голів"
+                    label={"Температура переходу" + strHead}
                     color="red"
                     initialValue={value}
                     help={helpM.temp_transition_m}
@@ -164,8 +171,7 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="%"
                     help={helpM.power_selection_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody} />
                 )}
               />
             </div>
@@ -176,7 +182,7 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="pid"
-                    label="Потужність відбору голів"
+                    label={"Потужність відбору" + strHead}
                     value={value}
                     units="%"
                     help={helpM.power_selection_m}
@@ -186,17 +192,9 @@ const DistillationProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-3 w-full">
+          <div className="block p-4 w-full">
             <h3>Інше</h3>
-            <div className="flex flex-row align-items-start justify-content-start w-full">
-                <ACRegulator
-                  icon='arrow_fork'
-                  label="Перехід тіла"
-                  help={helpM.temp_transition_body_m}
-                />
-                <ToggleButton onLabel='Темп' offLabel='Час' checked={isTempMode} onChange={(e) => handleToggleChange(e.value)} className="custom-toggle-button" />
-            </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller
                 name="distCubeHead"
                 control={control}
@@ -207,13 +205,12 @@ const DistillationProcessPage = () => {
                     value={value}
                     units='°C'
                     help={helpM.temp_transition_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                    disabled={!isTempMode}
-                  />
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody}/>
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+
               <Controller
                 name="distTimeBody"
                 control={control}
@@ -224,13 +221,12 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="хв"
                     help={helpM.time_body_transition_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                    disabled={isTempMode}
-                  />
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody}  />
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+
               <Controller
                 name="distTempError"
                 control={control}

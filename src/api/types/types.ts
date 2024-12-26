@@ -34,11 +34,11 @@ export type SortedData = {
   distPowerBody: number,
   distTimeBody: number,
   distCubeHead: number,
-
+  
   rectAcceleration: number,
   rectPower: number,
   rectPowerBody: number,
-  prexid: number,
+  prexid: number, /* пока не обноружен */
   rectTempPower: number,
   rectTempStop: number,
   rectTempHead: number,
@@ -58,4 +58,9 @@ export type SortedData = {
   rectCyclesNumber: number,
   rectEndCycle: number,
   rectPowerTail: number,
+  rectTimeBody: number,
+  rectSwitchTail: number,
+  rectSwitchCube: number,
+  rectSwitchCarge: number,
+
 };
