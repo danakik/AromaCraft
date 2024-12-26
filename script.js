@@ -13,7 +13,7 @@ function createWindow() {
       allowRunningInsecureContent: false,
     },
   });
- win.setMenu(null) 
+ /* win.setMenu(null) */ 
 
   win.loadFile('main.html');
 }

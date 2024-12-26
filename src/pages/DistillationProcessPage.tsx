@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -48,7 +48,19 @@ const DistillationProcessPage = () => {
     },
   });
 
-  if (isLoading) return <p>Завантаження...</p>;
+  const [disabledBody, setdisabledBody] = useState(false);
+  const [strHead, setstrHead] = useState(' голів');
+
+  useEffect(() => {
+    if (data.version !== 0) {
+      if (data.version < 3.3 || (data.version >= 4.0 && data.version < 4.3)) {
+        setdisabledBody(true)
+        setstrHead('')
+      }
+    }
+  }, [data]);
+
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -85,7 +97,7 @@ const DistillationProcessPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label="Температура переходу голів"
+                    label={"Температура переходу" + strHead}
                     color="red"
                     initialValue={value}
                     help={helpM.temp_transition_m}
@@ -96,20 +108,19 @@ const DistillationProcessPage = () => {
               
             </div>
             <div className="block flex-1 p-2 col-6">
-            <Controller
-                name="distCubeHead"
+              <Controller
+                name="distTempStop"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label="Температура переходу тіла"
                     color="purple"
+                    label="Температура зупинки"
                     initialValue={value}
-                    help={helpM.temp_transition_body_m}
+                    help={helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
               />
-              
             </div>
           </div>
         </div>
@@ -159,8 +170,7 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="%"
                     help={helpM.power_selection_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody} />
                 )}
               />
             </div>
@@ -171,7 +181,7 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="pid"
-                    label="Потужність відбору голів"
+                    label={"Потужність відбору" + strHead}
                     value={value}
                     units="%"
                     help={helpM.power_selection_m}
@@ -182,9 +192,24 @@ const DistillationProcessPage = () => {
             </div>
           </div>
           <div className="block p-4 w-full">
-            <h3>Аварія/Час</h3>
+            <h3>Інше</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
+                name="distCubeHead"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon='temp'
+                    label="Темп. переходу тіла"
+                    value={value}
+                    units='°C'
+                    help={helpM.temp_transition_body_m}
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody}/>
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+              <Controller
                 name="distTimeBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -194,13 +219,12 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="хв"
                     help={helpM.time_body_transition_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
+                    onChange={(e) => onChangeForm(e.value)} disabled={disabledBody}  />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="distTempError"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -210,22 +234,6 @@ const DistillationProcessPage = () => {
                     value={value}
                     units="°C"
                     help={helpM.temp_breakdown_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
-                name="distTempStop"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="temp"
-                    label="Температура зупинки"
-                    value={value}
-                    units="°C"
-                    help={helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}

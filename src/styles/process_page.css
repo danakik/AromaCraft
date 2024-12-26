@@ -30,3 +30,11 @@ header{
     background: #111828;
     border-radius: 12px;
 }
+
+.custom-toggle-button .p-button {
+    background-color: #052343;
+    border-color: #007bff;
+    color: white;
+    font-size: 8px !important;
+    font-weight: 50 !important;
+}
