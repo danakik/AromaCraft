@@ -271,6 +271,7 @@ const ManualProcessPage = () => {
                       units={simvol}
                       label="Швидкість відб. хвостів"
                       help={helpM.speed_selection_tails_m}
+                      disabled={disabledK4}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,

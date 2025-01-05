@@ -60,6 +60,7 @@ const samogonApi = createApi({
           distTempError: parseNumber(data[21]),
           distPowerBody: parseNumber(data[124]),
           distTimeBody: parseNumber(data[125]),
+          distCubeSwitch: parseNumber(data[134]),
           distCubeHead: parseNumber(data[135]),
 
           rectAcceleration: parseNumber(data[22]),

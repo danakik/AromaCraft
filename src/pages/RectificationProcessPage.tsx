@@ -17,7 +17,8 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
-import { debounce } from 'lodash';
+import { calculateHandPercent } from '../utils/calculate';
+import { debounce, values } from 'lodash';
 
 type FormData = {
   rectTempHead: number;
@@ -25,7 +26,10 @@ type FormData = {
   rectTempBody: number;
   rectGystBody: number;
   rectCubeTail: number;
-  rectSpeedTail: number;
+  rectSpeedTail: {
+    value: number;
+    true_value: number;
+  };
   rectDecreaseSpeed: number;
   rectAcceleration: number;
   rectPower: number;
@@ -63,7 +67,10 @@ const RectificationProcessPage = () => {
       rectTempBody: data.rectTempBody,
       rectGystBody: data.rectGystBody,
       rectCubeTail: data.rectCubeTail,
-      rectSpeedTail: data.rectSpeedTail,
+      rectSpeedTail:{
+              value: calculateHandPercent(data.rectSpeedTail, data.selectionSpeed, data.version, data.selection),
+              true_value: data.handPercent,
+            },
       rectDecreaseSpeed: data.rectDecreaseSpeed,
       rectAcceleration: data.rectAcceleration,
       rectPower: data.rectPower,
@@ -92,8 +99,26 @@ const RectificationProcessPage = () => {
     console.log(rectSwitchTail);
   }, [rectSwitchTail]); */
 
+  const [switchTail, setSwitchTail] = useState(true);
+  const [speedTail, setSpeedTail] = useState(true);
+  const [powerTail, setPowerTail] = useState(true);
+  const hasTailSwitch = watch('rectSwitchTail');
+  useEffect(() => {
+    if (data.version !== 0) {
+      if (data.version >= 4.2) {
+        setSwitchTail(false);
+        if (hasTailSwitch) {
+          setSpeedTail(true);
+          setPowerTail(false);
+        } else {
+          setSpeedTail(false);
+          setPowerTail(true);
+        }
+      }
+    }
+  }, [data, hasTailSwitch]);
 
-  if (isLoading) return <p>Завантаження...</p>;
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -208,10 +233,22 @@ const RectificationProcessPage = () => {
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACCounterLabel
                       units="л/г"
-                      value={value}
+                      value={value.value}
                       label="Швидкість"
                       help={helpM.speed_selection_tails_m}
-                      onChange={(e) => onChangeForm(e.value)}
+                      onChange={(e) => {
+                        const updatedValue = calculateHandPercent(
+                          e.value,
+                          data.selectionSpeed,
+                          data.version,
+                          data.selection,
+                        );
+                        onChangeForm({
+                          value: updatedValue,
+                          true_value: e.value,
+                        });
+                      }}
+                      disabled={speedTail}
                     />
                   )}
                 />
@@ -249,8 +286,10 @@ const RectificationProcessPage = () => {
           </div>
         </div>
 
-
-        <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }} >
+        <div
+          className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
+          style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+        >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
@@ -328,6 +367,7 @@ const RectificationProcessPage = () => {
                     units="%"
                     help={helpM.power_selection_tails_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={powerTail}
                   />
                 )}
               />
@@ -531,6 +571,7 @@ const RectificationProcessPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="КОЛОНА"
                       offLabel="ВУЗОЛ"
+                      disabled={switchTail}
                     />
                   )}
                 />

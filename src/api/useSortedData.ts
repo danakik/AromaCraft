@@ -37,6 +37,7 @@ interface SortedData {
   distPowerBody: number,
   distTimeBody: number,
   distCubeHead: number,
+  distCubeSwitch: number,
 
   rectAcceleration: number,
   rectPower: number,
@@ -104,6 +105,7 @@ const initialSortedData: SortedData = {
   distPowerBody: 0,
   distTimeBody: 0,
   distCubeHead: 0,
+  distCubeSwitch: 0,
 
   rectAcceleration: 0,
   rectPower: 0,
@@ -188,6 +190,7 @@ const useSortedData = (key: string | null) => {
       distTempError: parseNumber(newData[21]),
       distPowerBody: parseNumber(newData[124]),
       distTimeBody: parseNumber(newData[125]),
+      distCubeSwitch: parseNumber(newData[134]),
       distCubeHead: parseNumber(newData[135]),
 
       rectAcceleration: parseNumber(newData[22]),

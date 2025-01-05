@@ -38,6 +38,7 @@ export const initialSortedData: SortedData = {
   distPowerBody: 0,
   distTimeBody: 0,
   distCubeHead: 0,
+  distCubeSwitch: 0,
 
   rectAcceleration: 0,
   rectPower: 0,

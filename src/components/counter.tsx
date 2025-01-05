@@ -46,7 +46,7 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disa
       break;
     case 'хв':
       step = 1;
-      min = 1;
+      min = 0;
       max = Number.MAX_VALUE;
       break;
     case 'Вт':
