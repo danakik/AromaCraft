@@ -233,7 +233,7 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distCubeHead"
                 control={control}
@@ -250,7 +250,7 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distTimeBody"
                 control={control}
@@ -267,7 +267,7 @@ const DistillationProcessPage = () => {
                 )}
               />
             </div>
-            <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distTempError"
                 control={control}
