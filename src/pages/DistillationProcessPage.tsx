@@ -118,7 +118,7 @@ const DistillationProcessPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label={'Температура переходу' + strHead}
+                    label={'Темп. переходу' + strHead}
                     color="red"
                     initialValue={value}
                     help={helpM.temp_transition_m}
@@ -134,7 +134,7 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
                     color="purple"
-                    label="Температура зупинки"
+                    label="Темп. зупинки"
                     initialValue={value}
                     help={helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}

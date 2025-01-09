@@ -47,6 +47,7 @@ type FormData = {
   rectTimeStab: number;
   rectDecreaseTemp: number;
   rectTimeBody: number;
+  rectSelectCarge: number;
   rectSwitchTail: boolean;
   rectSwitchCube: boolean;
   rectSwitchCarge: boolean;
@@ -67,10 +68,10 @@ const RectificationProcessPage = () => {
       rectTempBody: data.rectTempBody,
       rectGystBody: data.rectGystBody,
       rectCubeTail: data.rectCubeTail,
-      rectSpeedTail:{
-              value: calculateHandPercent(data.rectSpeedTail, data.selectionSpeed, data.version, data.selection),
-              true_value: data.handPercent,
-            },
+      rectSpeedTail: {
+        value: calculateHandPercent(data.rectSpeedTail, data.selectionSpeed, data.version, data.selection),
+        true_value: data.handPercent,
+      },
       rectDecreaseSpeed: data.rectDecreaseSpeed,
       rectAcceleration: data.rectAcceleration,
       rectPower: data.rectPower,
@@ -88,6 +89,7 @@ const RectificationProcessPage = () => {
       rectTimeStab: data.rectTimeStab,
       rectDecreaseTemp: data.rectDecreaseTemp,
       rectTimeBody: data.rectTimeBody,
+      rectSelectCarge: data.rectSelectCarge,
       rectSwitchTail: !!data.rectSwitchTail,
       rectSwitchCube: !!data.rectSwitchCube,
       rectSwitchCarge: !!data.rectSwitchCarge,
@@ -102,7 +104,13 @@ const RectificationProcessPage = () => {
   const [switchTail, setSwitchTail] = useState(true);
   const [speedTail, setSpeedTail] = useState(true);
   const [powerTail, setPowerTail] = useState(true);
+  const [tempTail, setTempTail] = useState(true);
+  const [endCycle, setEndCycle] = useState(true);
+  const [tempSelectCarge, setSelectCarge] = useState(true);
+  const [disabledTimeBody, setDisabledTimeBody] = useState(false);
+  const [disabledCarge, setDisabledCarge] = useState(true);
   const hasTailSwitch = watch('rectSwitchTail');
+  const hasCargeSwitch = watch('rectSwitchCarge');
   useEffect(() => {
     if (data.version !== 0) {
       if (data.version >= 4.2) {
@@ -115,8 +123,26 @@ const RectificationProcessPage = () => {
           setPowerTail(true);
         }
       }
+      if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
+        setDisabledCarge(false);
+        setEndCycle(false);
+        if(hasCargeSwitch){
+          setSelectCarge(false);
+        }else{
+          setSelectCarge(true);
+        }
+      }
+      if (data.version >= 4 && !hasTailSwitch) {
+        setSpeedTail(false);
+      }
+      if (data.version >= 4) {
+        setTempTail(false);
+      }
+      if (data.transitBody == 0) {
+        setDisabledTimeBody(true);
+      }
     }
-  }, [data, hasTailSwitch]);
+  }, [data, hasTailSwitch, hasCargeSwitch]);
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -223,6 +249,7 @@ const RectificationProcessPage = () => {
                       initialValue={value}
                       help={helpM.temp_selection_tails_m}
                       onChange={(e) => onChangeForm(e.value)}
+                      readonly={tempTail}
                     />
                   )}
                 />
@@ -436,6 +463,7 @@ const RectificationProcessPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="ТЕМП"
                       offLabel="АВТО"
+                      disabled={disabledCarge}
                     />
                   )}
                 />
@@ -473,6 +501,7 @@ const RectificationProcessPage = () => {
                     units="хв"
                     help={helpM.border_cycles_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={endCycle}
                   />
                 )}
               />
@@ -549,13 +578,20 @@ const RectificationProcessPage = () => {
             </div>
 
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator
-                icon="temp_minus"
-                label="Темп. зм. по царзі"
-                help={helpM.temp_selection_cargi_m}
-                units="°C"
-                value={0}
-                disabled
+              <Controller
+                name="rectSelectCarge"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="temp_minus"
+                    label="Темп. зм. по царзі"
+                    value={value}
+                    units="°C"
+                    help={helpM.temp_selection_cargi_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={tempSelectCarge}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
@@ -589,6 +625,7 @@ const RectificationProcessPage = () => {
                     units="хв"
                     help={helpM.transition_select_body_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={disabledTimeBody}
                   />
                 )}
               />

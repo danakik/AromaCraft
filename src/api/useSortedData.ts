@@ -66,6 +66,8 @@ interface SortedData {
   rectSwitchTail: number,
   rectSwitchCube: number,
   rectSwitchCarge: number,
+  rectSelectCarge: number,
+  transitBody: number,
 
 }
 
@@ -134,6 +136,8 @@ const initialSortedData: SortedData = {
   rectSwitchTail: 0,
   rectSwitchCube: 0,
   rectSwitchCarge: 0,
+  rectSelectCarge: 0,
+  transitBody: 0,
 
 };
 
@@ -221,6 +225,8 @@ const useSortedData = (key: string | null) => {
       rectSwitchCube: parseNumber(newData[126]),
       rectSwitchCarge: parseNumber(newData[127]),
       rectSwitchTail: parseNumber(newData[130]),
+      rectSelectCarge: parseNumber(newData[128]),
+      transitBody: parseNumber(newData[111]),
 
     };
 

@@ -92,6 +92,8 @@ const samogonApi = createApi({
           rectSwitchTail: parseNumber(data[130]),
           rectSwitchCube: parseNumber(data[126]),
           rectSwitchCarge: parseNumber(data[127]),
+          rectSelectCarge: parseNumber(data[128]),
+          transitBody: parseNumber(data[111]),
 
         };
       },
