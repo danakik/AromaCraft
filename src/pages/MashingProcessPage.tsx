@@ -23,178 +23,394 @@ import { calculateHandPercent } from '../utils/calculate';
 import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
 
+type FormData = {
+  mashingPauses: number;
+  mashingHeat: boolean;
+  mashingHeatTemp: number;
+  mashingHeatPower: number;
+  mashingHeatTime: number;
+  mashingCool: boolean;
+  mashingCoolTemp: number;
+  mashingCoolGyst: number;
+
+  mashingTemp0: number;
+  mashingTemp1: number;
+  mashingTemp2: number;
+  mashingTemp3: number;
+  mashingTemp4: number;
+  mashingTemp5: number;
+  mashingTemp6: number;
+  mashingTemp7: number;
+  mashingTemp8: number;
+  mashingTemp9: number;
+  mashingGyst0: number;
+
+  mashingGyst1: number;
+  mashingGyst2: number;
+  mashingGyst3: number;
+  mashingGyst4: number;
+  mashingGyst5: number;
+  mashingGyst6: number;
+  mashingGyst7: number;
+  mashingGyst8: number;
+  mashingGyst9: number;
+
+  mashingTime0: number;
+  mashingTime1: number;
+  mashingTime2: number;
+  mashingTime3: number;
+  mashingTime4: number;
+  mashingTime5: number;
+  mashingTime6: number;
+  mashingTime7: number;
+  mashingTime8: number;
+  mashingTime9: number;
+};
+
+type MashingType = `mashing${'Temp' | 'Gyst' | 'Time'}${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`;
+
 const MashingProcessPage = () => {
-    const key = localStorage.getItem('samogonKey');
-    const {
-        data = initialSortedData,
-        isLoading,
-        error,
-    } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  const key = localStorage.getItem('samogonKey');
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
 
-    if (isLoading) return <p>Завантаження...</p>;
-    if (error) return <p>Помилка у завантаженні даних.</p>;
+  const { control, watch } = useForm<FormData>({
+    values: {
+      mashingPauses: data.mashingPauses,
+      mashingHeat: !!data.mashingHeat,
+      mashingHeatTemp: data.mashingHeatTemp,
+      mashingHeatPower: data.mashingHeatPower,
+      mashingHeatTime: data.mashingHeatTime,
+      mashingCool: !!data.mashingCool,
+      mashingCoolTemp: data.mashingCoolTemp,
+      mashingCoolGyst: data.mashingCoolGyst,
 
-    console.log(data);
+      mashingTemp0: data.mashingTemp0,
+      mashingTemp1: data.mashingTemp1,
+      mashingTemp2: data.mashingTemp2,
+      mashingTemp3: data.mashingTemp3,
+      mashingTemp4: data.mashingTemp4,
+      mashingTemp5: data.mashingTemp5,
+      mashingTemp6: data.mashingTemp6,
+      mashingTemp7: data.mashingTemp7,
+      mashingTemp8: data.mashingTemp8,
+      mashingTemp9: data.mashingTemp9,
 
-    const [checked, setChecked] = useState(false);
-    const [pauseCount, setPauseCount] = useState(1);
+      mashingGyst0: data.mashingGyst0,
+      mashingGyst1: data.mashingGyst1,
+      mashingGyst2: data.mashingGyst2,
+      mashingGyst3: data.mashingGyst3,
+      mashingGyst4: data.mashingGyst4,
+      mashingGyst5: data.mashingGyst5,
+      mashingGyst6: data.mashingGyst6,
+      mashingGyst7: data.mashingGyst7,
+      mashingGyst8: data.mashingGyst8,
+      mashingGyst9: data.mashingGyst9,
 
-    const [isBrewMode, setIsBrewMode] = useState(false);
-    const handleBrewToggleChange = (e: boolean) => {
-        setIsBrewMode(e);
-    };
+      mashingTime0: data.mashingTime0,
+      mashingTime1: data.mashingTime1,
+      mashingTime2: data.mashingTime2,
+      mashingTime3: data.mashingTime3,
+      mashingTime4: data.mashingTime4,
+      mashingTime5: data.mashingTime5,
+      mashingTime6: data.mashingTime6,
+      mashingTime7: data.mashingTime7,
+      mashingTime8: data.mashingTime8,
+      mashingTime9: data.mashingTime9,
+    },
+  });
 
-    const [isFreezeMode, setIsFreezeMode] = useState(false);
-    const handleFreezeToggleChange = (e: boolean) => {
-        setIsFreezeMode(e);
-    };
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (error) return <p>Помилка у завантаженні даних.</p>;
 
+  const howMuchPause = watch('mashingPauses');
+  const hasMashingHeat = watch('mashingHeat');
+  const isFreezeMode = watch('mashingCool');
 
-    const generatePauseBlocks = () => {
-        const blocks = [];
-        let knobColor: "orange" | "blue" | "purple" | "red" = "orange";
-        let sliderColor: "orange" | "blue" | "purple" | "red" = "blue";
-        for (let i = 1; i <= pauseCount; i++) {
-            
-            if( i == 1 || i == 5 || i == 9){
-                knobColor = 'orange';
-                sliderColor = 'purple';
-            }
-            else if( i == 2 || i == 6 || i == 10){
-                knobColor = 'blue';
-                sliderColor = 'orange';
-            }
-            else if( i == 3 || i == 7){
-                knobColor = 'purple';
-                sliderColor = 'red';
-            }
-            else{
-                knobColor = 'red';
-                sliderColor = 'blue';
-            }
+  const generatePauseBlocks = () => {
+    const blocks = [];
+    let knobColor: 'orange' | 'blue' | 'purple' | 'red' = 'orange';
+    let sliderColor: 'orange' | 'blue' | 'purple' | 'red' = 'blue';
+    for (let i = 0; i <= howMuchPause - 1; i++) {
+      if (i == 0 || i == 4 || i == 8) {
+        knobColor = 'orange';
+        sliderColor = 'purple';
+      } else if (i == 1 || i == 5 || i == 9) {
+        knobColor = 'blue';
+        sliderColor = 'orange';
+      } else if (i == 2 || i == 6) {
+        knobColor = 'purple';
+        sliderColor = 'red';
+      } else {
+        knobColor = 'red';
+        sliderColor = 'blue';
+      }
+    const numberTemp: MashingType = `mashingTemp${i}` as MashingType;
+    const numberGyst: MashingType = `mashingGyst${i}` as MashingType;
+    const numberTime: MashingType = `mashingTime${i}` as MashingType;
 
-            blocks.push(
-                <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
-                    <div className="flex flex-column align-items-center justify-content-center block">
-                        <ACKnob
-                            label={`Температура паузи ${i}`}
-                            color={knobColor}
-                            initialValue={50}
-                            help={helpM.temp_pause_m}
-                            onChange={(e) => console.log(e)}
-                        />
-                        <ACSlider
-                            label={`Гістерезис паузи ${i}`}
-                            color={sliderColor}
-                            initialValue={10}
-                            help={helpM.gist_pause_m}
-                            onChange={(e) => console.log(e)}
-                        />
-                        <ACCounterLabel
-                            label={`Час паузи ${i}`}
-                            value={10}
-                            units="хв"
-                            help={helpM.temp_pause_m}
-                        />
-                    </div>
-                </div>
-            );
-        }
-        return blocks;
-    };
+      blocks.push(
+        <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
+          <div className="flex flex-column align-items-center justify-content-center block">
+            <Controller
+              name={numberTemp}
+              control={control}
+              render={({ field: { onChange: onChangeForm, value } }) => (
+                <ACKnob
+                  label={`Температура паузи ${i + 1}`}
+                  color={knobColor}
+                  initialValue={value}
+                  help={helpM.temp_pause_m}
+                  onChange={(e) => onChangeForm(e.value)}
+                />
+              )}
+            />
 
+            {/* <ACKnob
+              label={`Температура паузи ${i}`}
+              color={knobColor}
+              initialValue={50}
+              help={helpM.temp_pause_m}
+              onChange={(e) => console.log(e)}
+            />
+            <ACSlider
+              label={`Гістерезис паузи ${i}`}
+              color={sliderColor}
+              initialValue={10}
+              help={helpM.gist_pause_m}
+              onChange={(e) => console.log(e)}
+            /> */}
 
-    return (
-        <>
-            <header className="mb-1">
-                <div style={{ float: 'right' }}>
-                    <ACUserComp serial_number={key || ''} />
-                </div>
-                <div style={{ float: 'left' }}>
-                    <ACStatusComp status_text={'Очікування...'} />
-                </div>
-            </header>
-            <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
-                <div className="flex flex-column w-3/4 ">
-                    <div className="grid grid-cols-2 w-full">
-                        <div className="col-6">
-                            <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
-                        </div>
-                        <div className="col-6">
-                            <ACBlockTempSmall name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
-                        </div>
-                        <div className="col-6">
-                            <ACBlockTempSmall name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
-                        </div>
-                        <div className="col-6">
-                            <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
-                        </div>
-                    </div>
-                    <div className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2" style={{ maxHeight: '400px', width: '522px', overflowY: 'auto', borderRadius: '28px' }} >
-                        <div className="flex flex-column align-items-center justify-content-center w-full">
-                            <div className="grid grid-cols-2 w-full">
-                                {generatePauseBlocks()}
-                            </div>
-                        </div>
+            <Controller
+              name={numberGyst}
+              control={control}
+              render={({ field: { onChange: onChangeForm, value } }) => (
+                <ACSlider
+                  label={`Гістерезис паузи ${i + 1}`}
+                  color={sliderColor}
+                  initialValue={value}
+                  help={helpM.temp_selection_heads_m}
+                  onChange={(e) => onChangeForm(e.value)}
+                />
+              )}
+            />
 
-                    </div>
-                </div>
+            <Controller
+              name={numberTime}
+              control={control}
+              render={({ field: { onChange: onChangeForm, value } }) => (
+                <ACCounterLabel
+                  label={`Час паузи ${i + 1}`}
+                  value={value}
+                  units="хв"
+                  help={helpM.temp_pause_m}
+                  onChange={(e) => onChangeForm(e.value)}
+                />
+              )}
+            />
 
-                <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar" style={{ maxHeight: '650px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}  >
-                    <div className="block p-3 w-full">
-                        <h3>Автоматика</h3>
-                        <div className="flex align-items-center justify-content-center">
-                            <ACScriptComp />
+            {/* <ACCounterLabel label={`Час паузи ${i}`} value={10} units="хв" help={helpM.temp_pause_m} /> */}
+          </div>
+        </div>,
+      );
+      console.log(blocks);
+    }
+    return blocks;
+  };
 
-                            <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
-                            <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
-                            <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
-                            <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
-                        </div>
-                        <div className="flex align-items-center justify-content-center">
-                            <Button label="Пропуск" className="button-skip" />
-                            <Button label="Старт" className="button-start" />
-                        </div>
-                    </div>
-                    <div className="block p-3  w-full">
-                        <h3>Паузи</h3>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="list" label="Кількість пауз" units=' ' hint="pauses" value={pauseCount} help={helpM.pauses_m} onChange={(e: { value: number }) => setPauseCount(e.value)} />
-                        </div>
-                    </div>
-                    <div className="block p-3  w-full">
-                        <h3>Варка</h3>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="temp_plus" label="Варка" help={helpM.temp_brew_m} />
-                            <ACSwitch checked={isBrewMode} onChange={(e: boolean) => handleBrewToggleChange(e)} />
-                        </div>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="temp" label="Температура варки" units='°C' value={100} help={helpM.temp_brew_m} disabled={!isBrewMode}/>
-                        </div>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="ten" label="Потужність варки" units='%' value={50} help={helpM.power_brew_m} disabled={!isBrewMode} />
-                        </div>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="timer" label="Час варки" units='хв' value={10} help={helpM.time_brew_m} disabled={!isBrewMode} />
-                        </div>
-                    </div>
-                    <div className="block p-3  w-full">
-                        <h3>Охолодженння</h3>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="temp_minus" label="Охолодження" help={helpM.temp_freeze_m} />
-                            <ACSwitch checked={isFreezeMode} onChange={(e: boolean) => handleFreezeToggleChange(e)}/>
-                        </div>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="temp" label="Температура охолодження" units='°C' value={30} help={helpM.temp_freeze_m} disabled={!isFreezeMode} />
-                        </div>
-                        <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-                            <ACRegulator icon="temp_minus" label="Гістерезис охолодження" units='°C' value={30} help={helpM.temp_freeze_m} disabled={!isFreezeMode} />
-                        </div>
-                    </div>
-                </div>
-            </div >
-        </>
-    );
+  return (
+    <>
+      <header className="mb-1">
+        <div style={{ float: 'right' }}>
+          <ACUserComp serial_number={key || ''} />
+        </div>
+        <div style={{ float: 'left' }}>
+          <ACStatusComp status_text={'Очікування...'} />
+        </div>
+      </header>
+      <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
+        <div className="flex flex-column w-3/4 ">
+          <div className="grid grid-cols-2 w-full">
+            <div className="col-6">
+              <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+            </div>
+            <div className="col-6">
+              <ACBlockTempSmall name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
+            </div>
+            <div className="col-6">
+              <ACBlockTempSmall name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
+            </div>
+            <div className="col-6">
+              <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
+            </div>
+          </div>
+          <div
+            className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2"
+            style={{ maxHeight: '400px', width: '522px', overflowY: 'auto', borderRadius: '28px' }}
+          >
+            <div className="flex flex-column align-items-center justify-content-center w-full">
+              <div className="grid grid-cols-2 w-full">{generatePauseBlocks()}</div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
+          style={{ maxHeight: '650px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+        >
+          <div className="block p-3 w-full">
+            <h3>Автоматика</h3>
+            <div className="flex align-items-center justify-content-center">
+              <ACScriptComp />
+
+              <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
+              <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
+              <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
+              <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
+            </div>
+            <div className="flex align-items-center justify-content-center">
+              <Button label="Пропуск" className="button-skip" />
+              <Button label="Старт" className="button-start" />
+            </div>
+          </div>
+          <div className="block p-3  w-full">
+            <h3>Паузи</h3>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingPauses"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="list"
+                    label="Кількість пауз"
+                    value={value}
+                    units=" "
+                    hint="pauses"
+                    help={helpM.pauses_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="block p-3  w-full">
+            <h3>Варка</h3>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <ACRegulator icon="temp_plus" label="Варка" help={helpM.temp_brew_m} />
+              <Controller
+                name="mashingHeat"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingHeatTemp"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="temp"
+                    label="Температура варки"
+                    units="°C"
+                    value={value}
+                    help={helpM.temp_brew_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={!hasMashingHeat}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingHeatPower"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="ten"
+                    label="Потужність варки"
+                    units="%"
+                    value={value}
+                    help={helpM.power_brew_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={!hasMashingHeat}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingHeatTime"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="timer"
+                    label="Час варки"
+                    units="хв"
+                    value={value}
+                    help={helpM.time_brew_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={!hasMashingHeat}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="block p-3  w-full">
+            <h3>Охолодженння</h3>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <ACRegulator icon="temp_minus" label="Охолодження" help={helpM.temp_freeze_m} />
+              <Controller
+                name="mashingCool"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingCoolTemp"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="temp"
+                    label="Температура охолодження"
+                    units="°C"
+                    value={value}
+                    help={helpM.temp_freeze_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={!isFreezeMode}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
+              <Controller
+                name="mashingCoolGyst"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="temp_minus"
+                    label="Гістерезис охолодження"
+                    units="°C"
+                    value={value}
+                    help={helpM.temp_freeze_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                    disabled={!isFreezeMode}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default MashingProcessPage;

@@ -13,10 +13,10 @@ const keySlice = createSlice({
   initialState,
   reducers: {
     setKey(state, action: PayloadAction<string>) {
-      state.key = action.payload; // Сохраняем ключ
+      state.key = action.payload;
     },
     clearKey(state) {
-      state.key = null; // Очищаем ключ
+      state.key = null;
     },
   },
 });

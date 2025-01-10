@@ -29,46 +29,86 @@ interface SortedData {
   handK4: number;
   switchBody: number;
 
-  distAcceleration: number,
-  distPower: number,
-  distTempPower: number,
-  distTempStop: number,
-  distTempError: number,
-  distPowerBody: number,
-  distTimeBody: number,
-  distCubeHead: number,
-  distCubeSwitch: number,
+  distAcceleration: number;
+  distPower: number;
+  distTempPower: number;
+  distTempStop: number;
+  distTempError: number;
+  distPowerBody: number;
+  distTimeBody: number;
+  distCubeHead: number;
+  distCubeSwitch: number;
 
-  rectAcceleration: number,
-  rectPower: number,
-  rectPowerBody: number,
-  prexid: number, /* пока не обноружен */
-  rectTempPower: number,
-  rectTempStop: number,
-  rectTempHead: number,
-  rectGystHead: number,
-  rectTempBody: number,
-  rectGystBody: number,
-  rectPercentHead: number, 
-  rectPercentBody: number,
-  rectDecreaseTemp: number,
-  rectDecreaseSpeed: number,
-  rectTempError: number,
-  rectTimeStab: number,
-  rectCubeTail: number,
-  rectSpeedTail: number,
-  rectSpeedCarge: number,
-  rectDecreaseCycle: number,
-  rectCyclesNumber: number,
-  rectEndCycle: number,
-  rectPowerTail: number,
-  rectTimeBody: number,
-  rectSwitchTail: number,
-  rectSwitchCube: number,
-  rectSwitchCarge: number,
-  rectSelectCarge: number,
-  transitBody: number,
+  rectAcceleration: number;
+  rectPower: number;
+  rectPowerBody: number;
+  rectTempPower: number;
+  rectTempStop: number;
+  rectTempHead: number;
+  rectGystHead: number;
+  rectTempBody: number;
+  rectGystBody: number;
+  rectPercentHead: number;
+  rectPercentBody: number;
+  rectDecreaseTemp: number;
+  rectDecreaseSpeed: number;
+  rectTempError: number;
+  rectTimeStab: number;
+  rectCubeTail: number;
+  rectSpeedTail: number;
+  rectSpeedCarge: number;
+  rectDecreaseCycle: number;
+  rectCyclesNumber: number;
+  rectEndCycle: number;
+  rectPowerTail: number;
+  rectTimeBody: number;
+  rectSwitchTail: number;
+  rectSwitchCube: number;
+  rectSwitchCarge: number;
+  rectSelectCarge: number;
+  transitBody: number;
 
+  mashingPauses: number;
+  mashingHeat: number;
+  mashingHeatTemp: number;
+  mashingHeatPower: number;
+  mashingHeatTime: number;
+  mashingCool: number; 
+  mashingCoolTemp: number; 
+  mashingCoolGyst: number;
+
+  mashingTemp0: number;
+  mashingTemp1: number;
+  mashingTemp2: number;
+  mashingTemp3: number;
+  mashingTemp4: number;
+  mashingTemp5: number;
+  mashingTemp6: number;
+  mashingTemp7: number;
+  mashingTemp8: number;
+  mashingTemp9: number;
+
+  mashingGyst0: number; 
+  mashingGyst1: number; 
+  mashingGyst2: number; 
+  mashingGyst3: number; 
+  mashingGyst4: number; 
+  mashingGyst5: number; 
+  mashingGyst6: number; 
+  mashingGyst7: number; 
+  mashingGyst8: number; 
+  mashingGyst9: number;
+
+  mashingTime0: number;
+  mashingTime1: number;
+  mashingTime2: number;
+  mashingTime3: number;
+  mashingTime4: number;
+  mashingTime5: number;
+  mashingTime6: number;
+  mashingTime7: number;
+  mashingTime8: number;
+  mashingTime9: number;
 }
 
 const initialSortedData: SortedData = {
@@ -112,14 +152,13 @@ const initialSortedData: SortedData = {
   rectAcceleration: 0,
   rectPower: 0,
   rectPowerBody: 0,
-  prexid: 0, /* пока не обноружен */
   rectTempPower: 0,
   rectTempStop: 0,
   rectTempHead: 0,
   rectGystHead: 0,
   rectTempBody: 0,
   rectGystBody: 0,
-  rectPercentHead: 0, 
+  rectPercentHead: 0,
   rectPercentBody: 0,
   rectDecreaseTemp: 0,
   rectDecreaseSpeed: 0,
@@ -139,6 +178,47 @@ const initialSortedData: SortedData = {
   rectSelectCarge: 0,
   transitBody: 0,
 
+  mashingPauses: 0,
+  mashingHeat: 0,
+  mashingHeatTemp: 0,
+  mashingHeatPower: 0,
+  mashingHeatTime: 0,
+  mashingCool: 0, 
+  mashingCoolTemp: 0, 
+  mashingCoolGyst: 0,
+
+  mashingTemp0: 0,
+  mashingTemp1: 0,
+  mashingTemp2: 0,
+  mashingTemp3: 0,
+  mashingTemp4: 0,
+  mashingTemp5: 0,
+  mashingTemp6: 0,
+  mashingTemp7: 0,
+  mashingTemp8: 0,
+  mashingTemp9: 0,
+
+  mashingGyst0: 0,
+  mashingGyst1: 0,
+  mashingGyst2: 0,
+  mashingGyst3: 0,
+  mashingGyst4: 0,
+  mashingGyst5: 0,
+  mashingGyst6: 0,
+  mashingGyst7: 0,
+  mashingGyst8: 0,
+  mashingGyst9: 0,
+
+  mashingTime0: 0,
+  mashingTime1: 0,
+  mashingTime2: 0,
+  mashingTime3: 0,
+  mashingTime4: 0,
+  mashingTime5: 0,
+  mashingTime6: 0,
+  mashingTime7: 0,
+  mashingTime8: 0,
+  mashingTime9: 0,
 };
 
 const useSortedData = (key: string | null) => {
@@ -200,14 +280,13 @@ const useSortedData = (key: string | null) => {
       rectAcceleration: parseNumber(newData[22]),
       rectPower: parseNumber(newData[23]),
       rectPowerBody: parseNumber(newData[115]),
-      prexid: parseNumber(newData[0]), /* пока не обноружен */
       rectTempPower: parseNumber(newData[24]),
       rectTempStop: parseNumber(newData[25]),
       rectTempHead: parseNumber(newData[26]),
       rectGystHead: parseNumber(newData[27]),
       rectTempBody: parseNumber(newData[28]),
       rectGystBody: parseNumber(newData[29]),
-      rectPercentHead: parseNumber(newData[30]), 
+      rectPercentHead: parseNumber(newData[30]),
       rectPercentBody: parseNumber(newData[31]),
       rectDecreaseTemp: parseNumber(newData[103]),
       rectDecreaseSpeed: parseNumber(newData[104]),
@@ -228,6 +307,47 @@ const useSortedData = (key: string | null) => {
       rectSelectCarge: parseNumber(newData[128]),
       transitBody: parseNumber(newData[111]),
 
+      mashingPauses: parseNumber(newData[47]),
+      mashingHeat: parseNumber(newData[48]),
+      mashingHeatTemp: parseNumber(newData[49]),
+      mashingHeatPower: parseNumber(newData[50]),
+      mashingHeatTime: parseNumber(newData[51]),
+      mashingCool: parseNumber(newData[52]), 
+      mashingCoolTemp: parseNumber(newData[53]), 
+      mashingCoolGyst: parseNumber(newData[54]),
+
+      mashingTemp0: parseNumber(newData[55]),
+      mashingTemp1: parseNumber(newData[56]),
+      mashingTemp2: parseNumber(newData[57]),
+      mashingTemp3: parseNumber(newData[58]),
+      mashingTemp4: parseNumber(newData[59]),
+      mashingTemp5: parseNumber(newData[60]),
+      mashingTemp6: parseNumber(newData[61]),
+      mashingTemp7: parseNumber(newData[62]),
+      mashingTemp8: parseNumber(newData[63]),
+      mashingTemp9: parseNumber(newData[64]),
+
+      mashingGyst0: parseNumber(newData[65]),
+      mashingGyst1: parseNumber(newData[66]),
+      mashingGyst2: parseNumber(newData[67]),
+      mashingGyst3: parseNumber(newData[68]),
+      mashingGyst4: parseNumber(newData[69]),
+      mashingGyst5: parseNumber(newData[70]),
+      mashingGyst6: parseNumber(newData[71]),
+      mashingGyst7: parseNumber(newData[72]),
+      mashingGyst8: parseNumber(newData[73]),
+      mashingGyst9: parseNumber(newData[74]),
+
+      mashingTime0: parseNumber(newData[75]),
+      mashingTime1: parseNumber(newData[76]),
+      mashingTime2: parseNumber(newData[77]),
+      mashingTime3: parseNumber(newData[78]),
+      mashingTime4: parseNumber(newData[79]),
+      mashingTime5: parseNumber(newData[80]),
+      mashingTime6: parseNumber(newData[81]),
+      mashingTime7: parseNumber(newData[82]),
+      mashingTime8: parseNumber(newData[83]),
+      mashingTime9: parseNumber(newData[84]),
     };
 
     setSortedData(newSortedData);

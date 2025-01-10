@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const createRoomApi = createApi({
   reducerPath: 'createRoomApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://craftstore.com.ua/data/', // Ваш базовый URL
+    baseUrl: 'https://craftstore.com.ua/data/',
     responseHandler: 'text',
   }),
   endpoints: (builder) => ({

@@ -96,11 +96,6 @@ const RectificationProcessPage = () => {
     },
   });
 
-  /*   const rectSwitchTail = watch('rectSwitchTail');
-  useEffect(() => {
-    console.log(rectSwitchTail);
-  }, [rectSwitchTail]); */
-
   const [switchTail, setSwitchTail] = useState(true);
   const [speedTail, setSpeedTail] = useState(true);
   const [powerTail, setPowerTail] = useState(true);
@@ -126,9 +121,9 @@ const RectificationProcessPage = () => {
       if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
         setDisabledCarge(false);
         setEndCycle(false);
-        if(hasCargeSwitch){
+        if (hasCargeSwitch) {
           setSelectCarge(false);
-        }else{
+        } else {
           setSelectCarge(true);
         }
       }

@@ -39,7 +39,6 @@ export type SortedData = {
   rectAcceleration: number,
   rectPower: number,
   rectPowerBody: number,
-  prexid: number, /* пока не обноружен */
   rectTempPower: number,
   rectTempStop: number,
   rectTempHead: number,
@@ -65,5 +64,45 @@ export type SortedData = {
   rectSwitchCarge: number,
   rectSelectCarge: number,
   transitBody: number,
+
+  mashingPauses: number,
+  mashingHeat: number;
+  mashingHeatTemp: number;
+  mashingHeatPower: number;
+  mashingHeatTime: number;
+  mashingCool: number; 
+  mashingCoolTemp: number; 
+  mashingCoolGyst: number;
+  mashingTemp0: number;
+  mashingTemp1: number;
+  mashingTemp2: number;
+  mashingTemp3: number;
+  mashingTemp4: number;
+  mashingTemp5: number;
+  mashingTemp6: number;
+  mashingTemp7: number;
+  mashingTemp8: number;
+  mashingTemp9: number;
+  mashingGyst0: number; 
+  mashingGyst1: number; 
+  mashingGyst2: number; 
+  mashingGyst3: number; 
+  mashingGyst4: number; 
+  mashingGyst5: number; 
+  mashingGyst6: number; 
+  mashingGyst7: number; 
+  mashingGyst8: number; 
+  mashingGyst9: number;
+
+  mashingTime0: number;
+  mashingTime1: number;
+  mashingTime2: number;
+  mashingTime3: number;
+  mashingTime4: number;
+  mashingTime5: number;
+  mashingTime6: number;
+  mashingTime7: number;
+  mashingTime8: number;
+  mashingTime9: number;
 
 };

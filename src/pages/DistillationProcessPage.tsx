@@ -245,7 +245,7 @@ const DistillationProcessPage = () => {
                     units="°C"
                     help={helpM.temp_transition_body_m}
                     onChange={(e) => onChangeForm(e.value)}
-                    disabled={disabledBody}// меняй
+                    disabled={disabledBody}
                   />
                 )}
               />
