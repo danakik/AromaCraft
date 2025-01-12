@@ -12,6 +12,7 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { ToggleButton } from 'primereact/togglebutton';
+import { ACThreeStateButton } from '../components/threestatebutton';
 
 const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -132,7 +133,8 @@ const SettingPage = () => {
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
-                <ToggleButton onLabel="Рівень" offLabel="Час" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                {/* <ToggleButton onLabel="Рівень" offLabel="Час" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" /> */}
+                <ACThreeStateButton firstStateLabel='Рівень' secondStateLabel='Час' thirdStateLabel='Датчик'/>
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">

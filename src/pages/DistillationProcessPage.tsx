@@ -214,7 +214,7 @@ const DistillationProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-4 w-full">
+          <div className="block p-3 w-full">
             <h3>Інше</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <ACRegulator icon="arrow_fork" label="Перехід тіла" help={helpM.temp_transition_body_m} />
