@@ -22,7 +22,10 @@ import { debounce, values } from 'lodash';
 
 type FormData = {
   rectTempHead: number;
-  rectPercentHead: number;
+  rectPercentHead: {
+    value: number;
+    true_value: number;
+  };
   rectTempBody: number;
   rectGystBody: number;
   rectCubeTail: number;
@@ -30,17 +33,29 @@ type FormData = {
     value: number;
     true_value: number;
   };
-  rectDecreaseSpeed: number;
+  rectDecreaseSpeed: {
+    value: number;
+    true_value: number;
+  };
   rectAcceleration: number;
   rectPower: number;
   rectPowerBody: number;
   rectPowerTail: number;
   rectGystHead: number;
-  rectPercentBody: number;
-  rectSpeedCarge: number;
+  rectPercentBody: {
+    value: number;
+    true_value: number;
+  };
+  rectSpeedCarge: {
+    value: number;
+    true_value: number;
+  };
   rectCyclesNumber: number;
   rectEndCycle: number;
-  rectDecreaseCycle: number;
+  rectDecreaseCycle: {
+    value: number;
+    true_value: number;
+  };
   rectTempPower: number;
   rectTempStop: number;
   rectTempError: number;
@@ -64,25 +79,40 @@ const RectificationProcessPage = () => {
   const { control, watch } = useForm<FormData>({
     values: {
       rectTempHead: data.rectTempHead,
-      rectPercentHead: data.rectPercentHead,
+      rectPercentHead: {
+        value: calculateHandPercent(data.rectPercentHead, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectPercentHead,
+      },
       rectTempBody: data.rectTempBody,
       rectGystBody: data.rectGystBody,
       rectCubeTail: data.rectCubeTail,
       rectSpeedTail: {
         value: calculateHandPercent(data.rectSpeedTail, data.selectionSpeed, data.version, data.selection),
-        true_value: data.handPercent,
+        true_value: data.rectSpeedTail,
       },
-      rectDecreaseSpeed: data.rectDecreaseSpeed,
+      rectDecreaseSpeed: {
+        value: calculateHandPercent(data.rectDecreaseSpeed, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectDecreaseSpeed,
+      },
       rectAcceleration: data.rectAcceleration,
       rectPower: data.rectPower,
       rectPowerBody: data.rectPowerBody,
       rectPowerTail: data.rectPowerTail,
       rectGystHead: data.rectGystHead,
-      rectPercentBody: data.rectPercentBody,
-      rectSpeedCarge: data.rectSpeedCarge,
+      rectPercentBody: {
+        value: calculateHandPercent(data.rectPercentBody, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectPercentBody,
+      },
+      rectSpeedCarge: {
+        value: calculateHandPercent(data.rectSpeedCarge, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectSpeedCarge,
+      },
       rectCyclesNumber: data.rectCyclesNumber,
       rectEndCycle: data.rectEndCycle,
-      rectDecreaseCycle: data.rectDecreaseCycle,
+      rectDecreaseCycle: {
+        value: calculateHandPercent(data.rectDecreaseCycle, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectDecreaseCycle,
+      },
       rectTempPower: data.rectTempPower,
       rectTempStop: data.rectTempStop,
       rectTempError: data.rectTempError,
@@ -106,6 +136,7 @@ const RectificationProcessPage = () => {
   const [disabledCarge, setDisabledCarge] = useState(true);
   const hasTailSwitch = watch('rectSwitchTail');
   const hasCargeSwitch = watch('rectSwitchCarge');
+  const [symbol, setSymbol] = useState('');
   useEffect(() => {
     if (data.version !== 0) {
       if (data.version >= 4.2) {
@@ -135,6 +166,11 @@ const RectificationProcessPage = () => {
       }
       if (data.transitBody == 0) {
         setDisabledTimeBody(true);
+      }
+      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+        setSymbol('%');
+      } else if (data.selection == 1 && data.version >= 2.5) {
+        setSymbol('л/г');
       }
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
@@ -254,7 +290,7 @@ const RectificationProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACCounterLabel
-                      units="л/г"
+                      units={symbol}
                       value={value.value}
                       label="Швидкість"
                       help={helpM.speed_selection_tails_m}
@@ -406,10 +442,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="ten"
                     label="Шв.відбору(голів)"
-                    value={value}
-                    units="%"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.speed_selection_heads_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -422,10 +469,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="ten"
                     label="Шв.відбору(тіла)"
-                    value={value}
-                    units="%"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.speed_selection_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -440,10 +498,21 @@ const RectificationProcessPage = () => {
                       icon="speed"
                       color="red"
                       label="Зменш.шв.царзі"
-                      value={value}
-                      units="л/г"
+                      value={value.value}
+                      units={symbol}
                       help={helpM.decrease_speed_cargi_m}
-                      onChange={(e) => onChangeForm(e.value)}
+                      onChange={(e) => {
+                        const updatedValue = calculateHandPercent(
+                          e.value,
+                          data.selectionSpeed,
+                          data.version,
+                          data.selection,
+                        );
+                        onChangeForm({
+                          value: updatedValue,
+                          true_value: e.value,
+                        });
+                      }}
                     />
                   )}
                 />
@@ -509,10 +578,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="sort"
                     label="Зменшення по циклам"
-                    value={value}
-                    units="л/г"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.decrease_cycles_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -626,21 +706,47 @@ const RectificationProcessPage = () => {
               />
             </div>
 
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller
-                name="rectDecreaseSpeed"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="speed"
-                    units="л/г"
-                    value={value}
-                    label="Зменш.шв.відбору"
-                    help={helpM.decrease_speed_selection_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
-                )}
-              />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <Controller
+                  name="rectDecreaseSpeed"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACRegulator
+                      icon="speed"
+                      units={symbol}
+                      value={value.value}
+                      label="Зменш.шв.відбору"
+                      help={helpM.decrease_speed_selection_m}
+                      onChange={(e) => {
+                        const updatedValue = calculateHandPercent(
+                          e.value,
+                          data.selectionSpeed,
+                          data.version,
+                          data.selection,
+                        );
+                        onChangeForm({
+                          value: updatedValue,
+                          true_value: e.value,
+                        });
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="rectSwitchCube"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="БАГАТ"
+                      offLabel="ОДНОК"
+                    />
+                  )}
+                />
+              </div>
             </div>
           </div>
         </div>

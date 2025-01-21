@@ -28,7 +28,7 @@ export const initialSortedData: SortedData = {
   selectionSpeed: 0.06,
   handSpeedTail: 0.06,
   handK4: 0,
-  switchBody: 0,
+  switchTail: 0,
 
   distAcceleration: 0,
   distPower: 0,
@@ -109,4 +109,11 @@ export const initialSortedData: SortedData = {
   mashingTime8: 0,
   mashingTime9: 0,
 
+  settingTempCupe: 0,
+  settingTempCarge: 0,
+  settingTempDef: 0,
+  settingTempWater: 0,
+  settingSeatHeat: 0,
+  settingTen: 0,
+  settingBrometr: 0,
 };

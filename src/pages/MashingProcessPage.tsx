@@ -20,7 +20,6 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { calculateHandPercent } from '../utils/calculate';
-import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
 
 type FormData = {
@@ -132,25 +131,15 @@ const MashingProcessPage = () => {
 
   const generatePauseBlocks = () => {
     const blocks = [];
-    let knobColor: 'orange' | 'blue' | 'purple' | 'red' = 'orange';
-    let sliderColor: 'orange' | 'blue' | 'purple' | 'red' = 'blue';
+    const knobColors = ['orange', 'blue', 'purple', 'red'];
+    const sliderColors = ['purple', 'orange', 'red', 'blue'];
     for (let i = 0; i <= howMuchPause - 1; i++) {
-      if (i == 0 || i == 4 || i == 8) {
-        knobColor = 'orange';
-        sliderColor = 'purple';
-      } else if (i == 1 || i == 5 || i == 9) {
-        knobColor = 'blue';
-        sliderColor = 'orange';
-      } else if (i == 2 || i == 6) {
-        knobColor = 'purple';
-        sliderColor = 'red';
-      } else {
-        knobColor = 'red';
-        sliderColor = 'blue';
-      }
-    const numberTemp: MashingType = `mashingTemp${i}` as MashingType;
-    const numberGyst: MashingType = `mashingGyst${i}` as MashingType;
-    const numberTime: MashingType = `mashingTime${i}` as MashingType;
+      const knobColor = knobColors[i % knobColors.length] as 'orange' | 'blue' | 'purple' | 'red';
+      const sliderColor = sliderColors[i % sliderColors.length] as 'orange' | 'blue' | 'purple' | 'red';
+
+      const numberTemp: MashingType = `mashingTemp${i}` as MashingType;
+      const numberGyst: MashingType = `mashingGyst${i}` as MashingType;
+      const numberTime: MashingType = `mashingTime${i}` as MashingType;
 
       blocks.push(
         <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
@@ -168,22 +157,6 @@ const MashingProcessPage = () => {
                 />
               )}
             />
-
-            {/* <ACKnob
-              label={`Температура паузи ${i}`}
-              color={knobColor}
-              initialValue={50}
-              help={helpM.temp_pause_m}
-              onChange={(e) => console.log(e)}
-            />
-            <ACSlider
-              label={`Гістерезис паузи ${i}`}
-              color={sliderColor}
-              initialValue={10}
-              help={helpM.gist_pause_m}
-              onChange={(e) => console.log(e)}
-            /> */}
-
             <Controller
               name={numberGyst}
               control={control}
@@ -211,12 +184,9 @@ const MashingProcessPage = () => {
                 />
               )}
             />
-
-            {/* <ACCounterLabel label={`Час паузи ${i}`} value={10} units="хв" help={helpM.temp_pause_m} /> */}
           </div>
         </div>,
       );
-      console.log(blocks);
     }
     return blocks;
   };

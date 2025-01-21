@@ -24,7 +24,7 @@ export type SortedData = {
   selectionSpeed: number;
   handSpeedTail: number;
   handK4: number;
-  switchBody: number;
+  switchTail: number;
 
   distAcceleration: number,
   distPower: number,
@@ -105,4 +105,11 @@ export type SortedData = {
   mashingTime8: number;
   mashingTime9: number;
 
+  settingTempCupe: number;
+  settingTempCarge: number;
+  settingTempDef: number;
+  settingTempWater: number;
+  settingSeatHeat: number;
+  settingTen: number;
+  settingBrometr: number;
 };

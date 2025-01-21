@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, version } from 'react';
 import * as yup from 'yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
@@ -129,8 +129,9 @@ const ManualProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      console.log(formattedData);
-      /* save(formattedData); */
+      /* console.log(formattedData);
+      save(formattedData); 
+      protection against children */
 
       setIsFormChanging(false);
     }, 5000);
@@ -144,29 +145,22 @@ const ManualProcessPage = () => {
     };
   }, [formValues, isFormChanging]);
 
-  const [simvol, setSimvol] = useState('');
-
-  useEffect(() => {
-    if (data.version !== 0) {
-      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
-        setSimvol('%');
-      } else if (data.selection == 0 || data.version < 2.5) {
-        setSimvol('%');
-      } else {
-        setSimvol('л/г');
-      }
-    }
-  }, [data]);
-
-  const [disabledK4, setdisabledK4] = useState(false);
-  const [disabledPID, setdisabledKPID] = useState(false);
+  const [symbol, setSymbol] = useState('');
+  const [disabledK4, setDisabledK4] = useState(false);
+  const [disabledPID, setDisabledKPID] = useState(false);
   useEffect(() => {
     if (data.version !== 0) {
       if (data.version >= 2.30 && data.version < 4) {
-        setdisabledK4(true);
+        setDisabledK4(true);
       } else if (data.version < 2.3) {
-        setdisabledKPID(true);
-        setdisabledK4(true);
+        setDisabledKPID(true);
+        setDisabledK4(true);
+      }
+
+      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+        setSymbol('%');
+      } else if (data.selection == 1 && data.version >= 2.5) {
+        setSymbol('л/г');
       }
     }
   }, [data]);
@@ -226,7 +220,7 @@ const ManualProcessPage = () => {
                     <ACCounterSpeed
                       value={value.value}
                       true_value={value.true_value}
-                      units={simvol}
+                      units={symbol}
                       label="Швидкість відбору"
                       help={helpM.speed_selection_m}
                       onChange={(e) => {
@@ -268,7 +262,7 @@ const ManualProcessPage = () => {
                     <ACCounterSpeed
                       value={value.value}
                       true_value={value.true_value}
-                      units={simvol}
+                      units={symbol}
                       label="Швидкість відб. хвостів"
                       help={helpM.speed_selection_tails_m}
                       disabled={disabledK4}

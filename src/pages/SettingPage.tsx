@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
@@ -12,19 +12,97 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { ToggleButton } from 'primereact/togglebutton';
+import { useForm, Controller } from 'react-hook-form';
+import { ACThreeStateButton } from '../components/threestatebutton';
+import { debounce } from 'lodash';
+import { useSaveSettingMutation } from '../api/settingSave';
+
+type FormData = {
+  settingTempCupe: number;
+  settingTempCarge: number;
+  settingTempDef: number;
+  settingTempWater: number;
+  settingSeatHeat: boolean;
+  settingTen: number;
+  settingBrometr: boolean;
+  transitBody: number;
+  switchTail: boolean;
+  selection: boolean;
+  selectionSpeed: number;
+};
 
 const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
+  const [isFormChanging, setIsFormChanging] = useState(false);
+  const [save] = useSaveSettingMutation();
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(key ?? skipToken, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
-  if (isLoading) return <p>Завантаження...</p>;
+  const { control, watch } = useForm<FormData>({
+    values: {
+      settingTempCupe: data.settingTempCupe,
+      settingTempCarge: data.settingTempCarge,
+      settingTempDef: data.settingTempDef,
+      settingTempWater: data.settingTempWater,
+      settingSeatHeat: !!data.settingSeatHeat,
+      settingTen: data.settingTen,
+      settingBrometr: !!data.settingBrometr,
+      transitBody: data.transitBody,
+      switchTail: !!data.switchTail,
+      selection: !!data.selection,
+      selectionSpeed: data.selectionSpeed,
+    },
+  });
+
+  const formatFormData = (formValues: FormData) => {
+    return {
+      key: key,
+      c: formValues.settingTempCupe,
+      g: formValues.settingTempCarge,
+      d: formValues.settingTempDef,
+      w: formValues.settingTempWater,
+      r: formValues.settingSeatHeat ? 1 : 0,
+      p: formValues.selectionSpeed,
+      b: formValues.settingBrometr ? 1 : 0,
+      s: formValues.selection ? 1 : 0,
+      t: formValues.transitBody,
+      e: formValues.settingTen,
+      h: formValues.switchTail ? 1 : 0,
+    };
+  };
+
+  const formValues = watch();
+  const prevFormValues = useRef(formValues);
+
+  useEffect(() => {
+    if (JSON.stringify(formValues) !== JSON.stringify(prevFormValues.current)) {
+      setIsFormChanging(true);
+      prevFormValues.current = formValues;
+    }
+
+    const debouncedLog = debounce(() => {
+      const formattedData = formatFormData(formValues);
+      /* console.log(formattedData);
+      save(formattedData); 
+      protection against children */
+
+      setIsFormChanging(false);
+    }, 5000);
+
+    if (isFormChanging) {
+      debouncedLog();
+    }
+
+    return () => {
+      debouncedLog.cancel();
+    };
+  }, [formValues, isFormChanging]);
+
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
-
-  const [checked, setChecked] = useState(false);
 
   return (
     <>
@@ -46,12 +124,20 @@ const SettingPage = () => {
                   color="purple"
                   initialValue={Number(data.tempCube)}
                   help={helpM.set_temp_cube_m}
+                  readonly={true}
                 />
-                <ACCounterLabel
-                  units="°C "
-                  value={Number(1.1)}
-                  label="Зміна темп. куба"
-                  help={helpM.set_temp_cube_m}
+                <Controller
+                  name="settingTempCupe"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACCounterLabel
+                      units="°C "
+                      value={value}
+                      label="Зміна темп. куба"
+                      help={helpM.set_temp_cube_m}
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
                 />
               </div>
               <div className="block col-6">
@@ -60,12 +146,21 @@ const SettingPage = () => {
                   color="orange"
                   initialValue={Number(data.tempCargi)}
                   help={helpM.set_temp_cargi_m}
+                  readonly={true}
                 />
-                <ACCounterLabel
-                  units="°C "
-                  value={Number(1.1)}
-                  label="Зміна темп. царги"
-                  help={helpM.set_temp_cargi_m}
+
+                <Controller
+                  name="settingTempCarge"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACCounterLabel
+                      units="°C "
+                      value={value}
+                      label="Зміна темп. царги"
+                      help={helpM.set_temp_cargi_m}
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -76,12 +171,21 @@ const SettingPage = () => {
                   color="red"
                   initialValue={Number(data.tempDef)}
                   help={helpM.set_temp_defl_m}
+                  readonly={true}
                 />
-                <ACCounterLabel
-                  units="°C "
-                  value={Number(1.1)}
-                  label="Зміна темп. дефл."
-                  help={helpM.set_temp_defl_m}
+
+                <Controller
+                  name="settingTempDef"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACCounterLabel
+                      units="°C "
+                      value={value}
+                      label="Зміна темп. дефл."
+                      help={helpM.set_temp_defl_m}
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
                 />
               </div>
               <div className="block col-6">
@@ -90,12 +194,20 @@ const SettingPage = () => {
                   color="blue"
                   initialValue={Number(data.tempWater)}
                   help={helpM.set_temp_water_m}
+                  readonly={true}
                 />
-                <ACCounterLabel
-                  units="°C "
-                  value={Number(1.1)}
-                  label="Зміна темп. води"
-                  help={helpM.set_temp_water_m}
+                <Controller
+                  name="settingTempWater"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACCounterLabel
+                      units="°C "
+                      value={value}
+                      label="Зміна темп. води"
+                      help={helpM.set_temp_water_m}
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -119,41 +231,115 @@ const SettingPage = () => {
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="pid" label="Встановлення нагріву" help={helpM.set_warm_m} />
-                <ToggleButton onLabel="Регул" offLabel="Розет" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <Controller
+                  name="settingSeatHeat"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="Регул"
+                      offLabel="Розет"
+                    />
+                  )}
+                />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="ten" label="ТЕН" units="Вт" value={3000} help={helpM.set_ten_m} />
+              <Controller
+                name="settingTen"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="ten"
+                    label="ТЕН"
+                    value={value}
+                    units="Вт"
+                    help={helpM.set_ten_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <ACRegulator icon="antena_bars" label="Барометр" help={helpM.barometer_m} />
-              <ACSwitch />
+              <Controller
+                name="settingBrometr"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                )}
+              />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
-                <ToggleButton onLabel="Рівень" offLabel="Час" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <Controller
+                  name="transitBody"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACThreeStateButton
+                      firstStateLabel="Рівень"
+                      secondStateLabel="Час"
+                      thirdStateLabel="Датчик"
+                      initialState={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
+                />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="arrow_fork" label="Перемикач голів" help={helpM.set_change_heads_m} />
-                <ToggleButton onLabel="Вбік" offLabel="Вниз" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <Controller
+                  name="switchTail"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="Вбік"
+                      offLabel="Вниз"
+                    />
+                  )}
+                />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="select_valve" label="Встановлення відбору" help={helpM.set_selection_m} />
-                <ToggleButton onLabel="л/г" offLabel="%" checked={checked} onChange={(e) => setChecked(e.value)} className="custom-toggle-button" />
+                <Controller
+                  name="selection"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="л/г"
+                      offLabel="%"
+                    />
+                  )}
+                />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator
-                icon="speed"
-                label="Швидкість при 20%"
-                units="л/г"
-                value={Number(0.25)}
-                help={helpM.set_speed_20_m}
+              <Controller
+                name="selectionSpeed"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACRegulator
+                    icon="speed"
+                    label="Швидкість при 20%"
+                    value={value}
+                    units="л/г"
+                    help={helpM.set_speed_20_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
               />
             </div>
           </div>
