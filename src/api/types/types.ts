@@ -64,6 +64,7 @@ export type SortedData = {
   rectSwitchCarge: number,
   rectSelectCarge: number,
   transitBody: number,
+  rectTempTransit: number,
 
   mashingPauses: number,
   mashingHeat: number;
@@ -112,4 +113,5 @@ export type SortedData = {
   settingSeatHeat: number;
   settingTen: number;
   settingBrometr: number;
+  settingValueBrometr: number;
 };

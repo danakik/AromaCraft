@@ -91,6 +91,7 @@ const samogonApi = createApi({
           rectSwitchCarge: parseNumber(data[127]),
           rectSelectCarge: parseNumber(data[128]),
           transitBody: parseNumber(data[111]),
+          rectTempTransit: parseNumber(data[136]),
 
           mashingPauses: parseNumber(data[47]),
           mashingHeat: parseNumber(data[48]),
@@ -141,6 +142,7 @@ const samogonApi = createApi({
           settingSeatHeat: parseNumber(data[100]),
           settingTen: parseNumber(data[120]),
           settingBrometr: parseNumber(data[108]),
+          settingValueBrometr: parseNumber(data[112]),
         };
       },
     }),

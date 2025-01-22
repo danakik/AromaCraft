@@ -66,6 +66,7 @@ type FormData = {
   rectSwitchTail: boolean;
   rectSwitchCube: boolean;
   rectSwitchCarge: boolean;
+  rectTempTransit: number;
 };
 
 const RectificationProcessPage = () => {
@@ -123,6 +124,7 @@ const RectificationProcessPage = () => {
       rectSwitchTail: !!data.rectSwitchTail,
       rectSwitchCube: !!data.rectSwitchCube,
       rectSwitchCarge: !!data.rectSwitchCarge,
+      rectTempTransit: data.rectTempTransit,
     },
   });
 
@@ -136,7 +138,10 @@ const RectificationProcessPage = () => {
   const [disabledCarge, setDisabledCarge] = useState(true);
   const hasTailSwitch = watch('rectSwitchTail');
   const hasCargeSwitch = watch('rectSwitchCarge');
+  const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [symbol, setSymbol] = useState('');
+  const [bodySymbol, setBodySymbol] = useState('');
+
   useEffect(() => {
     if (data.version !== 0) {
       if (data.version >= 4.2) {
@@ -149,6 +154,7 @@ const RectificationProcessPage = () => {
           setPowerTail(true);
         }
       }
+
       if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
         setDisabledCarge(false);
         setEndCycle(false);
@@ -158,20 +164,33 @@ const RectificationProcessPage = () => {
           setSelectCarge(true);
         }
       }
+
       if (data.version >= 4 && !hasTailSwitch) {
         setSpeedTail(false);
       }
+
       if (data.version >= 4) {
         setTempTail(false);
       }
+      
       if (data.transitBody == 0) {
         setDisabledTimeBody(true);
+      }else if(data.transitBody == 1){
+        setDisabledTimeBody(false);
+        setIsSwitchOn(true);
+        setBodySymbol('хв');
+      }else if(data.transitBody == 2){
+        setDisabledTimeBody(false);
+        setIsSwitchOn(false);
+        setBodySymbol('°C');
       }
+
       if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
       } else if (data.selection == 1 && data.version >= 2.5) {
         setSymbol('л/г');
       }
+      console.log(isSwitchOn)
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
@@ -690,14 +709,15 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
-                name="rectTimeBody"
+                key={bodySymbol}
+                name={isSwitchOn ? 'rectTimeBody' : 'rectTempTransit'} //bag no symbol for first boot
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="arrow_fork"
                     label="Перехід на відбір тіла"
                     value={value}
-                    units="хв"
+                    units={bodySymbol}
                     help={helpM.transition_select_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTimeBody}

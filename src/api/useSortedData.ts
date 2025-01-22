@@ -67,6 +67,7 @@ interface SortedData {
   rectSwitchCarge: number;
   rectSelectCarge: number;
   transitBody: number;
+  rectTempTransit: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -117,6 +118,7 @@ interface SortedData {
   settingSeatHeat: number;
   settingTen: number;
   settingBrometr: number;
+  settingValueBrometr: number;
 }
 
 const initialSortedData: SortedData = {
@@ -185,6 +187,7 @@ const initialSortedData: SortedData = {
   rectSwitchCarge: 0,
   rectSelectCarge: 0,
   transitBody: 0,
+  rectTempTransit: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -235,6 +238,7 @@ const initialSortedData: SortedData = {
   settingSeatHeat: 0,
   settingTen: 0,
   settingBrometr: 0,
+  settingValueBrometr: 0,
 };
 
 const useSortedData = (key: string | null) => {
@@ -322,6 +326,7 @@ const useSortedData = (key: string | null) => {
       rectSwitchTail: parseNumber(newData[130]),
       rectSelectCarge: parseNumber(newData[128]),
       transitBody: parseNumber(newData[111]),
+      rectTempTransit: parseNumber(newData[136]),
 
       mashingPauses: parseNumber(newData[47]),
       mashingHeat: parseNumber(newData[48]),
@@ -372,6 +377,7 @@ const useSortedData = (key: string | null) => {
       settingSeatHeat: parseNumber(newData[100]),
       settingTen: parseNumber(newData[120]),
       settingBrometr: parseNumber(newData[108]),
+      settingValueBrometr: parseNumber(newData[112]),
     };
 
     setSortedData(newSortedData);

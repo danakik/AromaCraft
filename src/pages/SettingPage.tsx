@@ -101,6 +101,17 @@ const SettingPage = () => {
     };
   }, [formValues, isFormChanging]);
 
+  const [isBarometr, setIsBarometr] = useState(false);
+  const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}мм`);
+  useEffect(() => {
+    if (data.version !== 0) {
+      if (data.version >= 2.5 && data.version < 4) {
+        setIsBarometr(true);
+        setLableBarometr('нема');
+      }
+    }
+  }, [data]);
+
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
@@ -263,12 +274,16 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="antena_bars" label="Барометр" help={helpM.barometer_m} />
+              <ACRegulator
+                icon="antena_bars"
+                label={`Барометр, ${lableBarometr}`}
+                help={helpM.barometer_m}
+              />
               <Controller
                 name="settingBrometr"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} />
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={isBarometr} />
                 )}
               />
             </div>

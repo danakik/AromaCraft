@@ -68,6 +68,7 @@ export const initialSortedData: SortedData = {
   rectSwitchCarge: 0,
   rectSelectCarge: 0,
   transitBody: 0,
+  rectTempTransit: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -116,4 +117,5 @@ export const initialSortedData: SortedData = {
   settingSeatHeat: 0,
   settingTen: 0,
   settingBrometr: 0,
+  settingValueBrometr: 0,
 };
