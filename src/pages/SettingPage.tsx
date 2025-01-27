@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
@@ -35,11 +35,13 @@ const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useSaveSettingMutation();
-  const {
-    data = initialSortedData,
-    isLoading,
-    error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  const dataSamagon = useMemo (() => {
+    return {
+      key: key,
+        };
+  },[key]);
+
+  const { data = initialSortedData, isLoading, error } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -274,11 +276,7 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator
-                icon="antena_bars"
-                label={`Барометр, ${lableBarometr}`}
-                help={helpM.barometer_m}
-              />
+              <ACRegulator icon="antena_bars" label={`Барометр, ${lableBarometr}`} help={helpM.barometer_m} />
               <Controller
                 name="settingBrometr"
                 control={control}

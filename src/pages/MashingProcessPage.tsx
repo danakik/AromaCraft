@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ACBlockTempSmall } from '../components/blocktemp';
@@ -21,6 +21,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { calculateHandPercent } from '../utils/calculate';
 import { debounce } from 'lodash';
+import { useReedReceptsMutation } from '../api/receptsApi';
 
 type FormData = {
   mashingPauses: number;
@@ -70,11 +71,55 @@ type MashingType = `mashing${'Temp' | 'Gyst' | 'Time'}${0 | 1 | 2 | 3 | 4 | 5 | 
 
 const MashingProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
-  const {
-    data = initialSortedData,
-    isLoading,
-    error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+
+  const [receptName, setReceptName] = useState('');
+    const [receptNumber, setReceptNumber] = useState('');
+    const [reedRecept] = useReedReceptsMutation();
+  
+    const pageRecept = () => {
+      return {
+        key: key,
+        w: 3,
+      };
+    };
+  
+    const [listRecept, setLsitRecept] = useState([]);
+  
+    const fetchRecept = async () => {
+      const respons = await reedRecept(pageRecept());
+      setLsitRecept(respons.data);
+    };
+  
+    useEffect(() => {
+      fetchRecept();
+    }, []);
+  
+  
+    const pageReceptData = useMemo(() => {
+      return {
+        key: key,
+        w: 3,
+        r: receptNumber,
+        n: receptName,
+      };
+    },[receptName, receptNumber]);
+  
+    const {
+      data = initialSortedData,
+      isLoading,
+      error,
+    } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+  
+    const handleScenarioChange = (label: string, value: string) => {
+      setReceptName(label);
+      setReceptNumber(value);
+    };
+  
+    useEffect(() => {
+      if (receptName !== '') {
+        console.log(pageReceptData);
+      }
+    }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -234,7 +279,7 @@ const MashingProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp />
+              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
 
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />

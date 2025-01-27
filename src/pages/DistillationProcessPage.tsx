@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -15,6 +15,7 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
 import { debounce } from 'lodash';
+import { useReedReceptsMutation } from '../api/receptsApi';
 
 type FormData = {
   distTempPower: number;
@@ -30,11 +31,54 @@ type FormData = {
 
 const DistillationProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
+
+  const [receptName, setReceptName] = useState('');
+  const [receptNumber, setReceptNumber] = useState('');
+  const [reedRecept] = useReedReceptsMutation();
+
+  const pageRecept = () => {
+    return {
+      key: key,
+      w: 1,
+    };
+  };
+
+  const [listRecept, setLsitRecept] = useState([]);
+
+  const fetchRecept = async () => {
+    const respons = await reedRecept(pageRecept());
+    setLsitRecept(respons.data);
+  };
+
+  useEffect(() => {
+    fetchRecept();
+  }, []);
+
+  const pageReceptData = useMemo(() => {
+    return {
+      key: key,
+      w: 1,
+      r: receptNumber,
+      n: receptName,
+    };
+  }, [receptName, receptNumber]);
+
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+
+  const handleScenarioChange = (label: string, value: string) => {
+    setReceptName(label);
+    setReceptNumber(value);
+  };
+
+  useEffect(() => {
+    if (receptName !== '') {
+      console.log(pageReceptData);
+    }
+  }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -59,23 +103,22 @@ const DistillationProcessPage = () => {
   const cubeSwith = watch('distCubeSwitch');
 
   useEffect(() => {
-    if (data.version !== 0) {      
-      if((data.version>=3.3 && data.version<4.0) || data.version>=4.3){
+    if (data.version !== 0) {
+      if ((data.version >= 3.3 && data.version < 4.0) || data.version >= 4.3) {
         setSwithBody(false);
-        if(cubeSwith){
+        if (cubeSwith) {
           setdisabledTime(true);
           setdisabledBody(false);
-        }else{
+        } else {
           setdisabledTime(false);
           setdisabledBody(true);
-
         }
-        if(timeBody === 0 && cubeSwith === false){
-          setdisabledPowers(true)
-          setstrHead('')
-        }else if((timeBody !=0 && cubeSwith === false) || cubeSwith === true){
-          setdisabledPowers(false)
-          setstrHead(' голів')
+        if (timeBody === 0 && cubeSwith === false) {
+          setdisabledPowers(true);
+          setstrHead('');
+        } else if ((timeBody != 0 && cubeSwith === false) || cubeSwith === true) {
+          setdisabledPowers(false);
+          setstrHead(' голів');
         }
       }
     }
@@ -149,8 +192,7 @@ const DistillationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp />
-
+              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />

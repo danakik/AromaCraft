@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -19,6 +19,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
 import { debounce, values } from 'lodash';
+import { useReedReceptsMutation } from '../api/receptsApi';
 
 type FormData = {
   rectTempHead: number;
@@ -71,11 +72,54 @@ type FormData = {
 
 const RectificationProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
+  const [receptName, setReceptName] = useState('');
+  const [receptNumber, setReceptNumber] = useState('');
+  const [reedRecept] = useReedReceptsMutation();
+
+  const pageRecept = () => {
+    return {
+      key: key,
+      w: 2,
+    };
+  };
+
+  const [listRecept, setLsitRecept] = useState([]);
+
+  const fetchRecept = async () => {
+    const respons = await reedRecept(pageRecept());
+    setLsitRecept(respons.data);
+  };
+
+  useEffect(() => {
+    fetchRecept();
+  }, []);
+
+
+  const pageReceptData = useMemo(() => {
+    return {
+      key: key,
+      w: 2,
+      r: receptNumber,
+      n: receptName,
+    };
+  },[receptName, receptNumber]);
+
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+
+  const handleScenarioChange = (label: string, value: string) => {
+    setReceptName(label);
+    setReceptNumber(value);
+  };
+
+  useEffect(() => {
+    if (receptName !== '') {
+      console.log(pageReceptData);
+    }
+  }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -141,9 +185,10 @@ const RectificationProcessPage = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [symbol, setSymbol] = useState('');
   const [bodySymbol, setBodySymbol] = useState('');
-
+  
   useEffect(() => {
     if (data.version !== 0) {
+
       if (data.version >= 4.2) {
         setSwitchTail(false);
         if (hasTailSwitch) {
@@ -172,14 +217,14 @@ const RectificationProcessPage = () => {
       if (data.version >= 4) {
         setTempTail(false);
       }
-      
+
       if (data.transitBody == 0) {
         setDisabledTimeBody(true);
-      }else if(data.transitBody == 1){
+      } else if (data.transitBody == 1) {
         setDisabledTimeBody(false);
         setIsSwitchOn(true);
         setBodySymbol('хв');
-      }else if(data.transitBody == 2){
+      } else if (data.transitBody == 2) {
         setDisabledTimeBody(false);
         setIsSwitchOn(false);
         setBodySymbol('°C');
@@ -190,11 +235,10 @@ const RectificationProcessPage = () => {
       } else if (data.selection == 1 && data.version >= 2.5) {
         setSymbol('л/г');
       }
-      console.log(isSwitchOn)
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -370,7 +414,7 @@ const RectificationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp />
+              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />

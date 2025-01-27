@@ -1,41 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { ButtonGroup } from 'primereact/buttongroup';
 import '../styles/scriptcomp.css';
 
-type Option = {
-  label: string;
-  value: string;
+type ACScriptCompProps = {
+  options: string[];
+  onChange?: (label: string, value: string) => void;
 };
 
-export const ACScriptComp: React.FC = () => {
-  const options: Option[] = [
-    { label: 'Сценарій 1', value: '1' },
-    { label: 'Сценарій 2', value: '2' },
-  ];
+export const ACScriptComp: React.FC<ACScriptCompProps> = ({ options, onChange }) => {
+  const formattedOptions = options.map((label, index) => ({
+    label,
+    value: index.toString(),
+  }));
 
-  const [selectedOption, setSelectedOption] = useState<string>(options[0].value);
+  const [selectedOption, setSelectedOption] = useState<string>('');
+
+  useEffect(() => {
+    if (formattedOptions.length > 0) {
+      const initialOption = formattedOptions[0];
+      setSelectedOption(initialOption.value);
+      onChange?.(initialOption.label, initialOption.value);
+    }
+  }, [options]);
+
+  const handleChange = (newValue: string) => {
+    setSelectedOption(newValue);
+    const selectedLabel = formattedOptions.find((option) => option.value === newValue)?.label || '';
+    onChange?.(selectedLabel, newValue);
+  };
+
+  const findNextValidIndex = (currentIndex: number, direction: 1 | -1) => {
+    let nextIndex = currentIndex;
+
+    do {
+      nextIndex = (nextIndex + direction + formattedOptions.length) % formattedOptions.length;
+    } while (formattedOptions[nextIndex].label === '---' && nextIndex !== currentIndex);
+
+    return nextIndex;
+  };
 
   const handleNext = () => {
-    const currentIndex = options.findIndex((option) => option.value === selectedOption);
-    const nextIndex = (currentIndex + 1) % options.length;
-    setSelectedOption(options[nextIndex].value);
+    const currentIndex = formattedOptions.findIndex((option) => option.value === selectedOption);
+    const nextIndex = findNextValidIndex(currentIndex, 1);
+    handleChange(formattedOptions[nextIndex].value);
   };
 
   const handlePrev = () => {
-    const currentIndex = options.findIndex((option) => option.value === selectedOption);
-    const prevIndex = (currentIndex - 1 + options.length) % options.length;
-    setSelectedOption(options[prevIndex].value);
+    const currentIndex = formattedOptions.findIndex((option) => option.value === selectedOption);
+    const prevIndex = findNextValidIndex(currentIndex, -1);
+    handleChange(formattedOptions[prevIndex].value);
   };
 
-  const selectedLabel = options.find((option) => option.value === selectedOption)?.label;
+  const selectedLabel = formattedOptions.find((option) => option.value === selectedOption)?.label;
 
   return (
     <div>
       <ButtonGroup>
-          <Button icon="pi pi-chevron-left button-arrow" onClick={handlePrev} rounded text className='button-arrow button-group'/>
-          <Button label={selectedLabel} className='button-group button-script'/>
-          <Button icon="pi pi-chevron-right button-arrow" onClick={handleNext} rounded text className='button-arrow button-group'/>
+        <Button
+          icon="pi pi-chevron-left button-arrow"
+          onClick={handlePrev}
+          rounded
+          text
+          aria-label="Previous scenario"
+          className="button-arrow button-group"
+        />
+        <Button label={selectedLabel || 'Немає даних'} className="button-group button-script" />
+        <Button
+          icon="pi pi-chevron-right button-arrow"
+          onClick={handleNext}
+          rounded
+          text
+          aria-label="Next scenario"
+          className="button-arrow button-group"
+        />
       </ButtonGroup>
     </div>
   );

@@ -242,7 +242,7 @@ const initialSortedData: SortedData = {
 };
 
 const useSortedData = (key: string | null) => {
-  const { data, error, isLoading, refetch } = useGetDataQuery(key!, {
+  const { data, error, isLoading, refetch } = useGetDataQuery({ key }, {
     skip: !key,
   });
   const [sortedData, setSortedData] = useState<SortedData>(initialSortedData);

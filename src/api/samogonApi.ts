@@ -13,11 +13,11 @@ const samogonApi = createApi({
   refetchOnFocus: true,
   refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getData: builder.query<SortedData, string>({
-      query: (key) => ({
+    getData: builder.query<SortedData, Record<string, any>>({
+      query: (data) => ({
         url: 'read_data.php',
         method: 'POST',
-        body: new URLSearchParams({ key }),
+        body: new URLSearchParams(data),
       }),
       transformResponse: (response: string): SortedData => {
         const data: DataResponse = response

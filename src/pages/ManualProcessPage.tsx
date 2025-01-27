@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, version } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import * as yup from 'yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
@@ -46,12 +46,18 @@ const ManualProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useSaveHandMutation();
+  const dataSamagon = useMemo(() => {
+    return {
+      key: key,
+    };
+  }, [key]);
+
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
-
+  } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  
   const schema = yup.object().shape({
     tempSelect: yup.number().max(120, 'Максимальне значення 120').min(0, 'Мінімальне значення 0'),
     handPercent: yup.number().max(6, 'Максимальне значення 6').min(0.06, 'Мінімальне значення 0.06'),
@@ -117,7 +123,6 @@ const ManualProcessPage = () => {
     };
   };
 
-
   const formValues = watch();
   const prevFormValues = useRef(formValues);
 
@@ -150,7 +155,7 @@ const ManualProcessPage = () => {
   const [disabledPID, setDisabledKPID] = useState(false);
   useEffect(() => {
     if (data.version !== 0) {
-      if (data.version >= 2.30 && data.version < 4) {
+      if (data.version >= 2.3 && data.version < 4) {
         setDisabledK4(true);
       } else if (data.version < 2.3) {
         setDisabledKPID(true);
@@ -167,8 +172,6 @@ const ManualProcessPage = () => {
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
-
-
 
   return (
     <>
@@ -312,7 +315,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="handPin1"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -331,7 +334,7 @@ const ManualProcessPage = () => {
                 name="handPin2"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID}/>
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID} />
                 )}
               />
             </div>
@@ -374,7 +377,7 @@ const ManualProcessPage = () => {
                 name="handK4"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledK4}/>
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledK4} />
                 )}
               />
             </div>
