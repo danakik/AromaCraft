@@ -8,6 +8,7 @@ import DataIcon from '../../assets/icons/data_icon';
 import SettingsIcon from '../../assets/icons/settings_icon';
 import ExitIcon from '../../assets/icons/exit_icon';
 import GlobeIcon from '../../assets/icons/globe_icon';
+import { SelectButton } from 'primereact/selectbutton';
 import './SideBar.css';
 
 export const SideBar = (props: PanelMenuProps) => {
@@ -15,6 +16,13 @@ export const SideBar = (props: PanelMenuProps) => {
   const location = useLocation();
 
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
+
+  const selectButtonOptions = [
+    { label: 'ENG', value: '1' },
+    { label: 'UKR', value: '2' },
+];
+
+const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const homeIcon = useMemo(
     () =>
@@ -63,6 +71,25 @@ export const SideBar = (props: PanelMenuProps) => {
 
   const mainPageMenuItems: MenuItem[] = useMemo(
     () => [
+       {
+        label: '',
+        icon: globeIcon,
+        template: (item) => {
+          return (
+              <div className="flex align-items-center">
+                  <i className={`pi ${item.icon}`}></i>
+                  <div className="select-lang">
+                  <SelectButton
+                      value={selectedOption}
+                      options={selectButtonOptions}
+                      onChange={(e) => setSelectedOption(e.value)}
+                      optionLabel="label"
+                  />
+                  </div>
+              </div>
+          );
+      },
+    }, 
       {
         label: 'Головна',
         icon: homeIcon,
@@ -76,11 +103,29 @@ export const SideBar = (props: PanelMenuProps) => {
         className: location.pathname === '/login' ? 'active' : '',
       },
     ],
-    [navigate, location.pathname, homeIcon, exitIcon],
+    [navigate, location.pathname, homeIcon, exitIcon, globeIcon, selectedOption],
   );
 
   const defaultMenuItems: MenuItem[] = useMemo(
     () => [
+      /* {
+        label: '',
+        icon: globeIcon,
+        template: (item) => {
+          return (
+              <div className="flex align-items-center">
+                  <i className={`pi ${item.icon}`}></i>
+                  <SelectButton
+                      value={selectedOption}
+                      options={selectButtonOptions}
+                      onChange={(e) => setSelectedOption(e.value)}
+                      optionLabel="label"
+                      className="p-button-rounded select-button"
+                  />
+              </div>
+          );
+      },
+    }, */
       {
         label: 'Головна',
         icon: homeIcon,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import KotelIcon from '../assets/icons/kotel_icon';
 import NagrevIcon from '../assets/icons/nagrev_icon';
 import IngredientIcon from '../assets/icons/ingredient_icon';
@@ -25,7 +25,17 @@ import { ACStatusComp } from '../components/statuscomp';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
-  const { data = initialSortedData } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  const dataSamagon = useMemo(() => {
+    return {
+      key: key,
+    };
+  }, [key]);
+
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(dataSamagon, { pollingInterval: SYNC_INTERVAL });
 
   return (
     <>
@@ -44,7 +54,13 @@ const DevicePage = () => {
         <UnderTextIcon style={{ position: 'absolute', top: 567, left: 844, transform: 'scale(-1, -1)' }} />
 
         {createExplainingDiv('#2942e1', String(data.tempWater), 'Вода', { top: 70, left: 84 }, helpM.temp_water_m)}
-        {createExplainingDiv('#e74a4a', String(data.tempDef), 'Дефлагматор', { top: 58, left: 816.5 }, helpM.temp_defl_m)}
+        {createExplainingDiv(
+          '#e74a4a',
+          String(data.tempDef),
+          'Дефлагматор',
+          { top: 58, left: 816.5 },
+          helpM.temp_defl_m,
+        )}
         {createExplainingDiv('#e7764a', String(data.tempCargi), 'Царга', { top: 271, left: 827 }, helpM.temp_cargi_m)}
         {createExplainingDiv('#9e4ae7', String(data.tempCube), 'Куб', { top: 529, left: 860 }, helpM.temp_cube_m)}
         <p

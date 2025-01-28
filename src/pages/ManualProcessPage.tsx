@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import * as yup from 'yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
@@ -46,12 +46,18 @@ const ManualProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useSaveHandMutation();
+  const dataSamagon = useMemo(() => {
+    return {
+      key: key,
+    };
+  }, [key]);
+
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
-
+  } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  
   const schema = yup.object().shape({
     tempSelect: yup.number().max(120, 'Максимальне значення 120').min(0, 'Мінімальне значення 0'),
     handPercent: yup.number().max(6, 'Максимальне значення 6').min(0.06, 'Мінімальне значення 0.06'),
@@ -117,7 +123,6 @@ const ManualProcessPage = () => {
     };
   };
 
-
   const formValues = watch();
   const prevFormValues = useRef(formValues);
 
@@ -129,8 +134,9 @@ const ManualProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      console.log(formattedData);
-      /* save(formattedData); */
+      /* console.log(formattedData);
+      save(formattedData); 
+      protection against children */
 
       setIsFormChanging(false);
     }, 5000);
@@ -144,37 +150,28 @@ const ManualProcessPage = () => {
     };
   }, [formValues, isFormChanging]);
 
-  const [simvol, setSimvol] = useState('');
-
+  const [symbol, setSymbol] = useState('');
+  const [disabledK4, setDisabledK4] = useState(false);
+  const [disabledPID, setDisabledKPID] = useState(false);
   useEffect(() => {
     if (data.version !== 0) {
-      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
-        setSimvol('%');
-      } else if (data.selection == 0 || data.version < 2.5) {
-        setSimvol('%');
-      } else {
-        setSimvol('л/г');
-      }
-    }
-  }, [data]);
-
-  const [disabledK4, setdisabledK4] = useState(false);
-  const [disabledPID, setdisabledKPID] = useState(false);
-  useEffect(() => {
-    if (data.version !== 0) {
-      if (data.version >= 2.30 && data.version < 4) {
-        setdisabledK4(true);
+      if (data.version >= 2.3 && data.version < 4) {
+        setDisabledK4(true);
       } else if (data.version < 2.3) {
-        setdisabledKPID(true);
-        setdisabledK4(true);
+        setDisabledKPID(true);
+        setDisabledK4(true);
+      }
+
+      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+        setSymbol('%');
+      } else if (data.selection == 1 && data.version >= 2.5) {
+        setSymbol('л/г');
       }
     }
   }, [data]);
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
-
-
 
   return (
     <>
@@ -219,14 +216,14 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                <Controller
+                 <Controller
                   name="handPercent"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACCounterSpeed
                       value={value.value}
                       true_value={value.true_value}
-                      units={simvol}
+                      units={symbol}
                       label="Швидкість відбору"
                       help={helpM.speed_selection_m}
                       onChange={(e) => {
@@ -261,14 +258,14 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                <Controller
+                 <Controller
                   name="handSpeedTail"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACCounterSpeed
                       value={value.value}
                       true_value={value.true_value}
-                      units={simvol}
+                      units={symbol}
                       label="Швидкість відб. хвостів"
                       help={helpM.speed_selection_tails_m}
                       disabled={disabledK4}

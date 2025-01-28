@@ -13,11 +13,11 @@ const samogonApi = createApi({
   refetchOnFocus: true,
   refetchOnReconnect: true,
   endpoints: (builder) => ({
-    getData: builder.query<SortedData, string>({
-      query: (key) => ({
+    getData: builder.query<SortedData, Record<string, any>>({
+      query: (data) => ({
         url: 'read_data.php',
         method: 'POST',
-        body: new URLSearchParams({ key }),
+        body: new URLSearchParams(data),
       }),
       transformResponse: (response: string): SortedData => {
         const data: DataResponse = response
@@ -51,7 +51,7 @@ const samogonApi = createApi({
           selectionSpeed: parseNumber(data[110]),
           handSpeedTail: parseNumber(data[113]),
           handK4: parseNumber(data[114]),
-          switchBody: parseNumber(data[121]),
+          switchTail: parseNumber(data[121]),
 
           distAcceleration: parseNumber(data[17]),
           distPower: parseNumber(data[18]),
@@ -91,14 +91,15 @@ const samogonApi = createApi({
           rectSwitchCarge: parseNumber(data[127]),
           rectSelectCarge: parseNumber(data[128]),
           transitBody: parseNumber(data[111]),
+          rectTempTransit: parseNumber(data[136]),
 
           mashingPauses: parseNumber(data[47]),
           mashingHeat: parseNumber(data[48]),
           mashingHeatTemp: parseNumber(data[49]),
           mashingHeatPower: parseNumber(data[50]),
           mashingHeatTime: parseNumber(data[51]),
-          mashingCool: parseNumber(data[52]), 
-          mashingCoolTemp: parseNumber(data[53]), 
+          mashingCool: parseNumber(data[52]),
+          mashingCoolTemp: parseNumber(data[53]),
           mashingCoolGyst: parseNumber(data[54]),
 
           mashingTemp0: parseNumber(data[55]),
@@ -122,7 +123,7 @@ const samogonApi = createApi({
           mashingGyst7: parseNumber(data[72]),
           mashingGyst8: parseNumber(data[73]),
           mashingGyst9: parseNumber(data[74]),
-    
+
           mashingTime0: parseNumber(data[75]),
           mashingTime1: parseNumber(data[76]),
           mashingTime2: parseNumber(data[77]),
@@ -134,6 +135,14 @@ const samogonApi = createApi({
           mashingTime8: parseNumber(data[83]),
           mashingTime9: parseNumber(data[84]),
 
+          settingTempCupe: parseNumber(data[89]),
+          settingTempCarge: parseNumber(data[90]),
+          settingTempDef: parseNumber(data[91]),
+          settingTempWater: parseNumber(data[92]),
+          settingSeatHeat: parseNumber(data[100]),
+          settingTen: parseNumber(data[120]),
+          settingBrometr: parseNumber(data[108]),
+          settingValueBrometr: parseNumber(data[112]),
         };
       },
     }),

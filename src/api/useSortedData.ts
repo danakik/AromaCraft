@@ -27,7 +27,7 @@ interface SortedData {
   selectionSpeed: number;
   handSpeedTail: number;
   handK4: number;
-  switchBody: number;
+  switchTail: number;
 
   distAcceleration: number;
   distPower: number;
@@ -67,14 +67,15 @@ interface SortedData {
   rectSwitchCarge: number;
   rectSelectCarge: number;
   transitBody: number;
+  rectTempTransit: number;
 
   mashingPauses: number;
   mashingHeat: number;
   mashingHeatTemp: number;
   mashingHeatPower: number;
   mashingHeatTime: number;
-  mashingCool: number; 
-  mashingCoolTemp: number; 
+  mashingCool: number;
+  mashingCoolTemp: number;
   mashingCoolGyst: number;
 
   mashingTemp0: number;
@@ -88,15 +89,15 @@ interface SortedData {
   mashingTemp8: number;
   mashingTemp9: number;
 
-  mashingGyst0: number; 
-  mashingGyst1: number; 
-  mashingGyst2: number; 
-  mashingGyst3: number; 
-  mashingGyst4: number; 
-  mashingGyst5: number; 
-  mashingGyst6: number; 
-  mashingGyst7: number; 
-  mashingGyst8: number; 
+  mashingGyst0: number;
+  mashingGyst1: number;
+  mashingGyst2: number;
+  mashingGyst3: number;
+  mashingGyst4: number;
+  mashingGyst5: number;
+  mashingGyst6: number;
+  mashingGyst7: number;
+  mashingGyst8: number;
   mashingGyst9: number;
 
   mashingTime0: number;
@@ -109,6 +110,15 @@ interface SortedData {
   mashingTime7: number;
   mashingTime8: number;
   mashingTime9: number;
+
+  settingTempCupe: number;
+  settingTempCarge: number;
+  settingTempDef: number;
+  settingTempWater: number;
+  settingSeatHeat: number;
+  settingTen: number;
+  settingBrometr: number;
+  settingValueBrometr: number;
 }
 
 const initialSortedData: SortedData = {
@@ -137,7 +147,7 @@ const initialSortedData: SortedData = {
   selectionSpeed: 0,
   handSpeedTail: 0,
   handK4: 0,
-  switchBody: 0,
+  switchTail: 0,
 
   distAcceleration: 0,
   distPower: 0,
@@ -177,14 +187,15 @@ const initialSortedData: SortedData = {
   rectSwitchCarge: 0,
   rectSelectCarge: 0,
   transitBody: 0,
+  rectTempTransit: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
   mashingHeatTemp: 0,
   mashingHeatPower: 0,
   mashingHeatTime: 0,
-  mashingCool: 0, 
-  mashingCoolTemp: 0, 
+  mashingCool: 0,
+  mashingCoolTemp: 0,
   mashingCoolGyst: 0,
 
   mashingTemp0: 0,
@@ -219,10 +230,19 @@ const initialSortedData: SortedData = {
   mashingTime7: 0,
   mashingTime8: 0,
   mashingTime9: 0,
+
+  settingTempCupe: 0,
+  settingTempCarge: 0,
+  settingTempDef: 0,
+  settingTempWater: 0,
+  settingSeatHeat: 0,
+  settingTen: 0,
+  settingBrometr: 0,
+  settingValueBrometr: 0,
 };
 
 const useSortedData = (key: string | null) => {
-  const { data, error, isLoading, refetch } = useGetDataQuery(key!, {
+  const { data, error, isLoading, refetch } = useGetDataQuery({ key }, {
     skip: !key,
   });
   const [sortedData, setSortedData] = useState<SortedData>(initialSortedData);
@@ -265,7 +285,7 @@ const useSortedData = (key: string | null) => {
       selectionSpeed: parseNumber(newData[110]),
       handSpeedTail: parseNumber(newData[113]),
       handK4: parseNumber(newData[114]),
-      switchBody: parseNumber(newData[121]),
+      switchTail: parseNumber(newData[121]),
 
       distAcceleration: parseNumber(newData[17]),
       distPower: parseNumber(newData[18]),
@@ -306,14 +326,15 @@ const useSortedData = (key: string | null) => {
       rectSwitchTail: parseNumber(newData[130]),
       rectSelectCarge: parseNumber(newData[128]),
       transitBody: parseNumber(newData[111]),
+      rectTempTransit: parseNumber(newData[136]),
 
       mashingPauses: parseNumber(newData[47]),
       mashingHeat: parseNumber(newData[48]),
       mashingHeatTemp: parseNumber(newData[49]),
       mashingHeatPower: parseNumber(newData[50]),
       mashingHeatTime: parseNumber(newData[51]),
-      mashingCool: parseNumber(newData[52]), 
-      mashingCoolTemp: parseNumber(newData[53]), 
+      mashingCool: parseNumber(newData[52]),
+      mashingCoolTemp: parseNumber(newData[53]),
       mashingCoolGyst: parseNumber(newData[54]),
 
       mashingTemp0: parseNumber(newData[55]),
@@ -348,6 +369,15 @@ const useSortedData = (key: string | null) => {
       mashingTime7: parseNumber(newData[82]),
       mashingTime8: parseNumber(newData[83]),
       mashingTime9: parseNumber(newData[84]),
+
+      settingTempCupe: parseNumber(newData[89]),
+      settingTempCarge: parseNumber(newData[90]),
+      settingTempDef: parseNumber(newData[91]),
+      settingTempWater: parseNumber(newData[92]),
+      settingSeatHeat: parseNumber(newData[100]),
+      settingTen: parseNumber(newData[120]),
+      settingBrometr: parseNumber(newData[108]),
+      settingValueBrometr: parseNumber(newData[112]),
     };
 
     setSortedData(newSortedData);

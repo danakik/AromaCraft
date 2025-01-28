@@ -17,8 +17,8 @@ const HeatIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
           y2="0.299805"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FF0000" stop-opacity="0.61" />
-          <stop offset="1" stop-color="#737373" stop-opacity="0" />
+          <stop stopColor="#FF0000" stopOpacity="0.61" />
+          <stop offset="1" stopColor="#737373" stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

@@ -3,7 +3,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { Knob } from 'primereact/knob';
 import { Dialog } from 'primereact/dialog';
-import { Slider } from 'primereact/slider';
+import { Slider, SliderChangeEvent } from 'primereact/slider';
+import { InputNumber, InputNumberValueChangeEvent } from 'primereact/inputnumber';
 import '../styles/knob.css';
 
 type KnobProps = {
@@ -51,8 +52,19 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
-  let gradID = getGradientClass(color);
-  const valueTemp = `${value.toFixed(1).toString().replace('.', ',')}°C`;
+
+  const gradID = getGradientClass(color);
+
+  const handleKnobChange = (e: { value: number }) => {
+    setValue(e.value);
+    if (onChange) onChange(e);
+  };
+
+  const handleInputNumberChange = (e: InputNumberValueChangeEvent) => {
+    const newValue = e.value ?? 0;
+    setValue(newValue);
+    if (onChange) onChange({ value: newValue });
+  };
 
   const handleLabelClick = () => {
     setDialogVisible(true);
@@ -63,7 +75,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
   };
 
   return (
-    <div className="card flex flex-column align-items-center justify-content-center">
+    <div className="card flex flex-column align-items-center justify-content-center pb-2">
       <svg width="0" height="0">
         <defs>
           <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -85,21 +97,35 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
         </defs>
       </svg>
 
-      <Knob
-        value={value}
-        onChange={(e) => {
-          setValue(e.value);
-          if (onChange) onChange(e);
-        }}
-        className="custom-knob"
-        valueColor={gradID}
-        rangeColor="#999CA2"
-        valueTemplate={valueTemp}
-        max={120}
-        step={0.1}
-        size={200}
-        readOnly={readonly}
-      />
+      <div className="knob-container">
+        <Knob
+          value={value}
+          onChange={handleKnobChange}
+          className="custom-knob"
+          valueColor={gradID}
+          rangeColor="#999CA2"
+          valueTemplate={`${value.toFixed(1)}°C`}
+          min={0}
+          max={120}
+          step={0.1}
+          size={200}
+          readOnly={readonly}
+        />
+        <div className="knob-input">
+          <InputNumber
+            value={value}
+            onValueChange={handleInputNumberChange}
+            disabled={readonly}
+            mode="decimal"
+            minFractionDigits={1}
+            maxFractionDigits={1}
+            suffix="°C"
+            min={0}
+            max={120}
+            step={0.1}
+          />
+        </div>
+      </div>
 
       <span className="knob-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
         {label}
@@ -112,8 +138,8 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
   );
 };
 
-export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange}) => {
-  const [value, setValue] = useState<number | [number, number]>(initialValue);
+export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange }) => {
+  const [value, setValue] = useState<number>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
   useEffect(() => {
@@ -122,8 +148,17 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
 
   const gradientClass = getGradientClassSlider(color);
 
-  const valueDisplay =
-    typeof value === 'number' ? `${value.toString().replace('.', ',')}°C` : `${value[0]}, ${value[1]}°C`;
+  const handleSliderChange = (e: SliderChangeEvent) => {
+    const newValue = Array.isArray(e.value) ? e.value[0] : e.value;
+    setValue(newValue);
+    if (onChange) onChange({ value: newValue });
+  };
+
+  const handleInputNumberChange = (e: InputNumberValueChangeEvent) => {
+    const newValue = e.value ?? 0;
+    setValue(newValue);
+    if (onChange) onChange({ value: newValue });
+  };
 
   const handleLabelClick = () => setDialogVisible(true);
   const hideDialog = () => setDialogVisible(false);
@@ -151,19 +186,32 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
         </defs>
       </svg>
 
-      <div className="ac-slider-container">
-      <Slider
+      <div className="ac-slider-container pb-2">
+        <Slider
           value={value}
-          onChange={(e) => {
-            setValue(e.value);
-            if (onChange) onChange(e);
-          }}
+          onChange={handleSliderChange}
           className={`unfilled custom-slider ${gradientClass}`}
+          min={0}
           max={120}
+          step={0.1}
           disabled={readonly}
         />
-        <div className="slider-temp">{valueDisplay}</div>
+        <div className="slider-temp flex flex-row align-items-center justify-content-center">
+          <InputNumber
+            value={value}
+            onValueChange={handleInputNumberChange}
+            disabled={readonly}
+            mode="decimal"
+            minFractionDigits={1}
+            maxFractionDigits={1}
+            suffix="°C"
+            min={0}
+            max={120}
+            step={0.1}
+          />
+          </div>
       </div>
+
       <span className="knob-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
         {label}
       </span>

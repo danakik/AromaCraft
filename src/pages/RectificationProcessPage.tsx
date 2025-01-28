@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -19,10 +19,14 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
 import { debounce, values } from 'lodash';
+import { useReedReceptsMutation } from '../api/receptsApi';
 
 type FormData = {
   rectTempHead: number;
-  rectPercentHead: number;
+  rectPercentHead: {
+    value: number;
+    true_value: number;
+  };
   rectTempBody: number;
   rectGystBody: number;
   rectCubeTail: number;
@@ -30,17 +34,29 @@ type FormData = {
     value: number;
     true_value: number;
   };
-  rectDecreaseSpeed: number;
+  rectDecreaseSpeed: {
+    value: number;
+    true_value: number;
+  };
   rectAcceleration: number;
   rectPower: number;
   rectPowerBody: number;
   rectPowerTail: number;
   rectGystHead: number;
-  rectPercentBody: number;
-  rectSpeedCarge: number;
+  rectPercentBody: {
+    value: number;
+    true_value: number;
+  };
+  rectSpeedCarge: {
+    value: number;
+    true_value: number;
+  };
   rectCyclesNumber: number;
   rectEndCycle: number;
-  rectDecreaseCycle: number;
+  rectDecreaseCycle: {
+    value: number;
+    true_value: number;
+  };
   rectTempPower: number;
   rectTempStop: number;
   rectTempError: number;
@@ -51,38 +67,97 @@ type FormData = {
   rectSwitchTail: boolean;
   rectSwitchCube: boolean;
   rectSwitchCarge: boolean;
+  rectTempTransit: number;
 };
 
 const RectificationProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
+  const [receptName, setReceptName] = useState('');
+  const [receptNumber, setReceptNumber] = useState('');
+  const [reedRecept] = useReedReceptsMutation();
+
+  const pageRecept = () => {
+    return {
+      key: key,
+      w: 2,
+    };
+  };
+
+  const [listRecept, setLsitRecept] = useState([]);
+
+  const fetchRecept = async () => {
+    const respons = await reedRecept(pageRecept());
+    setLsitRecept(respons.data);
+  };
+
+  useEffect(() => {
+    fetchRecept();
+  }, []);
+
+
+  const pageReceptData = useMemo(() => {
+    return {
+      key: key,
+      w: 2,
+      r: receptNumber,
+      n: receptName,
+    };
+  }, [receptName, receptNumber]);
+
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(key ?? skipToken, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+
+  const handleScenarioChange = (label: string, value: string) => {
+    setReceptName(label);
+    setReceptNumber(value);
+  };
+
+  useEffect(() => {
+    if (receptName !== '') {
+      console.log(pageReceptData);
+    }
+  }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
       rectTempHead: data.rectTempHead,
-      rectPercentHead: data.rectPercentHead,
+      rectPercentHead: {
+        value: calculateHandPercent(data.rectPercentHead, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectPercentHead,
+      },
       rectTempBody: data.rectTempBody,
       rectGystBody: data.rectGystBody,
       rectCubeTail: data.rectCubeTail,
       rectSpeedTail: {
         value: calculateHandPercent(data.rectSpeedTail, data.selectionSpeed, data.version, data.selection),
-        true_value: data.handPercent,
+        true_value: data.rectSpeedTail,
       },
-      rectDecreaseSpeed: data.rectDecreaseSpeed,
+      rectDecreaseSpeed: {
+        value: calculateHandPercent(data.rectDecreaseSpeed, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectDecreaseSpeed,
+      },
       rectAcceleration: data.rectAcceleration,
       rectPower: data.rectPower,
       rectPowerBody: data.rectPowerBody,
       rectPowerTail: data.rectPowerTail,
       rectGystHead: data.rectGystHead,
-      rectPercentBody: data.rectPercentBody,
-      rectSpeedCarge: data.rectSpeedCarge,
+      rectPercentBody: {
+        value: calculateHandPercent(data.rectPercentBody, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectPercentBody,
+      },
+      rectSpeedCarge: {
+        value: calculateHandPercent(data.rectSpeedCarge, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectSpeedCarge,
+      },
       rectCyclesNumber: data.rectCyclesNumber,
       rectEndCycle: data.rectEndCycle,
-      rectDecreaseCycle: data.rectDecreaseCycle,
+      rectDecreaseCycle: {
+        value: calculateHandPercent(data.rectDecreaseCycle, data.selectionSpeed, data.version, data.selection),
+        true_value: data.rectDecreaseCycle,
+      },
       rectTempPower: data.rectTempPower,
       rectTempStop: data.rectTempStop,
       rectTempError: data.rectTempError,
@@ -93,6 +168,7 @@ const RectificationProcessPage = () => {
       rectSwitchTail: !!data.rectSwitchTail,
       rectSwitchCube: !!data.rectSwitchCube,
       rectSwitchCarge: !!data.rectSwitchCarge,
+      rectTempTransit: data.rectTempTransit,
     },
   });
 
@@ -106,8 +182,13 @@ const RectificationProcessPage = () => {
   const [disabledCarge, setDisabledCarge] = useState(true);
   const hasTailSwitch = watch('rectSwitchTail');
   const hasCargeSwitch = watch('rectSwitchCarge');
+  const [isSwitchOn, setIsSwitchOn] = useState(true);
+  const [symbol, setSymbol] = useState('');
+  const [bodySymbol, setBodySymbol] = useState('');
+
   useEffect(() => {
     if (data.version !== 0) {
+
       if (data.version >= 4.2) {
         setSwitchTail(false);
         if (hasTailSwitch) {
@@ -118,6 +199,7 @@ const RectificationProcessPage = () => {
           setPowerTail(true);
         }
       }
+
       if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
         setDisabledCarge(false);
         setEndCycle(false);
@@ -127,19 +209,36 @@ const RectificationProcessPage = () => {
           setSelectCarge(true);
         }
       }
+
       if (data.version >= 4 && !hasTailSwitch) {
         setSpeedTail(false);
       }
+
       if (data.version >= 4) {
         setTempTail(false);
       }
+
       if (data.transitBody == 0) {
         setDisabledTimeBody(true);
+      } else if (data.transitBody == 1) {
+        setDisabledTimeBody(false);
+        setIsSwitchOn(true);
+        setBodySymbol('хв');
+      } else if (data.transitBody == 2) {
+        setDisabledTimeBody(false);
+        setIsSwitchOn(false);
+        setBodySymbol('°C');
+      }
+
+      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+        setSymbol('%');
+      } else if (data.selection == 1 && data.version >= 2.5) {
+        setSymbol('л/г');
       }
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -168,154 +267,157 @@ const RectificationProcessPage = () => {
               <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 p-3">
-            <div className="col flex flex-col align-items-center justify-content-center gap-3 p-2 -mt-3">
-              <div className="block col-6">
-                <Controller
-                  name="rectTempHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп. відбору голів"
-                      color="blue"
-                      initialValue={value}
-                      help={helpM.temp_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб. голів"
-                      help={helpM.gist_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+          <div className="flex flex-column align-items-center justify-content-center w-full">
+            <div className="grid grid-cols-2 w-full">
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп. відбору голів"
+                        color="blue"
+                        initialValue={value}
+                        help={helpM.temp_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб. голів"
+                        help={helpM.gist_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              <div className="block col-6">
-                <Controller
-                  name="rectTempBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп.відбору тіла"
-                      color="orange"
-                      initialValue={value}
-                      help={helpM.temp_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб.тіла"
-                      help={helpM.gist_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп.відбору тіла"
+                        color="orange"
+                        initialValue={value}
+                        help={helpM.temp_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб.тіла"
+                        help={helpM.gist_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              className="col flex flex-col align-items-center justify-content-center gap-3 p-2 -mt-2"
-              style={{ height: '200px' }}
-            >
-              <div className="block col-6" style={{ height: '200px', minWidth: '200px' }}>
-                <Controller
-                  name="rectCubeTail"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп.відб.хвостів"
-                      color="red"
-                      initialValue={value}
-                      help={helpM.temp_selection_tails_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                      readonly={tempTail}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectSpeedTail"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units="л/г"
-                      value={value.value}
-                      label="Швидкість"
-                      help={helpM.speed_selection_tails_m}
-                      onChange={(e) => {
-                        const updatedValue = calculateHandPercent(
-                          e.value,
-                          data.selectionSpeed,
-                          data.version,
-                          data.selection,
-                        );
-                        onChangeForm({
-                          value: updatedValue,
-                          true_value: e.value,
-                        });
-                      }}
-                      disabled={speedTail}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectCubeTail"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп.відб.хвостів"
+                        color="red"
+                        initialValue={value}
+                        help={helpM.temp_selection_tails_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                        readonly={tempTail}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectSpeedTail"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units="л/г"
+                        value={value.value}
+                        label="Швидкість"
+                        help={helpM.speed_selection_tails_m}
+                        onChange={(e) => {
+                          const updatedValue = calculateHandPercent(
+                            e.value,
+                            data.selectionSpeed,
+                            data.version,
+                            data.selection,
+                          );
+                          onChangeForm({
+                            value: updatedValue,
+                            true_value: e.value,
+                          });
+                        }}
+                        disabled={speedTail}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              <div className="block col-6" style={{ height: '200px', minWidth: '200px' }}>
-                <Controller
-                  name="rectTempStop"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      color="purple"
-                      label="Темп. зупинки"
-                      initialValue={value}
-                      help={helpM.temp_stop_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectTimeStab"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      label="Стабілізація колони"
-                      value={value}
-                      units="хв"
-                      help={helpM.stabilisation_column_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempStop"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        color="purple"
+                        label="Темп. зупинки"
+                        initialValue={value}
+                        help={helpM.temp_stop_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectTimeStab"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        label="Стабілізація колони"
+                        value={value}
+                        units="хв"
+                        help={helpM.stabilisation_column_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
+
             </div>
           </div>
         </div>
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '660px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp />
+              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
@@ -406,10 +508,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="ten"
                     label="Шв.відбору(голів)"
-                    value={value}
-                    units="%"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.speed_selection_heads_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -422,10 +535,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="ten"
                     label="Шв.відбору(тіла)"
-                    value={value}
-                    units="%"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.speed_selection_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -440,10 +564,21 @@ const RectificationProcessPage = () => {
                       icon="speed"
                       color="red"
                       label="Зменш.шв.царзі"
-                      value={value}
-                      units="л/г"
+                      value={value.value}
+                      units={symbol}
                       help={helpM.decrease_speed_cargi_m}
-                      onChange={(e) => onChangeForm(e.value)}
+                      onChange={(e) => {
+                        const updatedValue = calculateHandPercent(
+                          e.value,
+                          data.selectionSpeed,
+                          data.version,
+                          data.selection,
+                        );
+                        onChangeForm({
+                          value: updatedValue,
+                          true_value: e.value,
+                        });
+                      }}
                     />
                   )}
                 />
@@ -509,10 +644,21 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="sort"
                     label="Зменшення по циклам"
-                    value={value}
-                    units="л/г"
+                    value={value.value}
+                    units={symbol}
                     help={helpM.decrease_cycles_m}
-                    onChange={(e) => onChangeForm(e.value)}
+                    onChange={(e) => {
+                      const updatedValue = calculateHandPercent(
+                        e.value,
+                        data.selectionSpeed,
+                        data.version,
+                        data.selection,
+                      );
+                      onChangeForm({
+                        value: updatedValue,
+                        true_value: e.value,
+                      });
+                    }}
                   />
                 )}
               />
@@ -626,21 +772,48 @@ const RectificationProcessPage = () => {
               />
             </div>
 
-            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller
-                name="rectDecreaseSpeed"
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="speed"
-                    units="л/г"
-                    value={value}
-                    label="Зменш.шв.відбору"
-                    help={helpM.decrease_speed_selection_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                  />
-                )}
-              />
+            <div className="flex flex-row align-items-start justify-content-start w-full">
+              <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
+                <Controller
+                  name="rectDecreaseSpeed"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACRegulator
+                      icon="speed"
+                      units={symbol}
+                      value={value.value}
+                      label="Зменш.шв.відбору"
+                      help={helpM.decrease_speed_selection_m}
+                      onChange={(e) => {
+                        const updatedValue = calculateHandPercent(
+                          e.value,
+                          data.selectionSpeed,
+                          data.version,
+                          data.selection,
+                        );
+                        onChangeForm({
+                          value: updatedValue,
+                          true_value: e.value,
+                        });
+                      }}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="rectSwitchCube"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ToggleButton
+                      className="custom-toggle-button"
+                      checked={value}
+                      onChange={(e) => onChangeForm(e.value)}
+                      onLabel="БАГАТ"
+                      offLabel="ОДНОК"
+                    />
+                  )}
+                />
+              </div>
             </div>
           </div>
         </div>
