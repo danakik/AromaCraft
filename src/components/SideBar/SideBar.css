@@ -91,3 +91,12 @@
 .p-submenu-list .p-menuitem .active {
   background-color: #6749ae !important;
 }
+
+.select-lang .p-button{
+  height: 30px;
+  width: 46px;
+  font-size: 10px;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}

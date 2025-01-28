@@ -104,6 +104,7 @@ const RectificationProcessPage = () => {
     };
   },[receptName, receptNumber]);
 
+
   const {
     data = initialSortedData,
     isLoading,
@@ -185,7 +186,7 @@ const RectificationProcessPage = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [symbol, setSymbol] = useState('');
   const [bodySymbol, setBodySymbol] = useState('');
-  
+
   useEffect(() => {
     if (data.version !== 0) {
 
@@ -267,65 +268,68 @@ const RectificationProcessPage = () => {
               <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 p-3">
-            <div className="col flex flex-col align-items-center justify-content-center gap-3 p-2 -mt-3">
-              <div className="block col-6">
-                <Controller
-                  name="rectTempHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп. відбору голів"
-                      color="blue"
-                      initialValue={value}
-                      help={helpM.temp_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб. голів"
-                      help={helpM.gist_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+          <div className="flex flex-column align-items-center justify-content-center w-full">
+            <div className="grid grid-cols-2 w-full">
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп. відбору голів"
+                        color="blue"
+                        initialValue={value}
+                        help={helpM.temp_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб. голів"
+                        help={helpM.gist_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              <div className="block col-6">
-                <Controller
-                  name="rectTempBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп.відбору тіла"
-                      color="orange"
-                      initialValue={value}
-                      help={helpM.temp_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб.тіла"
-                      help={helpM.gist_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп.відбору тіла"
+                        color="orange"
+                        initialValue={value}
+                        help={helpM.temp_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб.тіла"
+                        help={helpM.gist_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -374,42 +378,45 @@ const RectificationProcessPage = () => {
                   )}
                 />
               </div>
-              <div className="block col-6" style={{ height: '200px', minWidth: '200px' }}>
-                <Controller
-                  name="rectTempStop"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      color="purple"
-                      label="Темп. зупинки"
-                      initialValue={value}
-                      help={helpM.temp_stop_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectTimeStab"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      label="Стабілізація колони"
-                      value={value}
-                      units="хв"
-                      help={helpM.stabilisation_column_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempStop"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        color="purple"
+                        label="Темп. зупинки"
+                        initialValue={value}
+                        help={helpM.temp_stop_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectTimeStab"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        label="Стабілізація колони"
+                        value={value}
+                        units="хв"
+                        help={helpM.stabilisation_column_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
+
             </div>
           </div>
         </div>
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '660px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>

@@ -121,6 +121,7 @@ const MashingProcessPage = () => {
       }
     }, [receptName]);
 
+
   const { control, watch } = useForm<FormData>({
     values: {
       mashingPauses: data.mashingPauses,
@@ -176,8 +177,10 @@ const MashingProcessPage = () => {
 
   const generatePauseBlocks = () => {
     const blocks = [];
+
     const knobColors = ['orange', 'blue', 'purple', 'red'];
     const sliderColors = ['purple', 'orange', 'red', 'blue'];
+
     for (let i = 0; i <= howMuchPause - 1; i++) {
       const knobColor = knobColors[i % knobColors.length] as 'orange' | 'blue' | 'purple' | 'red';
       const sliderColor = sliderColors[i % sliderColors.length] as 'orange' | 'blue' | 'purple' | 'red';
@@ -187,8 +190,8 @@ const MashingProcessPage = () => {
       const numberTime: MashingType = `mashingTime${i}` as MashingType;
 
       blocks.push(
-        <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
-          <div className="flex flex-column align-items-center justify-content-center block">
+        <div key={i} className="col-6">
+          <div className="flex flex-column align-items-center justify-content-center block pb-3">
             <Controller
               name={numberTemp}
               control={control}
@@ -215,7 +218,6 @@ const MashingProcessPage = () => {
                 />
               )}
             />
-
             <Controller
               name={numberTime}
               control={control}
@@ -230,7 +232,7 @@ const MashingProcessPage = () => {
               )}
             />
           </div>
-        </div>,
+        </div>
       );
     }
     return blocks;
@@ -247,7 +249,7 @@ const MashingProcessPage = () => {
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
-        <div className="flex flex-column w-3/4 ">
+        <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
               <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
@@ -263,8 +265,8 @@ const MashingProcessPage = () => {
             </div>
           </div>
           <div
-            className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2"
-            style={{ maxHeight: '400px', width: '522px', overflowY: 'auto', borderRadius: '28px' }}
+            className="flex flex-column align-items-start justify-content-start w-full custom-scrollbar2"
+            style={{ maxHeight: '400px', maxWidth: '545px', overflowY: 'auto', borderRadius: '30px' }}
           >
             <div className="flex flex-column align-items-center justify-content-center w-full">
               <div className="grid grid-cols-2 w-full">{generatePauseBlocks()}</div>
@@ -274,13 +276,12 @@ const MashingProcessPage = () => {
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '650px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '658px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-
               <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />

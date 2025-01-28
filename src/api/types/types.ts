@@ -114,4 +114,6 @@ export type SortedData = {
   settingTen: number;
   settingBrometr: number;
   settingValueBrometr: number;
+
 };
+
