@@ -200,10 +200,10 @@ const DistillationProcessPage = () => {
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
 
-              <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
+              <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
-              <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
-              <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
+              <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
+              <ACIconButton iconName="delete" onClick={() => setDialogDeleteVisible(true)} />
             </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" className="button-skip" />
