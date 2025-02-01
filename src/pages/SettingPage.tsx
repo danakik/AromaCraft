@@ -35,11 +35,12 @@ const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useSaveSettingMutation();
-  const dataSamagon = useMemo(() => {
+  const dataSamagon = useMemo (() => {
     return {
       key: key,
-    };
-  }, [key]);
+        };
+  },[key]);
+
 
   const { data = initialSortedData, isLoading, error } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
@@ -87,9 +88,10 @@ const SettingPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-       console.log(formattedData);
+      /* console.log(formattedData);
       save(formattedData); 
- /*      protection against children  */
+      protection against children */
+
 
       setIsFormChanging(false);
     }, 5000);
@@ -138,6 +140,7 @@ const SettingPage = () => {
                   initialValue={Number(data.tempCube)}
                   help={helpM.set_temp_cube_m}
                   readonly
+
                 />
                 <Controller
                   name="settingTempCupe"
@@ -161,6 +164,7 @@ const SettingPage = () => {
                   help={helpM.set_temp_cargi_m}
                   readonly
                 />
+
                 <Controller
                   name="settingTempCarge"
                   control={control}
@@ -274,7 +278,8 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-            <ACRegulator icon="antena_bars" label={`Барометр, ${lableBarometr}`} help={helpM.barometer_m} />
+              <ACRegulator icon="antena_bars" label={`Барометр, ${lableBarometr}`} help={helpM.barometer_m} />
+
               <Controller
                 name="settingBrometr"
                 control={control}
@@ -316,6 +321,7 @@ const SettingPage = () => {
                       offLabel="Вниз"
                     />
                   )}
+
                 />              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -334,6 +340,7 @@ const SettingPage = () => {
                     />
                   )}
                 />              </div>
+
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller

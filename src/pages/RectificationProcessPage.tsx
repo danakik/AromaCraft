@@ -104,7 +104,8 @@ const RectificationProcessPage = () => {
       r: receptNumber,
       n: receptName,
     };
-  }, [receptName, receptNumber]);
+  },[receptName, receptNumber]);
+
 
   const {
     data = initialSortedData,
@@ -240,6 +241,7 @@ const RectificationProcessPage = () => {
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
+
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
@@ -336,7 +338,6 @@ const RectificationProcessPage = () => {
                   />
                 </div>
               </div>
-
               <div className="col-6" style={{ minWidth: '200px' }}>
                 <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
                   <Controller
@@ -762,14 +763,15 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
-                name="rectTimeBody"
+                key={bodySymbol}
+                name={isSwitchOn ? 'rectTimeBody' : 'rectTempTransit'} //bag no symbol for first boot
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="arrow_fork"
                     label="Перехід на відбір тіла"
                     value={value}
-                    units="хв"
+                    units={bodySymbol}
                     help={helpM.transition_select_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTimeBody}
@@ -805,7 +807,6 @@ const RectificationProcessPage = () => {
                     />
                   )}
                 />
-
                 <Controller
                   name="rectSwitchCube"
                   control={control}

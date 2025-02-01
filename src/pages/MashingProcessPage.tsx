@@ -75,53 +75,53 @@ const MashingProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
 
   const [receptName, setReceptName] = useState('');
-  const [receptNumber, setReceptNumber] = useState('');
-  const [reedRecept] = useReedReceptsMutation();
-
-  const pageRecept = () => {
-    return {
-      key: key,
-      w: 3,
+    const [receptNumber, setReceptNumber] = useState('');
+    const [reedRecept] = useReedReceptsMutation();
+  
+    const pageRecept = () => {
+      return {
+        key: key,
+        w: 3,
+      };
     };
-  };
-
-  const [listRecept, setListRecept] = useState([]);
-
-  const fetchRecept = async () => {
-    const respons = await reedRecept(pageRecept());
-    setListRecept(respons.data);
-  };
-
-  useEffect(() => {
-    fetchRecept();
-  }, []);
-
-
-  const pageReceptData = useMemo(() => {
-    return {
-      key: key,
-      w: 3,
-      r: receptNumber,
-      n: receptName,
+  
+    const [listRecept, setLsitRecept] = useState([]);
+  
+    const fetchRecept = async () => {
+      const respons = await reedRecept(pageRecept());
+      setLsitRecept(respons.data);
     };
-  }, [receptName, receptNumber]);
-
-  const {
-    data = initialSortedData,
-    isLoading,
-    error,
-  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
-
-  const handleScenarioChange = (label: string, value: string) => {
-    setReceptName(label);
-    setReceptNumber(value);
-  };
-
-  useEffect(() => {
-    if (receptName !== '') {
-      console.log(pageReceptData);
-    }
-  }, [receptName]);
+  
+    useEffect(() => {
+      fetchRecept();
+    }, []);
+  
+  
+    const pageReceptData = useMemo(() => {
+      return {
+        key: key,
+        w: 3,
+        r: receptNumber,
+        n: receptName,
+      };
+    },[receptName, receptNumber]);
+  
+    const {
+      data = initialSortedData,
+      isLoading,
+      error,
+    } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+  
+    const handleScenarioChange = (label: string, value: string) => {
+      setReceptName(label);
+      setReceptNumber(value);
+    };
+  
+    useEffect(() => {
+      if (receptName !== '') {
+        console.log(pageReceptData);
+      }
+    }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -182,7 +182,6 @@ const MashingProcessPage = () => {
 
   const generatePauseBlocks = () => {
     const blocks = [];
-
     const knobColors = ['orange', 'blue', 'purple', 'red'];
     const sliderColors = ['purple', 'orange', 'red', 'blue'];
 

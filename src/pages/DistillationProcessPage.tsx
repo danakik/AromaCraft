@@ -199,7 +199,6 @@ const DistillationProcessPage = () => {
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-
               <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />

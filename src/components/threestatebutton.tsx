@@ -21,6 +21,7 @@ export const ACThreeStateButton: React.FC<ToggleButtonProps> = ({ onChange, init
         setState(newState);
         onChange && onChange({ value: newState });
 
+
     };
 
     const labels = [firstStateLabel, secondStateLabel, thirdStateLabel];
@@ -34,6 +35,7 @@ export const ACThreeStateButton: React.FC<ToggleButtonProps> = ({ onChange, init
             style={{
                 backgroundColor: colors[state],
                 color: state === 0 ? "#42099e" : "white",
+
                 border: "none",
                 width: "48px",
                 height: "28px",

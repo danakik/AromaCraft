@@ -315,7 +315,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-            <Controller
+              <Controller
                 name="handPin1"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -334,7 +334,7 @@ const ManualProcessPage = () => {
                 name="handPin2"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID}/>
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID} />
                 )}
               />
             </div>
@@ -377,7 +377,7 @@ const ManualProcessPage = () => {
                 name="handK4"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledK4}/>
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledK4} />
                 )}
               />
             </div>
