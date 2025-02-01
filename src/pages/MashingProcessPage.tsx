@@ -85,11 +85,11 @@ const MashingProcessPage = () => {
       };
     };
   
-    const [listRecept, setLsitRecept] = useState([]);
+    const [listRecept, setListRecept] = useState([]);
   
     const fetchRecept = async () => {
       const respons = await reedRecept(pageRecept());
-      setLsitRecept(respons.data);
+      setListRecept(respons.data);
     };
   
     useEffect(() => {
@@ -169,9 +169,6 @@ const MashingProcessPage = () => {
     },
   });
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка у завантаженні даних.</p>;
-
   const howMuchPause = watch('mashingPauses');
   const hasMashingHeat = watch('mashingHeat');
   const isFreezeMode = watch('mashingCool');
@@ -179,6 +176,9 @@ const MashingProcessPage = () => {
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (error) return <p>Помилка у завантаженні даних.</p>;
 
   const generatePauseBlocks = () => {
     const blocks = [];

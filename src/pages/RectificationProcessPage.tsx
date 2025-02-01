@@ -85,11 +85,11 @@ const RectificationProcessPage = () => {
     };
   };
 
-  const [listRecept, setLsitRecept] = useState([]);
+  const [listRecept, setListRecept] = useState([]);
 
   const fetchRecept = async () => {
     const respons = await reedRecept(pageRecept());
-    setLsitRecept(respons.data);
+    setListRecept(respons.data);
   };
 
   useEffect(() => {
