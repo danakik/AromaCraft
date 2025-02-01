@@ -118,4 +118,5 @@ export const initialSortedData: SortedData = {
   settingTen: 0,
   settingBrometr: 0,
   settingValueBrometr: 0,
+
 };

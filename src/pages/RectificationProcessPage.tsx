@@ -10,6 +10,8 @@ import { ACSwitch } from '../components/switch';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
 import 'primereact/resources/themes/lara-light-purple/theme.css';
 import * as helpM from '../components/help_messages';
@@ -104,6 +106,7 @@ const RectificationProcessPage = () => {
     };
   },[receptName, receptNumber]);
 
+
   const {
     data = initialSortedData,
     isLoading,
@@ -185,7 +188,7 @@ const RectificationProcessPage = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [symbol, setSymbol] = useState('');
   const [bodySymbol, setBodySymbol] = useState('');
-  
+
   useEffect(() => {
     if (data.version !== 0) {
 
@@ -238,6 +241,11 @@ const RectificationProcessPage = () => {
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
+
+  const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
+  const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
+  const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+
   if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
@@ -267,158 +275,160 @@ const RectificationProcessPage = () => {
               <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 p-3">
-            <div className="col flex flex-col align-items-center justify-content-center gap-3 p-2 -mt-3">
-              <div className="block col-6">
-                <Controller
-                  name="rectTempHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп. відбору голів"
-                      color="blue"
-                      initialValue={value}
-                      help={helpM.temp_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystHead"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб. голів"
-                      help={helpM.gist_selection_heads_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+          <div className="flex flex-column align-items-center justify-content-center w-full">
+            <div className="grid grid-cols-2 w-full">
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп. відбору голів"
+                        color="blue"
+                        initialValue={value}
+                        help={helpM.temp_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystHead"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб. голів"
+                        help={helpM.gist_selection_heads_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              <div className="block col-6">
-                <Controller
-                  name="rectTempBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп.відбору тіла"
-                      color="orange"
-                      initialValue={value}
-                      help={helpM.temp_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectGystBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units=" °C"
-                      value={value}
-                      label="Гістерезис відб.тіла"
-                      help={helpM.gist_selection_body_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп.відбору тіла"
+                        color="orange"
+                        initialValue={value}
+                        help={helpM.temp_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectGystBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units=" °C"
+                        value={value}
+                        label="Гістерезис відб.тіла"
+                        help={helpM.gist_selection_body_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-            </div>
-            <div
-              className="col flex flex-col align-items-center justify-content-center gap-3 p-2 -mt-2"
-              style={{ height: '200px' }}
-            >
-              <div className="block col-6" style={{ height: '200px', minWidth: '200px' }}>
-                <Controller
-                  name="rectCubeTail"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      label="Темп.відб.хвостів"
-                      color="red"
-                      initialValue={value}
-                      help={helpM.temp_selection_tails_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                      readonly={tempTail}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectSpeedTail"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units={symbol}
-                      value={value.value}
-                      label="Швидкість"
-                      help={helpM.speed_selection_tails_m}
-                      onChange={(e) => {
-                        const updatedValue = calculateHandPercent(
-                          e.value,
-                          data.selectionSpeed,
-                          data.version,
-                          data.selection,
-                        );
-                        onChangeForm({
-                          value: updatedValue,
-                          true_value: e.value,
-                        });
-                      }}
-                      disabled={speedTail}
-                    />
-                  )}
-                />
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectCubeTail"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        label="Темп.відб.хвостів"
+                        color="red"
+                        initialValue={value}
+                        help={helpM.temp_selection_tails_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                        readonly={tempTail}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectSpeedTail"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        units="л/г"
+                        value={value.value}
+                        label="Швидкість"
+                        help={helpM.speed_selection_tails_m}
+                        onChange={(e) => {
+                          const updatedValue = calculateHandPercent(
+                            e.value,
+                            data.selectionSpeed,
+                            data.version,
+                            data.selection,
+                          );
+                          onChangeForm({
+                            value: updatedValue,
+                            true_value: e.value,
+                          });
+                        }}
+                        disabled={speedTail}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              <div className="block col-6" style={{ height: '200px', minWidth: '200px' }}>
-                <Controller
-                  name="rectTempStop"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACSlider
-                      color="purple"
-                      label="Темп. зупинки"
-                      initialValue={value}
-                      help={helpM.temp_stop_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-                <br />
-                <Controller
-                  name="rectTimeStab"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      label="Стабілізація колони"
-                      value={value}
-                      units="хв"
-                      help={helpM.stabilisation_column_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+              <div className="col-6" style={{ minWidth: '200px' }}>
+                <div className="flex flex-column align-items-center justify-content-center block p-2 pb-3">
+                  <Controller
+                    name="rectTempStop"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACSlider
+                        color="purple"
+                        label="Темп. зупинки"
+                        initialValue={value}
+                        help={helpM.temp_stop_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="rectTimeStab"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACCounterLabel
+                        label="Стабілізація колони"
+                        value={value}
+                        units="хв"
+                        help={helpM.stabilisation_column_m}
+                        onChange={(e) => onChangeForm(e.value)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
+
             </div>
           </div>
         </div>
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '667px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '660px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-              <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
+              <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
-              <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
-              <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
+              <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
+              <ACIconButton iconName="delete" onClick={() => setDialogDeleteVisible(true)} />
             </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" className="button-skip" />
@@ -815,6 +825,89 @@ const RectificationProcessPage = () => {
           </div>
         </div>
       </div>
+
+      <Dialog header={"Створити новий сценарій"} visible={dialogCreateVisible} onHide={() => setDialogCreateVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogCreateVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Створено новий сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Перейменувати сценарій"} visible={dialogRenameVisible} onHide={() => setDialogRenameVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogRenameVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Перейменовано сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Видалити сценарій"} visible={dialogDeleteVisible} onHide={() => setDialogDeleteVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDeleteVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Видалено сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Сценарій: </p>
+      </Dialog>
+
     </>
   );
 };

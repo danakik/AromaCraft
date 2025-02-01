@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from 'primereact/button';
 import '../styles/process_page.css';
+
 type ToggleButtonProps = {
     firstStateLabel: string;
     secondStateLabel: string;
@@ -19,10 +20,13 @@ export const ACThreeStateButton: React.FC<ToggleButtonProps> = ({ onChange, init
         const newState = (state + 1) % 3;
         setState(newState);
         onChange && onChange({ value: newState });
-        
+
+
     };
+
     const labels = [firstStateLabel, secondStateLabel, thirdStateLabel];
-    const colors = ["white", "#9e4ae7", "#42099e"];
+    const colors = ["white", "#8b5cf6", "#42099e"];
+
     return (
         <Button
             label={labels[state]}
@@ -30,7 +34,8 @@ export const ACThreeStateButton: React.FC<ToggleButtonProps> = ({ onChange, init
             className="custom-toggle-button"
             style={{
                 backgroundColor: colors[state],
-                color: state === 0 ? "#42099e" : "white", 
+                color: state === 0 ? "#42099e" : "white",
+
                 border: "none",
                 width: "48px",
                 height: "28px",

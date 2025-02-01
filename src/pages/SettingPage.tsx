@@ -41,6 +41,7 @@ const SettingPage = () => {
         };
   },[key]);
 
+
   const { data = initialSortedData, isLoading, error } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
   const { control, watch } = useForm<FormData>({
@@ -91,6 +92,7 @@ const SettingPage = () => {
       save(formattedData); 
       protection against children */
 
+
       setIsFormChanging(false);
     }, 5000);
 
@@ -137,7 +139,8 @@ const SettingPage = () => {
                   color="purple"
                   initialValue={Number(data.tempCube)}
                   help={helpM.set_temp_cube_m}
-                  readonly={true}
+                  readonly
+
                 />
                 <Controller
                   name="settingTempCupe"
@@ -159,7 +162,7 @@ const SettingPage = () => {
                   color="orange"
                   initialValue={Number(data.tempCargi)}
                   help={helpM.set_temp_cargi_m}
-                  readonly={true}
+                  readonly
                 />
 
                 <Controller
@@ -184,9 +187,8 @@ const SettingPage = () => {
                   color="red"
                   initialValue={Number(data.tempDef)}
                   help={helpM.set_temp_defl_m}
-                  readonly={true}
+                  readonly
                 />
-
                 <Controller
                   name="settingTempDef"
                   control={control}
@@ -207,7 +209,7 @@ const SettingPage = () => {
                   color="blue"
                   initialValue={Number(data.tempWater)}
                   help={helpM.set_temp_water_m}
-                  readonly={true}
+                  readonly
                 />
                 <Controller
                   name="settingTempWater"
@@ -277,6 +279,7 @@ const SettingPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <ACRegulator icon="antena_bars" label={`Барометр, ${lableBarometr}`} help={helpM.barometer_m} />
+
               <Controller
                 name="settingBrometr"
                 control={control}
@@ -318,8 +321,8 @@ const SettingPage = () => {
                       offLabel="Вниз"
                     />
                   )}
-                />
-              </div>
+
+                />              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
@@ -336,8 +339,8 @@ const SettingPage = () => {
                       offLabel="%"
                     />
                   )}
-                />
-              </div>
+                />              </div>
+
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller

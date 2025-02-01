@@ -35,12 +35,39 @@
 }
 
 .custom-knob .p-knob-text {
-    fill: white !important; 
+    fill: #111828 !important; 
     font-family: 'Fixel Variable', sans-serif !important;
     font-weight: 400 !important;
     font-size: 18px !important; 
     text-anchor: middle !important; 
 }
+
+.knob-container{
+    position: relative;
+    display: inline-block;
+}
+.knob-input{
+    margin-bottom: -25px !important;
+}
+.knob-input .p-inputtext{
+    font-family: 'Fixel Variable', sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 34px !important;
+    width: 150px !important;
+    color: white !important;
+    background-color: transparent !important;
+    border: none !important;
+    position: absolute !important;
+    top: 52% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    text-align: center !important;
+}
+
+.knob-input .p-inputtext:focus {
+    outline: none; 
+    box-shadow: none; 
+  }
 
 .card {
     display: flex;
@@ -111,15 +138,25 @@
     --gradient-end: #a9124f;
 }
 
-.slider-temp {
-    color: white;
+.slider-temp{
+    margin-bottom: -10px;
+}
+
+.slider-temp .p-inputtext{
     font-family: 'Fixel Variable', sans-serif !important;
     font-weight: 400 !important;
-    font-size: 36px !important;
-    margin-top: 0;
-    margin-bottom: 0;
-    text-align: center; 
+    font-size: 34px !important;
+    width: 150px !important;
+    color: white !important;
+    background-color: transparent !important;
+    border: none !important;
+    text-align: center !important;
 }
+
+.slider-temp .p-inputtext:focus {
+    outline: none; 
+    box-shadow: none; 
+  }
 
 .ac-slider-container .custom-slider .p-slider-handle {
     height: 20px;

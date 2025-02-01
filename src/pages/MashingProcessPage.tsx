@@ -12,6 +12,8 @@ import { ACCounterLabel, ACCounterSpeed } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { ACSwitch } from '../components/switch';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
 import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
@@ -174,10 +176,15 @@ const MashingProcessPage = () => {
   const hasMashingHeat = watch('mashingHeat');
   const isFreezeMode = watch('mashingCool');
 
+  const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
+  const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
+  const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+
   const generatePauseBlocks = () => {
     const blocks = [];
     const knobColors = ['orange', 'blue', 'purple', 'red'];
     const sliderColors = ['purple', 'orange', 'red', 'blue'];
+
     for (let i = 0; i <= howMuchPause - 1; i++) {
       const knobColor = knobColors[i % knobColors.length] as 'orange' | 'blue' | 'purple' | 'red';
       const sliderColor = sliderColors[i % sliderColors.length] as 'orange' | 'blue' | 'purple' | 'red';
@@ -187,8 +194,8 @@ const MashingProcessPage = () => {
       const numberTime: MashingType = `mashingTime${i}` as MashingType;
 
       blocks.push(
-        <div key={i} className="col-6" style={{ maxWidth: '260px' }}>
-          <div className="flex flex-column align-items-center justify-content-center block">
+        <div key={i} className="col-6">
+          <div className="flex flex-column align-items-center justify-content-center block pb-3">
             <Controller
               name={numberTemp}
               control={control}
@@ -215,7 +222,6 @@ const MashingProcessPage = () => {
                 />
               )}
             />
-
             <Controller
               name={numberTime}
               control={control}
@@ -230,7 +236,7 @@ const MashingProcessPage = () => {
               )}
             />
           </div>
-        </div>,
+        </div>
       );
     }
     return blocks;
@@ -247,7 +253,7 @@ const MashingProcessPage = () => {
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
-        <div className="flex flex-column w-3/4 ">
+        <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
               <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
@@ -263,8 +269,8 @@ const MashingProcessPage = () => {
             </div>
           </div>
           <div
-            className="flex flex-column align-items-start justify-content-start w-3/4 custom-scrollbar2"
-            style={{ maxHeight: '400px', width: '522px', overflowY: 'auto', borderRadius: '28px' }}
+            className="flex flex-column align-items-start justify-content-start w-full custom-scrollbar2"
+            style={{ maxHeight: '400px', maxWidth: '545px', overflowY: 'auto', borderRadius: '30px' }}
           >
             <div className="flex flex-column align-items-center justify-content-center w-full">
               <div className="grid grid-cols-2 w-full">{generatePauseBlocks()}</div>
@@ -274,17 +280,16 @@ const MashingProcessPage = () => {
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '650px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '658px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-
-              <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
+              <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
-              <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
-              <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
+              <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
+              <ACIconButton iconName="delete" onClick={() => setDialogDeleteVisible(true)} />
             </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" className="button-skip" />
@@ -424,6 +429,88 @@ const MashingProcessPage = () => {
           </div>
         </div>
       </div>
+
+      <Dialog header={"Створити новий сценарій"} visible={dialogCreateVisible} onHide={() => setDialogCreateVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogCreateVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Створено новий сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Перейменувати сценарій"} visible={dialogRenameVisible} onHide={() => setDialogRenameVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogRenameVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Перейменовано сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Видалити сценарій"} visible={dialogDeleteVisible} onHide={() => setDialogDeleteVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDeleteVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Видалено сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Сценарій: </p>
+      </Dialog>
     </>
   );
 };

@@ -77,3 +77,15 @@ header {
   border-color: #58AC43;
   color: #fff;
 }
+
+.button-confirm {
+  background: linear-gradient(45deg, #2942e1, #4c07bb);
+}
+
+.button-cancel {
+  background: linear-gradient(45deg, #b31827, #950a42);
+}
+
+.button-confirm, .button-cancel {
+  width: 150px;
+}

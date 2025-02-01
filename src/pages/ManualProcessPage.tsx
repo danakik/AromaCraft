@@ -216,7 +216,7 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                <Controller
+                 <Controller
                   name="handPercent"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
@@ -258,7 +258,7 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                <Controller
+                 <Controller
                   name="handSpeedTail"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (

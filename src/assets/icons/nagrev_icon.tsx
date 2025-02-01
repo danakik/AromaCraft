@@ -8,7 +8,7 @@ const NagrevIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
         d="M14.7256 9.91847H1.69092V1.81348H254V9.91847H240.404H239.404V10.9185V205.474C239.404 221.49 226.42 234.474 210.404 234.474H44.7256C28.7094 234.474 15.7256 221.49 15.7256 205.474V10.9185V9.91847H14.7256Z"
         fill="url(#paint0_linear_303_1590)"
         stroke="white"
-        stroke-width="2"
+        strokeWidth="2"
       />
       <defs>
         <linearGradient
@@ -19,10 +19,10 @@ const NagrevIcon: React.FC<SVGProps<SVGSVGElement>> = (props) => {
           y2="120.389"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#D9D9D9" stop-opacity="0.25" />
-          <stop offset="0.2" stop-color="#A4A4A4" stop-opacity="0.05" />
-          <stop offset="0.8" stop-color="#A4A4A4" stop-opacity="0.05" />
-          <stop offset="1" stop-color="#D9D9D9" stop-opacity="0.25" />
+          <stop stopColor="#D9D9D9" stopOpacity="0.25" />
+          <stop offset="0.2" stopColor="#A4A4A4" stopOpacity="0.05" />
+          <stop offset="0.8" stopColor="#A4A4A4" stopOpacity="0.05" />
+          <stop offset="1" stopColor="#D9D9D9" stopOpacity="0.25" />
         </linearGradient>
       </defs>
     </svg>
