@@ -12,6 +12,8 @@ import { ACCounterLabel, ACCounterSpeed } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { ACSwitch } from '../components/switch';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
 import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
@@ -173,6 +175,10 @@ const MashingProcessPage = () => {
   const howMuchPause = watch('mashingPauses');
   const hasMashingHeat = watch('mashingHeat');
   const isFreezeMode = watch('mashingCool');
+
+  const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
+  const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
+  const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
 
   const generatePauseBlocks = () => {
     const blocks = [];
@@ -424,6 +430,88 @@ const MashingProcessPage = () => {
           </div>
         </div>
       </div>
+
+      <Dialog header={"Створити новий сценарій"} visible={dialogCreateVisible} onHide={() => setDialogCreateVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogCreateVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Створено новий сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Перейменувати сценарій"} visible={dialogRenameVisible} onHide={() => setDialogRenameVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogRenameVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Перейменовано сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Видалити сценарій"} visible={dialogDeleteVisible} onHide={() => setDialogDeleteVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDeleteVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Видалено сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Сценарій: </p>
+      </Dialog>
     </>
   );
 };

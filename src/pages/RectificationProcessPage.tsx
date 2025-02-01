@@ -10,6 +10,8 @@ import { ACSwitch } from '../components/switch';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
 import 'primereact/resources/themes/lara-light-purple/theme.css';
 import * as helpM from '../components/help_messages';
@@ -238,6 +240,10 @@ const RectificationProcessPage = () => {
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
 
+  const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
+  const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
+  const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+
   if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
@@ -418,10 +424,10 @@ const RectificationProcessPage = () => {
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-              <ACIconButton iconName="edit" onClick={() => console.log('Edit clicked')} />
+              <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
               <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
-              <ACIconButton iconName="doc_add" onClick={() => console.log('DocAdd clicked')} />
-              <ACIconButton iconName="delete" onClick={() => console.log('Delete clicked')} />
+              <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
+              <ACIconButton iconName="delete" onClick={() => setDialogDeleteVisible(true)} />
             </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" className="button-skip" />
@@ -818,6 +824,89 @@ const RectificationProcessPage = () => {
           </div>
         </div>
       </div>
+
+      <Dialog header={"Створити новий сценарій"} visible={dialogCreateVisible} onHide={() => setDialogCreateVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogCreateVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Створено новий сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Перейменувати сценарій"} visible={dialogRenameVisible} onHide={() => setDialogRenameVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogRenameVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Перейменовано сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog header={"Видалити сценарій"} visible={dialogDeleteVisible} onHide={() => setDialogDeleteVisible(false)} style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDeleteVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={() => console.log("Видалено сценарій")}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Сценарій: </p>
+      </Dialog>
+
     </>
   );
 };
