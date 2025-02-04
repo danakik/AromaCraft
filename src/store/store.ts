@@ -10,6 +10,8 @@ import keyReducer from './keySlice';
 import saveHandApi from '../api/manualSave';
 import saveSettingApi from '../api/settingSave';
 import reedReceptsApi from '../api/receptsApi';
+import renameReceptApi from '../api/renameReceptApi';
+import deleteReceptApi from '../api/deleteRecept';
 
 const store = configureStore({
   reducer: {
@@ -22,6 +24,8 @@ const store = configureStore({
     [saveHandApi.reducerPath]: saveHandApi.reducer,
     [saveSettingApi.reducerPath]: saveSettingApi.reducer,
     [reedReceptsApi.reducerPath]: reedReceptsApi.reducer,
+    [renameReceptApi.reducerPath]: renameReceptApi.reducer,
+    [deleteReceptApi.reducerPath]: deleteReceptApi.reducer,
     key: keyReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -35,6 +39,8 @@ const store = configureStore({
       saveHandApi.middleware,
       saveSettingApi.middleware,
       reedReceptsApi.middleware,
+      renameReceptApi.middleware,
+      deleteReceptApi.middleware,
     ),
 });
 

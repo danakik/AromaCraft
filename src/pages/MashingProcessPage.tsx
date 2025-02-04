@@ -20,10 +20,12 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import { calculateHandPercent } from '../utils/calculate';
 import { debounce } from 'lodash';
 import { useReedReceptsMutation } from '../api/receptsApi';
+import { toast } from 'react-toastify';
+import { useRenameReceptMutation } from '../api/renameReceptApi';
+import { useDeleteReceptMutation } from '../api/deleteRecept';
 
 type FormData = {
   mashingPauses: number;
@@ -75,53 +77,54 @@ const MashingProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
 
   const [receptName, setReceptName] = useState('');
-    const [receptNumber, setReceptNumber] = useState('');
-    const [reedRecept] = useReedReceptsMutation();
-  
-    const pageRecept = () => {
-      return {
-        key: key,
-        w: 3,
-      };
+  const [receptNumber, setReceptNumber] = useState('');
+  const [reedRecept] = useReedReceptsMutation();
+  const [renameRecept] = useRenameReceptMutation();
+  const [deleteRecept] = useDeleteReceptMutation();
+
+  const pageRecept = () => {
+    return {
+      key: key,
+      w: 3,
     };
-  
-    const [listRecept, setListRecept] = useState([]);
-  
-    const fetchRecept = async () => {
-      const respons = await reedRecept(pageRecept());
-      setListRecept(respons.data);
+  };
+
+  const [listRecept, setListRecept] = useState([]);
+
+  const fetchRecept = async () => {
+    const respons = await reedRecept(pageRecept());
+    setListRecept(respons.data);
+  };
+
+  useEffect(() => {
+    fetchRecept();
+  }, []);
+
+  const pageReceptData = useMemo(() => {
+    return {
+      key: key,
+      w: 3,
+      r: receptNumber,
+      n: receptName,
     };
-  
-    useEffect(() => {
-      fetchRecept();
-    }, []);
-  
-  
-    const pageReceptData = useMemo(() => {
-      return {
-        key: key,
-        w: 3,
-        r: receptNumber,
-        n: receptName,
-      };
-    },[receptName, receptNumber]);
-  
-    const {
-      data = initialSortedData,
-      isLoading,
-      error,
-    } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
-  
-    const handleScenarioChange = (label: string, value: string) => {
-      setReceptName(label);
-      setReceptNumber(value);
-    };
-  
-    useEffect(() => {
-      if (receptName !== '') {
-        console.log(pageReceptData);
-      }
-    }, [receptName]);
+  }, [receptName, receptNumber]);
+
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+
+  const handleScenarioChange = (label: string, value: string) => {
+    setReceptName(label);
+    setReceptNumber(value);
+  };
+
+  useEffect(() => {
+    if (receptName !== '') {
+      console.log(pageReceptData);
+    }
+  }, [receptName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -176,6 +179,56 @@ const MashingProcessPage = () => {
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+
+  const [disabledButtonRecept, setdisabledButtonRecept] = useState(true);
+
+  useEffect(() => {
+    if (receptNumber == '0') {
+      setdisabledButtonRecept(true);
+    } else {
+      setdisabledButtonRecept(false);
+    }
+  }, [receptNumber]);
+
+  const receptRename = async () => {
+    const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
+    if (inputElement.value === '') {
+      toast.error('Введіть назву рецепта');
+    } else {
+      const receptData = {
+        key: key,
+        w: 3,
+        n1: receptName,
+        n2: inputElement.value,
+      };
+      try {
+        await renameRecept(receptData);
+        await fetchRecept();
+        setDialogRenameVisible(false);
+        toast.success('Назва рецепта змінена на: ' + inputElement.value);
+      } catch (error) {
+        toast.error('Помилка при зміні назви рецепта');
+        console.error(error);
+      }
+    }
+  };
+
+  const receptDelete = async () => {
+    const receptData = {
+      key: key,
+      w: 3,
+      n: receptName,
+    };
+    try {
+      await deleteRecept(receptData);
+      await fetchRecept();
+      setDialogDeleteVisible(false);
+      toast.success('Рецепт видалено');
+    } catch (error) {
+      toast.error('Помилка при видаленні рецепта');
+      console.error(error);
+    }
+  };
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -236,7 +289,7 @@ const MashingProcessPage = () => {
               )}
             />
           </div>
-        </div>
+        </div>,
       );
     }
     return blocks;
@@ -286,10 +339,22 @@ const MashingProcessPage = () => {
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
-              <ACIconButton iconName="edit" onClick={() => setDialogRenameVisible(true)} />
-              <ACIconButton iconName="doc_download" onClick={() => console.log('DocD clicked')} />
+              <ACIconButton
+                iconName="edit"
+                disabled={disabledButtonRecept}
+                onClick={() => setDialogRenameVisible(true)}
+              />
+              <ACIconButton
+                iconName="doc_download"
+                disabled={disabledButtonRecept}
+                onClick={() => console.log('DocD clicked')}
+              />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
-              <ACIconButton iconName="delete" onClick={() => setDialogDeleteVisible(true)} />
+              <ACIconButton
+                iconName="delete"
+                disabled={disabledButtonRecept}
+                onClick={() => setDialogDeleteVisible(true)}
+              />
             </div>
             <div className="flex align-items-center justify-content-center">
               <Button label="Пропуск" className="button-skip" />
@@ -430,7 +495,11 @@ const MashingProcessPage = () => {
         </div>
       </div>
 
-      <Dialog header={"Створити новий сценарій"} visible={dialogCreateVisible} onHide={() => setDialogCreateVisible(false)} style={{ width: '500px' }}
+      <Dialog
+        header={'Створити новий сценарій'}
+        visible={dialogCreateVisible}
+        onHide={() => setDialogCreateVisible(false)}
+        style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
@@ -443,7 +512,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log("Створено новий сценарій")}
+              onClick={() => console.log('Створено новий сценарій')}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -452,14 +521,15 @@ const MashingProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText
-            id="create-scenario"
-            style={{ width: '80%' }}
-          />
+          <InputText id="create-scenario" style={{ width: '80%' }} />
         </div>
       </Dialog>
 
-      <Dialog header={"Перейменувати сценарій"} visible={dialogRenameVisible} onHide={() => setDialogRenameVisible(false)} style={{ width: '500px' }}
+      <Dialog
+        header={'Перейменувати сценарій'}
+        visible={dialogRenameVisible}
+        onHide={() => setDialogRenameVisible(false)}
+        style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
@@ -472,7 +542,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log("Перейменовано сценарій")}
+              onClick={receptRename}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -481,14 +551,15 @@ const MashingProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText
-            id="rename-scenario"
-            style={{ width: '80%' }}
-          />
+          <InputText id="rename-scenario" style={{ width: '80%' }} />
         </div>
       </Dialog>
 
-      <Dialog header={"Видалити сценарій"} visible={dialogDeleteVisible} onHide={() => setDialogDeleteVisible(false)} style={{ width: '500px' }}
+      <Dialog
+        header={'Видалити сценарій'}
+        visible={dialogDeleteVisible}
+        onHide={() => setDialogDeleteVisible(false)}
+        style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
@@ -501,7 +572,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log("Видалено сценарій")}
+              onClick={receptDelete}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -509,7 +580,7 @@ const MashingProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: </p>
+        <p>Сценарій: {receptName}</p>
       </Dialog>
     </>
   );

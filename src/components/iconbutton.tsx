@@ -9,6 +9,7 @@ import '../styles/scriptcomp.css';
 type IconButtonProps = {
   iconName: 'edit' | 'doc_download' | 'doc_add' | 'delete';
   onClick: () => void;
+  disabled?: boolean;
 };
 
 const renderIcon = (iconName: string) => {
@@ -26,6 +27,6 @@ const renderIcon = (iconName: string) => {
   }
 };
 
-export const ACIconButton: React.FC<IconButtonProps> = ({ iconName, onClick }) => {
-  return <Button icon={renderIcon(iconName)} rounded text onClick={onClick} />;
+export const ACIconButton: React.FC<IconButtonProps> = ({ iconName, disabled, onClick }) => {
+  return <Button icon={renderIcon(iconName)} rounded text onClick={onClick} disabled={disabled}/>;
 };
