@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -16,11 +16,11 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
-import { debounce } from 'lodash';
-import { useReedReceptsMutation } from '../api/receptsApi';
+import { debounce, identity, set } from 'lodash';
+import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
-import { useRenameReceptMutation } from '../api/renameReceptApi';
-import { useDeleteReceptMutation } from '../api/deleteRecept';
+import { useRenameRecipeMutation } from '../api/renameRecipeApi';
+import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 
 type FormData = {
   distTempPower: number;
@@ -35,57 +35,56 @@ type FormData = {
 };
 
 const DistillationProcessPage = () => {
+  const [reedRecipes] = useReedRecipeMutation();
+  const [renameRecipe] = useRenameRecipeMutation();
+  const [deleteRecipe] = useDeleteRecipeMutation();
+
   const key = localStorage.getItem('samogonKey');
 
-  const [receptName, setReceptName] = useState('');
-  const [receptNumber, setReceptNumber] = useState('');
-  const [reedRecept] = useReedReceptsMutation();
-  const [renameRecept] = useRenameReceptMutation();
-  const [deleteRecept] = useDeleteReceptMutation();
-
-  const pageRecept = () => {
+  const pageRecipe = () => {
     return {
       key: key,
       w: 1,
     };
   };
 
-  const [listRecept, setListRecept] = useState([]);
+  const [listRecipe, setListRecipe] = useState([]);
+  const [countRecipe, setCountRecipe] = useState(0);
 
-  const fetchRecept = async () => {
-    const respons = await reedRecept(pageRecept());
-    setListRecept(respons.data);
+  const fetchRecipe = async () => {
+    // This function is used to get recipes for a page and their quantity
+    const response = await reedRecipes(pageRecipe());
+    const { recipeList, recipeCount } = response.data;
+    setListRecipe(recipeList);
+    setCountRecipe(recipeCount);
   };
 
   useEffect(() => {
-    fetchRecept();
+    fetchRecipe();
   }, []);
 
-  const pageReceptData = useMemo(() => {
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeNumber, setRecipeNumber] = useState('');
+
+  const handleScenarioChange = (label: string, value: string) => {
+    setRecipeName(label);
+    setRecipeNumber(value);
+  };
+
+  const pageRecipeData = useMemo(() => {
     return {
       key: key,
       w: 1,
-      r: receptNumber,
-      n: receptName,
+      r: recipeNumber,
+      n: recipeName,
     };
-  }, [receptName, receptNumber]);
+  }, [recipeName, recipeNumber]);
 
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
-
-  const handleScenarioChange = (label: string, value: string) => {
-    setReceptName(label);
-    setReceptNumber(value);
-  };
-
-  useEffect(() => {
-    if (receptName !== '') {
-      console.log(pageReceptData);
-    }
-  }, [receptName]);
+  } = useGetDataQuery(pageRecipeData, { pollingInterval: SYNC_INTERVAL });
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -101,64 +100,108 @@ const DistillationProcessPage = () => {
     },
   });
 
-  const [disabledBody, setdisabledBody] = useState(false);
-  const [disabledPowers, setdisabledPowers] = useState(true);
-  const [disabledTime, setdisabledTime] = useState(true);
+  const [disabledBody, setDisabledBody] = useState(true);
+  const [disabledPowers, setDisabledPowers] = useState(true);
+  const [disabledTime, setDisabledTime] = useState(true);
   const [swithBody, setSwithBody] = useState(true);
-  const [strHead, setstrHead] = useState('');
+  const [strHead, setStrHead] = useState('');
   const timeBody = watch('distTimeBody');
   const cubeSwith = watch('distCubeSwitch');
 
-  useEffect(() => {
+  const updateBodySwitch = useCallback(() => {
     if (data.version !== 0) {
       if ((data.version >= 3.3 && data.version < 4.0) || data.version >= 4.3) {
+        setDisabledTime(cubeSwith);
+        setDisabledBody(!cubeSwith);
+      }
+      if (data.version < 3.2 || data.version == 4 || data.version == 4.1 || (timeBody == 0 && cubeSwith == false)) {
+        setDisabledPowers(true);
+        setSwithBody(true);
+        setStrHead('');
+      } else {
         setSwithBody(false);
-        if (cubeSwith) {
-          setdisabledTime(true);
-          setdisabledBody(false);
-        } else {
-          setdisabledTime(false);
-          setdisabledBody(true);
-        }
-        if (timeBody === 0 && cubeSwith === false) {
-          setdisabledPowers(true);
-          setstrHead('');
-        } else if ((timeBody != 0 && cubeSwith === false) || cubeSwith === true) {
-          setdisabledPowers(false);
-          setstrHead(' голів');
-        }
+        setDisabledPowers(false);
+        setStrHead(' голів');
       }
     }
-  }, [data, timeBody, cubeSwith]);
+  }, [data.version, cubeSwith, timeBody]);
 
+  useEffect(() => {
+    updateBodySwitch();
+  }, [updateBodySwitch]);
+
+  const [distCommand, setDistCommand] = useState(0);
+  const [startLabel, setStartLabel] = useState('СТАРТ');
+  const [hideButtonStart, setHideButtonStart] = useState(false);
+  const [hideButtonSkip, setHideButtonSkip] = useState(false);
+  const [disabledButtonStart, setDisabledButtonStart] = useState(false); // хай будэ
+  const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
+
+  const updateCommandControls = useCallback(() => {
+    setStartLabel(distCommand > 0 ? 'СТОП' : 'СТАРТ');
+
+    if (
+      (distCommand != data.distController && distCommand == 2) ||
+      !(distCommand == 2 && data.distController == 2 && timeBody > 0 && data.k3 == 0)
+    ) {
+      if (data.f == 0) {
+        setDistCommand(data.distController);
+        if (distCommand == 4) setDistCommand(0);
+      }
+    }
+
+    if (
+      countRecipe == 0 &&
+      data.distController >= 1 &&
+      data.distController <= 4 &&
+      data.distController != 3 &&
+      distCommand != 0
+    ) {
+      setDisabledButtonSkip(false);
+    } else {
+      setDisabledButtonSkip(true);
+    }
+  }, [distCommand, data.distController, timeBody, data.k3, data.f, countRecipe]);
+
+  useEffect(() => {
+    updateCommandControls();
+  }, [updateCommandControls]);
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
 
-  const [disabledButtonRecept, setdisabledButtonRecept] = useState(true);
+  const [disabledButtonRecipe, setdisabledButtonRecipe] = useState(true);
+
+  const updateRecipeControls = useCallback(() => {
+    if (recipeNumber == '0') {
+      setdisabledButtonRecipe(true);
+      setHideButtonStart(false);
+      setHideButtonSkip(false);
+    } else {
+      setdisabledButtonRecipe(false);
+      setHideButtonStart(true);
+      setHideButtonSkip(true);
+    }
+  }, [recipeNumber]);
 
   useEffect(() => {
-    if (receptNumber == '0') {
-      setdisabledButtonRecept(true);
-    } else {
-      setdisabledButtonRecept(false);
-    }
-  }, [receptNumber]);
+    updateRecipeControls();
+  }, [updateRecipeControls]);
 
-  const receptRename = async () => {
+  const recipeRename = async () => {
     const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
     if (inputElement.value === '') {
       toast.error('Введіть назву рецепта');
     } else {
-      const receptData = {
+      const recipeData = {
         key: key,
         w: 1,
-        n1: receptName,
+        n1: recipeName,
         n2: inputElement.value,
       };
       try {
-        await renameRecept(receptData);
-        await fetchRecept();
+        await renameRecipe(recipeData);
+        await fetchRecipe();
         setDialogRenameVisible(false);
         toast.success('Назва рецепта змінена на: ' + inputElement.value);
       } catch (error) {
@@ -168,15 +211,15 @@ const DistillationProcessPage = () => {
     }
   };
 
-  const receptDelete = async () => {
-    const receptData = {
+  const recipeDelete = async () => {
+    const recipeData = {
       key: key,
       w: 1,
-      n: receptName,
+      n: recipeName,
     };
     try {
-      await deleteRecept(receptData);
-      await fetchRecept();
+      await deleteRecipe(recipeData);
+      await fetchRecipe();
       setDialogDeleteVisible(false);
       toast.success('Рецепт видалено');
     } catch (error) {
@@ -184,6 +227,85 @@ const DistillationProcessPage = () => {
       console.error(error);
     }
   };
+
+  const [status, setStatus] = useState('');
+
+  const statusUpdate = useCallback(() => {
+    let updateStatus = '';
+
+    switch (data.distController) {
+      case 0:
+        updateStatus = 'Очікування';
+        break;
+      case 1:
+        updateStatus = 'Розгін';
+        break;
+      case 2:
+      case 4:
+        if (timeBody > 0 || cubeSwith) {
+          updateStatus = data.k3 == 1 ? 'Відбір голів' : 'Відбір тіла';
+        } else {
+          updateStatus = 'Відбір';
+        }
+        break;
+      case 3:
+        updateStatus = 'Зупинка';
+        break;
+      default:
+        updateStatus = 'щось нове';
+        break;
+    }
+
+    switch (data.distError) {
+      case 0:
+        updateStatus += ', помилок нема';
+        break;
+      case 1:
+        updateStatus = 'Помилка t° куба';
+        break;
+      case 2:
+        updateStatus = 'Помилка t° води';
+        break;
+      case 3:
+        updateStatus = 'Помилка рівня';
+        break;
+      case 4:
+        updateStatus = 'Помилка перегрів';
+        break;
+      default:
+        updateStatus = 'Невідома помилка';
+        break;
+    }
+    setStatus(updateStatus);
+  }, [data.distError, data.distController, data.k3, timeBody, cubeSwith]);
+
+  useEffect(() => {
+    statusUpdate();
+  }, [statusUpdate]);
+
+  const clickPass = () => {
+    if (data.distController == 1) {
+      setDistCommand(2);
+    } else if (data.distController == 2) {
+      if (data.version < 3.2 || data.version == 4 || data.version == 4.1) {
+        setDistCommand(3);
+      } else {
+        if (data.k3 == 1 && (timeBody > 0 || cubeSwith)) {
+          setDistCommand(2);
+        } else {
+          setDistCommand(3);
+        }
+      }
+    }
+  };
+
+  const clickStart = () => {
+    if(distCommand == 0) {
+      setDistCommand(1);
+    }else{
+      setDistCommand(0);
+    }
+  }
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
@@ -195,7 +317,7 @@ const DistillationProcessPage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
         <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
+          <ACStatusComp status_text={status} />
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
@@ -253,27 +375,30 @@ const DistillationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
+              <ACScriptComp options={listRecipe} onChange={handleScenarioChange} />
               <ACIconButton
                 iconName="edit"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => setDialogRenameVisible(true)}
               />
               <ACIconButton
                 iconName="doc_download"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => console.log('DocD clicked')}
               />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
               <ACIconButton
                 iconName="delete"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => setDialogDeleteVisible(true)}
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" className="button-skip" />
-              <Button label="Старт" className="button-start" />
+              {!hideButtonSkip && <Button label="Пропуск" className="button-skip" disabled={disabledButtonSkip} />}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" />}
+
+              {/* <Button label="++" onClick={() => { setDistCommand((prev) => prev + 1); console.log(distCommand); }} />
+              <Button label="--" onClick={() => { setDistCommand((prev) => prev - 1); console.log(distCommand) }} /> */}
             </div>
           </div>
 
@@ -448,7 +573,7 @@ const DistillationProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={receptRename}
+              onClick={recipeRename}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -478,7 +603,7 @@ const DistillationProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={receptDelete}
+              onClick={recipeDelete}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -486,7 +611,7 @@ const DistillationProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: {receptName}</p>
+        <p>Сценарій: {recipeName}</p>
       </Dialog>
     </>
   );

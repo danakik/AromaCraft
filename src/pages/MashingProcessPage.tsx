@@ -22,10 +22,10 @@ import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
 import { debounce } from 'lodash';
-import { useReedReceptsMutation } from '../api/receptsApi';
+import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
-import { useRenameReceptMutation } from '../api/renameReceptApi';
-import { useDeleteReceptMutation } from '../api/deleteRecept';
+import { useRenameRecipeMutation } from '../api/renameRecipeApi';
+import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 
 type FormData = {
   mashingPauses: number;
@@ -76,55 +76,58 @@ type MashingType = `mashing${'Temp' | 'Gyst' | 'Time'}${0 | 1 | 2 | 3 | 4 | 5 | 
 const MashingProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
 
-  const [receptName, setReceptName] = useState('');
-  const [receptNumber, setReceptNumber] = useState('');
-  const [reedRecept] = useReedReceptsMutation();
-  const [renameRecept] = useRenameReceptMutation();
-  const [deleteRecept] = useDeleteReceptMutation();
+  const [recipeName, setRecipeName] = useState('');
+  const [recipeNumber, setRecipeNumber] = useState('');
+  const [reedRecipes] = useReedRecipeMutation();
+  const [renameRecipe] = useRenameRecipeMutation();
+  const [deleteRecipe] = useDeleteRecipeMutation();
 
-  const pageRecept = () => {
+  const pageRecipe = () => {
     return {
       key: key,
       w: 3,
     };
   };
 
-  const [listRecept, setListRecept] = useState([]);
+  const [listRecipe, setListRecipe] = useState([]);
+  const [recipeCount, setRecipeCount] = useState(0);
 
-  const fetchRecept = async () => {
-    const respons = await reedRecept(pageRecept());
-    setListRecept(respons.data);
+  const fetchRecipe = async () => {
+    const respons = await reedRecipes(pageRecipe());
+    const { lines, recepCount } = respons.data;
+    setListRecipe(lines);
+    setRecipeCount(recepCount);
   };
 
   useEffect(() => {
-    fetchRecept();
+    fetchRecipe();
   }, []);
 
-  const pageReceptData = useMemo(() => {
+  const pageRecipeData = useMemo(() => {
     return {
       key: key,
       w: 3,
-      r: receptNumber,
-      n: receptName,
+      r: recipeNumber,
+      n: recipeName,
     };
-  }, [receptName, receptNumber]);
+  }, [recipeName, recipeNumber]);
 
   const {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(pageReceptData, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageRecipeData, { pollingInterval: SYNC_INTERVAL });
 
   const handleScenarioChange = (label: string, value: string) => {
-    setReceptName(label);
-    setReceptNumber(value);
+    setRecipeName(label);
+    setRecipeNumber(value);
   };
 
   useEffect(() => {
-    if (receptName !== '') {
-      console.log(pageReceptData);
+    if (recipeName !== '') {
+      console.log(pageRecipeData);
     }
-  }, [receptName]);
+  }, [recipeName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -180,30 +183,30 @@ const MashingProcessPage = () => {
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
 
-  const [disabledButtonRecept, setdisabledButtonRecept] = useState(true);
+  const [disabledButtonRecipe, setdisabledButtonRecipe] = useState(true);
 
   useEffect(() => {
-    if (receptNumber == '0') {
-      setdisabledButtonRecept(true);
+    if (recipeNumber == '0') {
+      setdisabledButtonRecipe(true);
     } else {
-      setdisabledButtonRecept(false);
+      setdisabledButtonRecipe(false);
     }
-  }, [receptNumber]);
+  }, [recipeNumber]);
 
-  const receptRename = async () => {
+  const recipeRename = async () => {
     const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
     if (inputElement.value === '') {
       toast.error('Введіть назву рецепта');
     } else {
-      const receptData = {
+      const recipeData = {
         key: key,
         w: 3,
-        n1: receptName,
+        n1: recipeName,
         n2: inputElement.value,
       };
       try {
-        await renameRecept(receptData);
-        await fetchRecept();
+        await renameRecipe(recipeData);
+        await fetchRecipe();
         setDialogRenameVisible(false);
         toast.success('Назва рецепта змінена на: ' + inputElement.value);
       } catch (error) {
@@ -213,15 +216,15 @@ const MashingProcessPage = () => {
     }
   };
 
-  const receptDelete = async () => {
-    const receptData = {
+  const recipeDelete = async () => {
+    const recipeData = {
       key: key,
       w: 3,
-      n: receptName,
+      n: recipeName,
     };
     try {
-      await deleteRecept(receptData);
-      await fetchRecept();
+      await deleteRecipe(recipeData);
+      await fetchRecipe();
       setDialogDeleteVisible(false);
       toast.success('Рецепт видалено');
     } catch (error) {
@@ -338,21 +341,21 @@ const MashingProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>Автоматика</h3>
             <div className="flex align-items-center justify-content-center">
-              <ACScriptComp options={listRecept} onChange={handleScenarioChange} />
+              <ACScriptComp options={listRecipe} onChange={handleScenarioChange} />
               <ACIconButton
                 iconName="edit"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => setDialogRenameVisible(true)}
               />
               <ACIconButton
                 iconName="doc_download"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => console.log('DocD clicked')}
               />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
               <ACIconButton
                 iconName="delete"
-                disabled={disabledButtonRecept}
+                disabled={disabledButtonRecipe}
                 onClick={() => setDialogDeleteVisible(true)}
               />
             </div>
@@ -542,7 +545,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={receptRename}
+              onClick={recipeRename}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -572,7 +575,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={receptDelete}
+              onClick={recipeDelete}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -580,7 +583,7 @@ const MashingProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: {receptName}</p>
+        <p>Сценарій: {recipeName}</p>
       </Dialog>
     </>
   );

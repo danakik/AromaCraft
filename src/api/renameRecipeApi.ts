@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const renameReceptApi = createApi({
-  reducerPath: 'renameReceptApi',
+export const renameRecipeApi = createApi({
+  reducerPath: 'renameRecipeApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://craftstore.com.ua/data/samogon/',
     responseHandler: 'text',
   }),
   endpoints: (builder) => ({
-    renameRecept: builder.mutation<any, Record<string, any>>({
+    renameRecipe: builder.mutation<any, Record<string, any>>({
       query: (data) => ({
         url: 'rename_recept.php',
         method: 'POST',
@@ -17,5 +17,5 @@ export const renameReceptApi = createApi({
   }),
 });
 
-export const { useRenameReceptMutation } = renameReceptApi;
-export default renameReceptApi;
+export const { useRenameRecipeMutation } = renameRecipeApi;
+export default renameRecipeApi;

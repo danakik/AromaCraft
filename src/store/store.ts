@@ -9,9 +9,9 @@ import deleteRoomApi from '../api/deleteRoomApi';
 import keyReducer from './keySlice';
 import saveHandApi from '../api/manualSave';
 import saveSettingApi from '../api/settingSave';
-import reedReceptsApi from '../api/receptsApi';
-import renameReceptApi from '../api/renameReceptApi';
-import deleteReceptApi from '../api/deleteRecept';
+import reedRecipeApi from '../api/recipeApi';
+import renameRecipeApi from '../api/renameRecipeApi';
+import deleteRecipeApi from '../api/deleteRecipeApi';
 
 const store = configureStore({
   reducer: {
@@ -23,9 +23,9 @@ const store = configureStore({
     [deleteRoomApi.reducerPath]: deleteRoomApi.reducer,
     [saveHandApi.reducerPath]: saveHandApi.reducer,
     [saveSettingApi.reducerPath]: saveSettingApi.reducer,
-    [reedReceptsApi.reducerPath]: reedReceptsApi.reducer,
-    [renameReceptApi.reducerPath]: renameReceptApi.reducer,
-    [deleteReceptApi.reducerPath]: deleteReceptApi.reducer,
+    [reedRecipeApi.reducerPath]: reedRecipeApi.reducer,
+    [renameRecipeApi.reducerPath]: renameRecipeApi.reducer,
+    [deleteRecipeApi.reducerPath]: deleteRecipeApi.reducer,
     key: keyReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -38,9 +38,9 @@ const store = configureStore({
       deleteRoomApi.middleware,
       saveHandApi.middleware,
       saveSettingApi.middleware,
-      reedReceptsApi.middleware,
-      renameReceptApi.middleware,
-      deleteReceptApi.middleware,
+      reedRecipeApi.middleware,
+      renameRecipeApi.middleware,
+      deleteRecipeApi.middleware,
     ),
 });
 

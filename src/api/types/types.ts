@@ -35,6 +35,10 @@ export type SortedData = {
   distTimeBody: number,
   distCubeHead: number,
   distCubeSwitch: number,
+  distController: number;
+  k3: number;
+  f: number;
+  distError: number;
   
   rectAcceleration: number,
   rectPower: number,
