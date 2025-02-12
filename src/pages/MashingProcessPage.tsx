@@ -90,13 +90,13 @@ const MashingProcessPage = () => {
   };
 
   const [listRecipe, setListRecipe] = useState([]);
-  const [recipeCount, setRecipeCount] = useState(0);
+  const [countRecipe, setCountRecipe] = useState(0);
 
   const fetchRecipe = async () => {
     const respons = await reedRecipes(pageRecipe());
-    const { lines, recepCount } = respons.data;
-    setListRecipe(lines);
-    setRecipeCount(recepCount);
+    const { recipeList, recipeCount } = respons.data;
+    setListRecipe(recipeList);
+    setCountRecipe(recipeCount);
   };
 
   useEffect(() => {

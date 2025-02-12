@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -21,6 +21,7 @@ import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
+import distillationSaveApi, { useDistillationSaveMutation } from '../api/distillationSave';
 
 type FormData = {
   distTempPower: number;
@@ -38,6 +39,8 @@ const DistillationProcessPage = () => {
   const [reedRecipes] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
+  const [isFormChanging, setIsFormChanging] = useState(false);
+  const [save] = useDistillationSaveMutation();
 
   const key = localStorage.getItem('samogonKey');
 
@@ -84,8 +87,7 @@ const DistillationProcessPage = () => {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(pageRecipeData, { pollingInterval: SYNC_INTERVAL });
-
+  } = useGetDataQuery(pageRecipeData, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
   const { control, watch } = useForm<FormData>({
     values: {
       distTempPower: data.distTempPower,
@@ -100,8 +102,53 @@ const DistillationProcessPage = () => {
     },
   });
 
+  const formatFormData = (formValues: FormData) => {
+    return {
+      key: key,
+      r: recipeNumber,
+      n: recipeName,
+      d: distCommand,
+      pR: formValues.distAcceleration,
+      pO: formValues.distPower,
+      tR: formValues.distTempPower,
+      tO: formValues.distTempStop,
+      tA: formValues.distTempError,
+      pB: formValues.distPowerBody,
+      tB: formValues.distTimeBody,
+      dS: formValues.distCubeSwitch ? 1 : 0,
+      dH: formValues.distCubeHead,
+    };
+  };
+
+  const formValues = watch();
+  const prevFormValues = useRef(formValues);
+
+  useEffect(() => {
+    if (JSON.stringify(formValues) !== JSON.stringify(prevFormValues.current)) {
+      setIsFormChanging(true);
+      prevFormValues.current = formValues;
+    }
+
+    const debouncedLog = debounce(() => {
+      const formattedData = formatFormData(formValues);
+      console.log(formattedData);
+      save(formattedData);
+      /* protection against children */
+
+      setIsFormChanging(false);
+    }, 5000);
+
+    if (isFormChanging) {
+      debouncedLog();
+    }
+
+    return () => {
+      debouncedLog.cancel();
+    };
+  }, [formValues, isFormChanging]);
+
   const [disabledBody, setDisabledBody] = useState(true);
-  const [disabledPowers, setDisabledPowers] = useState(true);
+  const [disabledPowers, setDisabledPowers] = useState(false);
   const [disabledTime, setDisabledTime] = useState(true);
   const [swithBody, setSwithBody] = useState(true);
   const [strHead, setStrHead] = useState('');
@@ -114,14 +161,17 @@ const DistillationProcessPage = () => {
         setDisabledTime(cubeSwith);
         setDisabledBody(!cubeSwith);
       }
-      if (data.version < 3.2 || data.version == 4 || data.version == 4.1 || (timeBody == 0 && cubeSwith == false)) {
-        setDisabledPowers(true);
-        setSwithBody(true);
-        setStrHead('');
-      } else {
+      if ((data.version >= 3.3 && data.version < 4) || data.version >= 4.3) {
         setSwithBody(false);
-        setDisabledPowers(false);
+      } else {
+        setSwithBody(true);
+      }
+      if (data.version < 3.2 || data.version == 4 || data.version == 4.1 || (timeBody == 0 && !cubeSwith)) {
+        setStrHead('');
+        setDisabledPowers(true);
+      } else {
         setStrHead(' голів');
+        setDisabledPowers(false);
       }
     }
   }, [data.version, cubeSwith, timeBody]);
@@ -300,12 +350,12 @@ const DistillationProcessPage = () => {
   };
 
   const clickStart = () => {
-    if(distCommand == 0) {
+    if (distCommand == 0) {
       setDistCommand(1);
-    }else{
+    } else {
       setDistCommand(0);
     }
-  }
+  };
 
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;

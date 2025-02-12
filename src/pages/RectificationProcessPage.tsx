@@ -91,13 +91,13 @@ const RectificationProcessPage = () => {
   };
 
   const [listRecipe, setListRecipe] = useState([]);
-  const [recipeCount, setRecipeCount] = useState(0);
+  const [countRecipe, setCountRecipe] = useState(0);
 
   const fetchRecipe = async () => {
     const respons = await reedRecipe(pageRecipe());
-    const { lines, recepCount } = respons.data;
-    setListRecipe(lines);
-    setRecipeCount(recepCount);
+    const { recipeList, recipeCount } = respons.data;
+    setListRecipe(recipeList);
+    setCountRecipe(recipeCount);
   };
 
   useEffect(() => {
