@@ -101,7 +101,7 @@ const MainPage = () => {
   return (
     <div className="flex justify-content-center align-items-center h-screen w-full">
       <div className="flex flex-column align-items-center p-4 w-800px min-h-10rem main-container">
-        <h2 className="text-center main-header">{t("title")}</h2>
+        <h2 className="text-center main-header">{t('title')}</h2>
         {data.map((item) => (
           <div key={item.key} className="data-container w-full">
             <div className="flex align-items-center justify-content-between w-full data-row gap-0">

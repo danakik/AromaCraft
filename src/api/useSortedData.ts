@@ -6,7 +6,6 @@ interface SortedData {
   tempCargi: number;
   tempDef: number;
   tempWoter: number;
-  handWork: number;
   errorHand: number;
   handPower: number;
   handPercent: number;
@@ -28,6 +27,7 @@ interface SortedData {
   handSpeedTail: number;
   handK4: number;
   switchTail: number;
+  handController: number;
 
   distAcceleration: number;
   distPower: number;
@@ -72,6 +72,7 @@ interface SortedData {
   rectSelectCarge: number;
   transitBody: number;
   rectTempTransit: number;
+  rectController: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -81,6 +82,7 @@ interface SortedData {
   mashingCool: number;
   mashingCoolTemp: number;
   mashingCoolGyst: number;
+  mashingController: number;
 
   mashingTemp0: number;
   mashingTemp1: number;
@@ -130,7 +132,6 @@ const initialSortedData: SortedData = {
   tempCargi: 0,
   tempDef: 0,
   tempWoter: 0,
-  handWork: 0,
   errorHand: 0,
   handPower: 0,
   handPercent: 0,
@@ -152,6 +153,7 @@ const initialSortedData: SortedData = {
   handSpeedTail: 0,
   handK4: 0,
   switchTail: 0,
+  handController: 0,
 
   distAcceleration: 0,
   distPower: 0,
@@ -196,6 +198,7 @@ const initialSortedData: SortedData = {
   rectSelectCarge: 0,
   transitBody: 0,
   rectTempTransit: 0,
+  rectController: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -205,6 +208,7 @@ const initialSortedData: SortedData = {
   mashingCool: 0,
   mashingCoolTemp: 0,
   mashingCoolGyst: 0,
+  mashingController: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,
@@ -272,7 +276,6 @@ const useSortedData = (key: string | null) => {
       tempCargi: parseNumber(newData[1]),
       tempDef: parseNumber(newData[2]),
       tempWoter: parseNumber(newData[3]),
-      handWork: parseNumber(newData[11]),
       errorHand: parseNumber(newData[15]),
       handPower: parseNumber(newData[36]),
       handPercent: parseNumber(newData[37]),
@@ -294,6 +297,7 @@ const useSortedData = (key: string | null) => {
       handSpeedTail: parseNumber(newData[113]),
       handK4: parseNumber(newData[114]),
       switchTail: parseNumber(newData[121]),
+      handController: parseNumber(newData[11]),
 
       distAcceleration: parseNumber(newData[17]),
       distPower: parseNumber(newData[18]),
@@ -322,6 +326,7 @@ const useSortedData = (key: string | null) => {
       rectPercentBody: parseNumber(newData[31]),
       rectDecreaseTemp: parseNumber(newData[103]),
       rectDecreaseSpeed: parseNumber(newData[104]),
+      rectController: parseNumber(newData[10]),
 
       rectTempError: parseNumber(newData[32]),
       rectTimeStab: parseNumber(newData[33]),
@@ -348,6 +353,7 @@ const useSortedData = (key: string | null) => {
       mashingCool: parseNumber(newData[52]),
       mashingCoolTemp: parseNumber(newData[53]),
       mashingCoolGyst: parseNumber(newData[54]),
+      mashingController: parseNumber(newData[12]),
 
       mashingTemp0: parseNumber(newData[55]),
       mashingTemp1: parseNumber(newData[56]),

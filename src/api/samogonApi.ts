@@ -30,7 +30,6 @@ const samogonApi = createApi({
           tempCargi: parseNumber(data[1]),
           tempDef: parseNumber(data[2]),
           tempWater: parseNumber(data[3]),
-          handWork: parseNumber(data[11]),
           errorHand: parseNumber(data[15]),
           handPower: parseNumber(data[36]),
           handPercent: parseNumber(data[37]),
@@ -52,6 +51,7 @@ const samogonApi = createApi({
           handSpeedTail: parseNumber(data[113]),
           handK4: parseNumber(data[114]),
           switchTail: parseNumber(data[121]),
+          handController: parseNumber(data[11]),
 
           distAcceleration: parseNumber(data[17]),
           distPower: parseNumber(data[18]),
@@ -96,6 +96,7 @@ const samogonApi = createApi({
           rectSelectCarge: parseNumber(data[128]),
           transitBody: parseNumber(data[111]),
           rectTempTransit: parseNumber(data[136]),
+          rectController: parseNumber(data[10]),
 
           mashingPauses: parseNumber(data[47]),
           mashingHeat: parseNumber(data[48]),
@@ -105,6 +106,7 @@ const samogonApi = createApi({
           mashingCool: parseNumber(data[52]),
           mashingCoolTemp: parseNumber(data[53]),
           mashingCoolGyst: parseNumber(data[54]),
+          mashingController: parseNumber(data[12]),
 
           mashingTemp0: parseNumber(data[55]),
           mashingTemp1: parseNumber(data[56]),

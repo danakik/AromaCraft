@@ -7,7 +7,6 @@ export const initialSortedData: SortedData = {
   tempCargi: 0,
   tempDef: 0,
   tempWater: 0,
-  handWork: 0,
   errorHand: 0,
   handPower: 0,
   handPercent: 0.06,
@@ -29,6 +28,7 @@ export const initialSortedData: SortedData = {
   handSpeedTail: 0.06,
   handK4: 0,
   switchTail: 0,
+  handController: 0,
 
   distAcceleration: 0,
   distPower: 0,
@@ -73,6 +73,7 @@ export const initialSortedData: SortedData = {
   rectSelectCarge: 0,
   transitBody: 0,
   rectTempTransit: 0,
+  rectController: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -82,6 +83,8 @@ export const initialSortedData: SortedData = {
   mashingCool: 0, 
   mashingCoolTemp: 0, 
   mashingCoolGyst: 0,
+  mashingController: 0,
+
   mashingTemp0: 0,
   mashingTemp1: 0,
   mashingTemp2: 0,

@@ -3,7 +3,6 @@ export type SortedData = {
   tempCargi: number;
   tempDef: number;
   tempWater: number;
-  handWork: number;
   errorHand: number;
   handPower: number;
   handPercent: number;
@@ -25,59 +24,63 @@ export type SortedData = {
   handSpeedTail: number;
   handK4: number;
   switchTail: number;
+  handController: number;
 
-  distAcceleration: number,
-  distPower: number,
-  distTempPower: number,
-  distTempStop: number,
-  distTempError: number,
-  distPowerBody: number,
-  distTimeBody: number,
-  distCubeHead: number,
-  distCubeSwitch: number,
+  distAcceleration: number;
+  distPower: number;
+  distTempPower: number;
+  distTempStop: number;
+  distTempError: number;
+  distPowerBody: number;
+  distTimeBody: number;
+  distCubeHead: number;
+  distCubeSwitch: number;
   distController: number;
   k3: number;
   f: number;
   distError: number;
-  
-  rectAcceleration: number,
-  rectPower: number,
-  rectPowerBody: number,
-  rectTempPower: number,
-  rectTempStop: number,
-  rectTempHead: number,
-  rectGystHead: number,
-  rectTempBody: number,
-  rectGystBody: number,
-  rectPercentHead: number, 
-  rectPercentBody: number,
-  rectDecreaseTemp: number,
-  rectDecreaseSpeed: number,
-  rectTempError: number,
-  rectTimeStab: number,
-  rectCubeTail: number,
-  rectSpeedTail: number,
-  rectSpeedCarge: number,
-  rectDecreaseCycle: number,
-  rectCyclesNumber: number,
-  rectEndCycle: number,
-  rectPowerTail: number,
-  rectTimeBody: number,
-  rectSwitchTail: number,
-  rectSwitchCube: number,
-  rectSwitchCarge: number,
-  rectSelectCarge: number,
-  transitBody: number,
-  rectTempTransit: number,
 
-  mashingPauses: number,
+  rectAcceleration: number;
+  rectPower: number;
+  rectPowerBody: number;
+  rectTempPower: number;
+  rectTempStop: number;
+  rectTempHead: number;
+  rectGystHead: number;
+  rectTempBody: number;
+  rectGystBody: number;
+  rectPercentHead: number;
+  rectPercentBody: number;
+  rectDecreaseTemp: number;
+  rectDecreaseSpeed: number;
+  rectTempError: number;
+  rectTimeStab: number;
+  rectCubeTail: number;
+  rectSpeedTail: number;
+  rectSpeedCarge: number;
+  rectDecreaseCycle: number;
+  rectCyclesNumber: number;
+  rectEndCycle: number;
+  rectPowerTail: number;
+  rectTimeBody: number;
+  rectSwitchTail: number;
+  rectSwitchCube: number;
+  rectSwitchCarge: number;
+  rectSelectCarge: number;
+  transitBody: number;
+  rectTempTransit: number;
+  rectController: number;
+
+  mashingPauses: number;
   mashingHeat: number;
   mashingHeatTemp: number;
   mashingHeatPower: number;
   mashingHeatTime: number;
-  mashingCool: number; 
-  mashingCoolTemp: number; 
+  mashingCool: number;
+  mashingCoolTemp: number;
   mashingCoolGyst: number;
+  mashingController: number;
+
   mashingTemp0: number;
   mashingTemp1: number;
   mashingTemp2: number;
@@ -88,15 +91,15 @@ export type SortedData = {
   mashingTemp7: number;
   mashingTemp8: number;
   mashingTemp9: number;
-  mashingGyst0: number; 
-  mashingGyst1: number; 
-  mashingGyst2: number; 
-  mashingGyst3: number; 
-  mashingGyst4: number; 
-  mashingGyst5: number; 
-  mashingGyst6: number; 
-  mashingGyst7: number; 
-  mashingGyst8: number; 
+  mashingGyst0: number;
+  mashingGyst1: number;
+  mashingGyst2: number;
+  mashingGyst3: number;
+  mashingGyst4: number;
+  mashingGyst5: number;
+  mashingGyst6: number;
+  mashingGyst7: number;
+  mashingGyst8: number;
   mashingGyst9: number;
 
   mashingTime0: number;
@@ -118,6 +121,4 @@ export type SortedData = {
   settingTen: number;
   settingBrometr: number;
   settingValueBrometr: number;
-
 };
-

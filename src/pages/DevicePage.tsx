@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import KotelIcon from '../assets/icons/kotel_icon';
 import NagrevIcon from '../assets/icons/nagrev_icon';
 import IngredientIcon from '../assets/icons/ingredient_icon';
@@ -22,6 +22,7 @@ import * as helpM from '../components/help_messages';
 import { Dialog } from 'primereact/dialog';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
+import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -36,6 +37,10 @@ const DevicePage = () => {
     isLoading,
     error,
   } = useGetDataQuery(dataSamagon, { pollingInterval: SYNC_INTERVAL });
+
+  useDisableLiProcess(data)
+
+  
 
   return (
     <>
