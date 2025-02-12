@@ -131,9 +131,9 @@ const DistillationProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      console.log(formattedData);
+      /* console.log(formattedData);
       save(formattedData);
-      /* protection against children */
+      protection against children */
 
       setIsFormChanging(false);
     }, 5000);
