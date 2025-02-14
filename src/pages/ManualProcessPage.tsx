@@ -16,6 +16,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
 import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   tempSelect: number;
@@ -68,6 +69,8 @@ const ManualProcessPage = () => {
     handTempWoterError: yup.number().max(120, 'Максимальне значення 120').min(1, 'Мінімальне значення 1'),
     handTempCubeError: yup.number().max(120, 'Максимальне значення 120').min(1, 'Мінімальне значення 1'),
   });
+
+  const { t } = useTranslation();
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -165,13 +168,15 @@ const ManualProcessPage = () => {
       if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
       } else if (data.selection == 1 && data.version >= 2.5) {
-        setSymbol('л/г');
+        setSymbol(t('unit_liter_per_gram'));
       }
     }
   }, [data]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка у завантаженні даних.</p>;
+  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
+  if (error) return <p>{t('loading_error_t')}</p>;
+
+  let l = localStorage.getItem('language');
 
   return (
     <>
@@ -187,16 +192,16 @@ const ManualProcessPage = () => {
         <div className="flex flex-column w-3/4 ">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTemp name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
+              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
+              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
+              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
             </div>
           </div>
 
@@ -208,10 +213,10 @@ const ManualProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACKnob
-                      label="Температура відбору"
+                      label={t('process_manual_temp_selection')}
                       color="orange"
                       initialValue={value}
-                      help={helpM.temp_selection_m}
+                      help={l === 'en' ? helpM.temp_selection : helpM.temp_selection_m}
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -224,8 +229,8 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
-                      label="Швидкість відбору"
-                      help={helpM.speed_selection_m}
+                      label={t('process_manual_speed_selection')}
+                      help={l === 'en' ? helpM.speed_selection : helpM.speed_selection_m}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -250,10 +255,10 @@ const ManualProcessPage = () => {
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
                     <ACKnob
-                      label="Гістерезис відбору"
+                      label={t('process_manual_gist_selection')}
                       color="blue"
                       initialValue={value}
-                      help="helpM.gist_selection_m"
+                      help={l === 'en' ? helpM.gist_selection : helpM.gist_selection_m}
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -266,8 +271,8 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
-                      label="Швидкість відб. хвостів"
-                      help={helpM.speed_selection_tails_m}
+                      label={t('process_speed_selection_tails')}
+                      help={l === 'en' ? helpM.speed_selection_tails : helpM.speed_selection_tails_m}
                       disabled={disabledK4}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
@@ -290,7 +295,7 @@ const ManualProcessPage = () => {
         </div>
         <div className="flex flex-column gap-3 w-1/4 align-items-start justify-content-start">
           <div className="block p-3  w-full">
-            <h3>Нагрівач/Регулятор</h3>
+            <h3>{t('process_manual_reg_header')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller
                 name="handPower"
@@ -298,10 +303,10 @@ const ManualProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Електронагрівач (ТЕН)"
+                    label={t('process_manual_heater')}
                     value={value}
                     units="%"
-                    help={helpM.ten_m}
+                    help={l === 'en' ? helpM.ten : helpM.ten_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -321,10 +326,10 @@ const ManualProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="pid"
-                    label="ПІД-регулятор"
+                    label={t('process_manual_pid')}
                     value={value}
                     units="°C"
-                    help={helpM.pid_m}
+                    help={l === 'en' ? helpM.pid : helpM.pid_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -340,9 +345,9 @@ const ManualProcessPage = () => {
             </div>
           </div>
           <div className="block p-3  w-full">
-            <h3>Механізми/Клапани</h3>
+            <h3>{t('process_manual_valve_header')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="water" label="Подача води" help={helpM.water_m} />
+              <ACRegulator icon="water" label={t('process_manual_valve_water')} help={l === 'en' ? helpM.water : helpM.water_m} />
               <Controller
                 name="handK1"
                 control={control}
@@ -352,7 +357,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="select_valve" label="Клапан відбору" help={helpM.selection_m} />
+              <ACRegulator icon="select_valve" label={t('process_manual_valve_selection')} help={l === 'en' ? helpM.selection : helpM.selection_m} />
               <Controller
                 name="handK2"
                 control={control}
@@ -362,7 +367,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="valve_heads" label="Клапан голів" help={helpM.heads_m} />
+              <ACRegulator icon="valve_heads" label={t('process_manual_valve_heads')} help={l === 'en' ? helpM.heads : helpM.heads_m} />
               <Controller
                 name="handK3"
                 control={control}
@@ -372,7 +377,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="valve_tails" label="Клапан хвостів" help={helpM.tails_m} />
+              <ACRegulator icon="valve_tails" label={t('process_manual_valve_tails')} help={l === 'en' ? helpM.tails : helpM.tails_m} />
               <Controller
                 name="handK4"
                 control={control}
@@ -382,9 +387,9 @@ const ManualProcessPage = () => {
               />
             </div>
           </div>
-          <div className="block p-3  w-full">
-            <h3>Аварії</h3>
-            <div className="flex flex-row align-items-start  justify-content-start w-full gap-2">
+          <div className="block p-3 w-full">
+            <h3>{t('process_manual_breakdowns_header')}</h3>
+            <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="handTempWoterError"
                 control={control}
@@ -392,10 +397,10 @@ const ManualProcessPage = () => {
                   <ACRegulator
                     icon="breakdown"
                     color="white"
-                    label="Аварія води"
+                    label={t('process_manual_break_water')}
                     value={value}
                     units="°C"
-                    help={helpM.water_break_m}
+                    help={l === 'en' ? helpM.water_break : helpM.water_break_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -416,17 +421,17 @@ const ManualProcessPage = () => {
                   <ACRegulator
                     icon="breakdown"
                     color="purple"
-                    label="Аварія куб"
+                    label={t('process_manual_break_cube')}
                     value={value}
                     units="°C"
-                    help={helpM.cube_break_m}
+                    help={l === 'en' ? helpM.cube_break : helpM.cube_break_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-start  justify-content-start  w-full gap-2">
-              <ACRegulator icon="breakdown" color="orange" label="Аварія рівень" help={helpM.level_break_m} />
+              <ACRegulator icon="breakdown" color="orange" label={t('process_manual_break_level')} help={l === 'en' ? helpM.level_break : helpM.level_break_m} />
               <Controller
                 name="handLevelError"
                 control={control}

@@ -12,10 +12,8 @@ import { useCreateRoomMutation } from '../api/createRoomApi';
 import { useDeleteRoomMutation } from '../api/deleteRoomApi';
 import '../styles/main_page.css';
 import 'primeflex/primeflex.css';
-import 'primereact/resources/primereact.min.css';
 import { useChangeNameMutation } from '../api/changeNameApi';
 import { useTranslation } from 'react-i18next';
-
 
 const MainPage = () => {
   const key = useSelector((state: RootState) => state.key.key) as string;
@@ -36,15 +34,15 @@ const MainPage = () => {
 
   const { t } = useTranslation();
 
-  if (isLoading) return <p>Завантаження...</p>;
+  if (isLoading) return <p>{t('loading')}</p>;
 
   if (error) {
-    toast.error('Помилка при отриманні даних');
-    return <p>Помилка при завантаженні даних.</p>;
+    toast.error(t('loading_error'));
+    return <p>{t('loading_error_t')}</p>;
   }
 
   if (!data || data.length === 0) {
-    return <p>Немає доступних даних.</p>;
+    return <p>{t('no_data')}</p>;
   }
 
   const handleButtonClick = (itemKey: string) => {
@@ -62,7 +60,7 @@ const MainPage = () => {
   };
 
   const handleSaveName = async (itemKey: string) => {
-    toast.success(`Збережена нова назва для ${itemKey}: ${newName}`);
+    toast.success(`${t('main_rename_toast_success')} ${itemKey}: ${newName}`);
     const response = await changeName({ key, c: itemKey, n: newName });
     setEditingItemKey(null);
     setNewName('');
@@ -74,10 +72,10 @@ const MainPage = () => {
     console.log(machineNumber, key);
     console.log(createResponse);
     if (createResponse.trim() === '3') {
-      toast.error('Пристрій уже існує');
+      toast.error(t('main_rename_toast_error'));
     } else {
       const saveResponse = await saveRoom({ machineNumber, key }).unwrap();
-      toast.success('Пристрій успішно збережено');
+      toast.success(t('main_save_device'));
       refetch();
     }
   };
@@ -101,7 +99,7 @@ const MainPage = () => {
   return (
     <div className="flex justify-content-center align-items-center h-screen w-full">
       <div className="flex flex-column align-items-center p-4 w-800px min-h-10rem main-container">
-        <h2 className="text-center main-header">{t('title')}</h2>
+        <h2 className="text-center main-header">{t('main_managment')}</h2>
         {data.map((item) => (
           <div key={item.key} className="data-container w-full">
             <div className="flex align-items-center justify-content-between w-full data-row gap-0">
@@ -120,7 +118,7 @@ const MainPage = () => {
                     <InputText
                       value={newName}
                       onChange={handleNameChange}
-                      placeholder="Нова назва пристрою..."
+                      placeholder={t('main_rename_device')}
                       className="input-rename"
                     />
                     <Button label="OK" onClick={() => handleSaveName(item.key)} className="button button-rename" />
@@ -131,16 +129,16 @@ const MainPage = () => {
                 <p className="item-key">{item.key}</p>
               </div>
               <div className="flex item-action">
-                <Button className="button button-delete" label="Видалити" onClick={() => OpenDialogKey(item.key)} />
-                <Button className="button button-enter" label="Увійти" onClick={() => handleButtonClick(item.key)} />
+                <Button className="button button-delete" label={t('main_delete')} onClick={() => OpenDialogKey(item.key)} />
+                <Button className="button button-enter" label={t('main_enter')} onClick={() => handleButtonClick(item.key)} />
               </div>
             </div>
           </div>
         ))}
-        <Button className="button button-add mt-3" label="Додати пристрій" onClick={() => setVisible(true)} />
+        <Button className="button button-add mt-3" label={t('main_add_device')} onClick={() => setVisible(true)} />
       </div>
       <Dialog
-        header="Додайте ID пристрою"
+        header={t('main_dialog_add_device')}
         visible={visible}
         style={{ width: '350px' }}
         className="custom-dialog"
@@ -151,14 +149,14 @@ const MainPage = () => {
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={DialogCreateRoom}
               className="p-button-text button button-confirm"
@@ -178,7 +176,7 @@ const MainPage = () => {
         </div>
       </Dialog>
       <Dialog
-        header={`Видалення пристрою`}
+        header={t('main_dialog_delete_device')}
         visible={visible_delete}
         style={{ width: '350px' }}
         onHide={() => {
@@ -188,14 +186,14 @@ const MainPage = () => {
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setvisible_delete(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={() => handleDeleteClick()}
               className="p-button-text button button-confirm"
@@ -205,7 +203,7 @@ const MainPage = () => {
           </div>
         }
       >
-        <p>Ви впевнені, що хочете видалити цей пристрій?</p>
+        <p>{t('main_dialog_delete_text')}</p>
       </Dialog>
     </div>
   );

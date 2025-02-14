@@ -22,6 +22,7 @@ import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import distillationSaveApi, { useDistillationSaveMutation } from '../api/distillationSave';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   distTempPower: number;
@@ -36,6 +37,7 @@ type FormData = {
 };
 
 const DistillationProcessPage = () => {
+  const { t } = useTranslation();
   const [reedRecipes] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
@@ -170,7 +172,7 @@ const DistillationProcessPage = () => {
         setStrHead('');
         setDisabledPowers(true);
       } else {
-        setStrHead(' голів');
+        setStrHead(t('process_dist_heads'));
         setDisabledPowers(false);
       }
     }
@@ -181,14 +183,14 @@ const DistillationProcessPage = () => {
   }, [updateBodySwitch]);
 
   const [distCommand, setDistCommand] = useState(0);
-  const [startLabel, setStartLabel] = useState('СТАРТ');
+  const [startLabel, setStartLabel] = useState(t('process_start1'));
   const [hideButtonStart, setHideButtonStart] = useState(false);
   const [hideButtonSkip, setHideButtonSkip] = useState(false);
   const [disabledButtonStart, setDisabledButtonStart] = useState(false); // хай будэ
   const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
 
   const updateCommandControls = useCallback(() => {
-    setStartLabel(distCommand > 0 ? 'СТОП' : 'СТАРТ');
+    setStartLabel(distCommand > 0 ? t('process_start2') : t('process_start1'));
 
     if (
       (distCommand != data.distController && distCommand == 2) ||
@@ -241,7 +243,7 @@ const DistillationProcessPage = () => {
   const recipeRename = async () => {
     const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
     if (inputElement.value === '') {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else {
       const recipeData = {
         key: key,
@@ -253,9 +255,9 @@ const DistillationProcessPage = () => {
         await renameRecipe(recipeData);
         await fetchRecipe();
         setDialogRenameVisible(false);
-        toast.success('Назва рецепта змінена на: ' + inputElement.value);
+        toast.success(t('scenario_rename_success') + inputElement.value);
       } catch (error) {
-        toast.error('Помилка при зміні назви рецепта');
+        toast.error(t('scenario_rename_error2'));
         console.error(error);
       }
     }
@@ -271,9 +273,9 @@ const DistillationProcessPage = () => {
       await deleteRecipe(recipeData);
       await fetchRecipe();
       setDialogDeleteVisible(false);
-      toast.success('Рецепт видалено');
+      toast.success(t('scenario_delete_success'));
     } catch (error) {
-      toast.error('Помилка при видаленні рецепта');
+      toast.error(t('scenario_delete_error'));
       console.error(error);
     }
   };
@@ -285,45 +287,45 @@ const DistillationProcessPage = () => {
 
     switch (data.distController) {
       case 0:
-        updateStatus = 'Очікування';
+        updateStatus = t('status_waiting');
         break;
       case 1:
-        updateStatus = 'Розгін';
+        updateStatus = t('status_acceleration');
         break;
       case 2:
       case 4:
         if (timeBody > 0 || cubeSwith) {
-          updateStatus = data.k3 == 1 ? 'Відбір голів' : 'Відбір тіла';
+          updateStatus = data.k3 == 1 ? t('status_selection_heads') : t('status_selection_body');
         } else {
-          updateStatus = 'Відбір';
+          updateStatus = t('status_selection');
         }
         break;
       case 3:
-        updateStatus = 'Зупинка';
+        updateStatus = t('status_stop');
         break;
       default:
-        updateStatus = 'щось нове';
+        updateStatus = t('status_unknown');
         break;
     }
 
     switch (data.distError) {
       case 0:
-        updateStatus += ', помилок нема';
+        updateStatus += t('status_success');
         break;
       case 1:
-        updateStatus = 'Помилка t° куба';
+        updateStatus = t('status_error_cube');
         break;
       case 2:
-        updateStatus = 'Помилка t° води';
+        updateStatus = t('status_error_water');
         break;
       case 3:
-        updateStatus = 'Помилка рівня';
+        updateStatus = t('status_error_level');
         break;
       case 4:
-        updateStatus = 'Помилка перегрів';
+        updateStatus = t('status_error_heat');
         break;
       default:
-        updateStatus = 'Невідома помилка';
+        updateStatus = t('status_error_unknown');
         break;
     }
     setStatus(updateStatus);
@@ -357,8 +359,10 @@ const DistillationProcessPage = () => {
     }
   };
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка у завантаженні даних.</p>;
+  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
+  if (error) return <p>{t('loading_error_t')}</p>;
+
+  let l = localStorage.getItem('language');
 
   return (
     <>
@@ -374,16 +378,16 @@ const DistillationProcessPage = () => {
         <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTemp name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
+              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
+              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
+              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
             </div>
           </div>
 
@@ -394,10 +398,10 @@ const DistillationProcessPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
-                    label={'Темп. переходу' + strHead}
+                    label={t('process_temp_transition') + strHead}
                     color="red"
                     initialValue={value}
-                    help={helpM.temp_transition_m}
+                    help={l === 'en' ? helpM.temp_transition : helpM.temp_transition_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -410,9 +414,9 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACKnob
                     color="purple"
-                    label="Темп. зупинки"
+                    label={t('process_temp_stop')}
                     initialValue={value}
-                    help={helpM.temp_stop_m}
+                    help={l === 'en' ? helpM.temp_stop : helpM.temp_stop_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -423,7 +427,7 @@ const DistillationProcessPage = () => {
 
         <div className="flex flex-column gap-3 w-1/4 align-items-start justify-content-start ">
           <div className="block p-3 w-full">
-            <h3>Автоматика</h3>
+            <h3>{t('process_scenario_header')}</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecipe} onChange={handleScenarioChange} />
               <ACIconButton
@@ -444,7 +448,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              {!hideButtonSkip && <Button label="Пропуск" className="button-skip" disabled={disabledButtonSkip} />}
+              {!hideButtonSkip && <Button label={t('process_skip')} className="button-skip" disabled={disabledButtonSkip} />}
               {!hideButtonStart && <Button label={startLabel} className="button-start" />}
 
               {/* <Button label="++" onClick={() => { setDistCommand((prev) => prev + 1); console.log(distCommand); }} />
@@ -453,7 +457,7 @@ const DistillationProcessPage = () => {
           </div>
 
           <div className="block p-3 w-full">
-            <h3>Потужність</h3>
+            <h3>{t('process_power_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="distAcceleration"
@@ -461,10 +465,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужність розгону"
+                    label={t('process_power_acceleration')}
                     value={value}
                     units="%"
-                    help={helpM.power_acceleration_m}
+                    help={l === 'en' ? helpM.power_acceleration : helpM.power_acceleration_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -477,10 +481,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="pid"
-                    label="Потужність відбору тіла"
+                    label={t('process_power_selection_body')}
                     value={value}
                     units="%"
-                    help={helpM.power_selection_body_m}
+                    help={l === 'en' ? helpM.power_selection_body : helpM.power_selection_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledPowers}
                   />
@@ -494,10 +498,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="pid"
-                    label={'Потужність відбору' + strHead}
+                    label={t('process_power_selection') + strHead}
                     value={value}
                     units="%"
-                    help={helpM.power_selection_m}
+                    help={l === 'en' ? helpM.power_selection : helpM.power_selection_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -505,9 +509,9 @@ const DistillationProcessPage = () => {
             </div>
           </div>
           <div className="block p-3 w-full">
-            <h3>Інше</h3>
+            <h3>{t('process_other')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
-              <ACRegulator icon="arrow_fork" label="Перехід тіла" help={helpM.temp_transition_body_m} />
+              <ACRegulator icon="arrow_fork" label={t('process_dist_transition_body')} help={l === 'en' ? helpM.temp_transition_body : helpM.temp_transition_body_m} />
               <Controller
                 name="distCubeSwitch"
                 control={control}
@@ -516,8 +520,8 @@ const DistillationProcessPage = () => {
                     className="custom-toggle-button"
                     checked={value}
                     onChange={(e) => onChangeForm(e.value)}
-                    onLabel="Темп"
-                    offLabel="Час"
+                    onLabel={t('toggle_temp')}
+                    offLabel={t('toggle_time')}
                     disabled={swithBody}
                   />
                 )}
@@ -530,10 +534,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
-                    label="Темп. переходу тіла"
+                    label={t('process_dist_temp_transition_body')}
                     value={value}
                     units="°C"
-                    help={helpM.temp_transition_body_m}
+                    help={l === 'en' ? helpM.temp_transition_body : helpM.temp_transition_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledBody}
                   />
@@ -547,10 +551,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="time"
-                    label="Час, хв. переходу тіла"
+                    label={t('process_dist_time_transition_body')}
                     value={value}
-                    units="хв"
-                    help={helpM.time_body_transition_m}
+                    units={t('unit_minutes')}
+                    help={l === 'en' ? helpM.time_body_transition : helpM.time_body_transition_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTime}
                   />
@@ -564,10 +568,10 @@ const DistillationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
-                    label="Температура аварії"
+                    label={t('process_temp_breakdown')}
                     value={value}
                     units="°C"
-                    help={helpM.temp_breakdown_m}
+                    help={l === 'en' ? helpM.temp_breakdown : helpM.temp_breakdown_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -577,21 +581,21 @@ const DistillationProcessPage = () => {
         </div>
       </div>
       <Dialog
-        header={'Створити новий сценарій'}
+        header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={() => console.log('Створено новий сценарій')}
               className="p-button-text button button-confirm"
@@ -607,21 +611,21 @@ const DistillationProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Перейменувати сценарій'}
+        header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
               className="p-button-text button button-confirm"
@@ -637,21 +641,21 @@ const DistillationProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Видалити сценарій'}
+        header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
               className="p-button-text button button-confirm"
@@ -661,7 +665,7 @@ const DistillationProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: {recipeName}</p>
+        <p>{t('scenario_dialog_name')} {recipeName}</p>
       </Dialog>
     </>
   );

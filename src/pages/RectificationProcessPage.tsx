@@ -6,7 +6,6 @@ import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACSlider } from '../components/knob';
 import { ACCounterLabel } from '../components/counter';
-import { ACSwitch } from '../components/switch';
 import { ACRegulator } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
@@ -25,6 +24,7 @@ import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   rectTempHead: number;
@@ -82,6 +82,8 @@ const RectificationProcessPage = () => {
   const [reedRecipe] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
+
+  const { t } = useTranslation();
 
   const pageRecipe = () => {
     return {
@@ -225,7 +227,7 @@ const RectificationProcessPage = () => {
       } else if (data.transitBody == 1) {
         setDisabledTimeBody(false);
         setIsSwitchOn(true);
-        setBodySymbol('хв');
+        setBodySymbol(t('unit_minutes'));
       } else if (data.transitBody == 2) {
         setDisabledTimeBody(false);
         setIsSwitchOn(false);
@@ -235,7 +237,7 @@ const RectificationProcessPage = () => {
       if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
       } else if (data.selection == 1 && data.version >= 2.5) {
-        setSymbol('л/г');
+        setSymbol(t('unit_liter_per_gram'));
       }
     }
   }, [data, hasTailSwitch, hasCargeSwitch]);
@@ -257,7 +259,7 @@ const RectificationProcessPage = () => {
   const recipeRename = async () => {
     const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
     if (inputElement.value === '') {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else {
       const recipeData = {
         key: key,
@@ -269,9 +271,9 @@ const RectificationProcessPage = () => {
         await renameRecipe(recipeData);
         await fetchRecipe();
         setDialogRenameVisible(false);
-        toast.success('Назва рецепта змінена на: ' + inputElement.value);
+        toast.success(t('scenario_rename_success') + inputElement.value);
       } catch (error) {
-        toast.error('Помилка при зміні назви рецепта');
+        toast.error(t('scenario_rename_error2'));
         console.error(error);
       }
     }
@@ -287,15 +289,17 @@ const RectificationProcessPage = () => {
       await deleteRecipe(recipeData);
       await fetchRecipe();
       setDialogDeleteVisible(false);
-      toast.success('Рецепт видалено');
+      toast.success(t('scenario_delete_success'));
     } catch (error) {
-      toast.error('Помилка при видаленні рецепта');
+      toast.error(t('scenario_delete_error'));
       console.error(error);
     }
   };
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
-  if (error) return <p>Помилка у завантаженні даних.</p>;
+  if (isLoading || data.version == 0) return <p>{t('loading')}</p>; // из-за списка рецепта дольше загрузка страницы
+  if (error) return <p>{t('loading_error_t')}</p>;
+
+  let l = localStorage.getItem('language');
 
   return (
     <>
@@ -311,16 +315,16 @@ const RectificationProcessPage = () => {
         <div className="flex flex-column w-1/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
+              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
+              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
+              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
             </div>
           </div>
           <div className="flex flex-column align-items-center justify-content-center w-full">
@@ -332,10 +336,10 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACSlider
-                        label="Темп. відбору голів"
+                        label={t('process_rect_temp_selection_heads')}
                         color="blue"
                         initialValue={value}
-                        help={helpM.temp_selection_heads_m}
+                        help={l === 'en' ? helpM.temp_selection_heads : helpM.temp_selection_heads_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -347,8 +351,8 @@ const RectificationProcessPage = () => {
                       <ACCounterLabel
                         units=" °C"
                         value={value}
-                        label="Гістерезис відб. голів"
-                        help={helpM.gist_selection_heads_m}
+                        label={t('process_rect_gist_selection_heads')}
+                        help={l === 'en' ? helpM.gist_selection_heads : helpM.gist_selection_heads_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -363,10 +367,10 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACSlider
-                        label="Темп.відбору тіла"
+                        label={t('process_rect_temp_selection_body')}
                         color="orange"
                         initialValue={value}
-                        help={helpM.temp_selection_body_m}
+                        help={l === 'en' ? helpM.temp_selection_body : helpM.temp_selection_body_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -378,8 +382,8 @@ const RectificationProcessPage = () => {
                       <ACCounterLabel
                         units=" °C"
                         value={value}
-                        label="Гістерезис відб.тіла"
-                        help={helpM.gist_selection_body_m}
+                        label={t('process_rect_gist_selection_body')}
+                        help={l === 'en' ? helpM.gist_selection_body : helpM.gist_selection_body_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -393,10 +397,10 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACSlider
-                        label="Темп.відб.хвостів"
+                        label={t('process_rect_temp_selection_tails')}
                         color="red"
                         initialValue={value}
-                        help={helpM.temp_selection_tails_m}
+                        help={l === 'en' ? helpM.temp_selection_tails : helpM.temp_selection_tails_m}
                         onChange={(e) => onChangeForm(e.value)}
                         readonly={tempTail}
                       />
@@ -407,10 +411,10 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
-                        units="л/г"
+                        units={t('unit_liter_per_gram')}
                         value={value.value}
-                        label="Швидкість"
-                        help={helpM.speed_selection_tails_m}
+                        label={t('process_speed_selection_tails')}
+                        help={l === 'en' ? helpM.speed_selection_tails : helpM.speed_selection_tails_m}
                         onChange={(e) => {
                           const updatedValue = calculateHandPercent(
                             e.value,
@@ -438,9 +442,9 @@ const RectificationProcessPage = () => {
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACSlider
                         color="purple"
-                        label="Темп. зупинки"
+                        label={t('process_temp_stop')}
                         initialValue={value}
-                        help={helpM.temp_stop_m}
+                        help={l === 'en' ? helpM.temp_stop : helpM.temp_stop_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -450,10 +454,10 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
-                        label="Стабілізація колони"
+                        label={t('process_rect_column_stabilization')}
                         value={value}
-                        units="хв"
-                        help={helpM.stabilisation_column_m}
+                        units={t('unit_minutes')}
+                        help={l === 'en' ? helpM.stabilisation_column : helpM.stabilisation_column_m}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -466,10 +470,10 @@ const RectificationProcessPage = () => {
 
         <div
           className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4 custom-scrollbar"
-          style={{ maxHeight: '660px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
+          style={{ maxHeight: '670px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
-            <h3>Автоматика</h3>
+            <h3>{t('process_scenario_header')}</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecipe} onChange={handleScenarioChange} />
               <ACIconButton
@@ -490,13 +494,13 @@ const RectificationProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" className="button-skip" />
-              <Button label="Старт" className="button-start" />
+              <Button label={t('process_skip')} className="button-skip" />
+              <Button label={t('process_start1')} className="button-start" />
             </div>
           </div>
 
           <div className="block p-3 w-full">
-            <h3>Потужність</h3>
+            <h3>{t('process_power_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="rectAcceleration"
@@ -504,10 +508,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужність розгону"
+                    label={t('process_power_acceleration')}
                     value={value}
                     units="%"
-                    help={helpM.power_acceleration_m}
+                    help={l === 'en' ? helpM.power_acceleration : helpM.power_acceleration_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -520,10 +524,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужність відбору"
+                    label={t('process_power_selection')}
                     value={value}
                     units="%"
-                    help={helpM.power_selection_m}
+                    help={l === 'en' ? helpM.power_selection : helpM.power_selection_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -536,10 +540,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужн.відбору(тіло)"
+                    label={t('process_power_selection_body')}
                     value={value}
                     units="%"
-                    help={helpM.power_selection_body_m}
+                    help={l === 'en' ? helpM.power_selection_body : helpM.power_selection_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -552,10 +556,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужн.відбору(хвости)"
+                    label={t('process_rect_power_selection_tails')}
                     value={value}
                     units="%"
-                    help={helpM.power_selection_tails_m}
+                    help={l === 'en' ? helpM.power_selection_tails : helpM.power_selection_tails_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={powerTail}
                   />
@@ -565,7 +569,7 @@ const RectificationProcessPage = () => {
           </div>
 
           <div className="block p-3 w-full">
-            <h3>Швидкість</h3>
+            <h3>{t('process_rect_speed_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="rectPercentHead"
@@ -573,10 +577,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв.відбору(голів)"
+                    label={t('process_rect_speeed_selection_heads')}
                     value={value.value}
                     units={symbol}
-                    help={helpM.speed_selection_heads_m}
+                    help={l === 'en' ? helpM.speed_selection_heads : helpM.speed_selection_heads_m}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -600,10 +604,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв.відбору(тіла)"
+                    label={t('process_rect_speed_selection_body')}
                     value={value.value}
                     units={symbol}
-                    help={helpM.speed_selection_body_m}
+                    help={l === 'en' ? helpM.speed_selection_body : helpM.speed_selection_body_m}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -629,10 +633,10 @@ const RectificationProcessPage = () => {
                     <ACRegulator
                       icon="speed"
                       color="red"
-                      label="Зменш.шв.царзі"
+                      label={t('process_rect_speed_carga_decrease')}
                       value={value.value}
                       units={symbol}
-                      help={helpM.decrease_speed_cargi_m}
+                      help={l === 'en' ? helpM.decrease_speed_cargi : helpM.decrease_speed_cargi_m}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -657,8 +661,8 @@ const RectificationProcessPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="ТЕМП"
-                      offLabel="АВТО"
+                      onLabel={t('toggle_temp')}
+                      offLabel={t('toggle_auto')}
                       disabled={disabledCarge}
                     />
                   )}
@@ -668,7 +672,7 @@ const RectificationProcessPage = () => {
           </div>
 
           <div className="block p-3 w-full">
-            <h3>Цикли</h3>
+            <h3>{t('process_rect_cycles_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="rectCyclesNumber"
@@ -676,10 +680,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="list"
-                    label="Кількість циклів"
+                    label={t('process_rect_cycles_number')}
                     value={value}
                     units=" "
-                    help={helpM.cycles_m}
+                    help={l === 'en' ? helpM.cycles : helpM.cycles_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -692,10 +696,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="timer"
-                    label="Обмеження циклу"
+                    label={t('process_rect_cycles_limit')}
                     value={value}
-                    units="хв"
-                    help={helpM.border_cycles_m}
+                    units={t('unit_minutes')}
+                    help={l === 'en' ? helpM.border_cycles : helpM.border_cycles_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={endCycle}
                   />
@@ -709,10 +713,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="sort"
-                    label="Зменшення по циклам"
+                    label={t('process_rect_cycles_reduction')}
                     value={value.value}
                     units={symbol}
-                    help={helpM.decrease_cycles_m}
+                    help={l === 'en' ? helpM.decrease_cycles : helpM.decrease_cycles_m}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -732,7 +736,7 @@ const RectificationProcessPage = () => {
           </div>
 
           <div className="block p-3 w-full">
-            <h3>Інше</h3>
+            <h3>{t('process_other')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="rectTempPower"
@@ -741,10 +745,10 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="temp"
                     color="white"
-                    label="Темп. переходу"
+                    label={t('process_temp_transition')}
                     value={value}
                     units="°C"
-                    help={helpM.temp_transition_m}
+                    help={l === 'en' ? helpM.temp_transition : helpM.temp_transition_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -757,10 +761,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
-                    label="Зменш.відбору tКУБ"
+                    label={t('process_rect_temp_cube_decrease')}
                     value={value}
                     units="°C"
-                    help={helpM.decrease_selection_m}
+                    help={l === 'en' ? helpM.decrease_selection : helpM.decrease_selection_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -774,10 +778,10 @@ const RectificationProcessPage = () => {
                   <ACRegulator
                     icon="temp"
                     color="red"
-                    label="Темп. аварії"
+                    label={t('process_temp_breakdown')}
                     value={value}
                     units="°C"
-                    help={helpM.temp_breakdown_m}
+                    help={l === 'en' ? helpM.temp_breakdown : helpM.temp_breakdown_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -791,10 +795,10 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp_minus"
-                    label="Темп. зм. по царзі"
+                    label={t('process_rect_temp_carga_decrease')}
                     value={value}
                     units="°C"
-                    help={helpM.temp_selection_cargi_m}
+                    help={l === 'en' ? helpM.temp_selection_cargi : helpM.temp_selection_cargi_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={tempSelectCarge}
                   />
@@ -803,7 +807,7 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <div className="flex flex-row align-items-center justify-content-center w-full">
-                <ACRegulator icon="arrow_curve" label="Відбір хвостів" help={helpM.selection_tails_m} />
+                <ACRegulator icon="arrow_curve" label={t('process_rect_selection_tails')} help={helpM.selection_tails_m} />
                 <Controller
                   name="rectSwitchTail"
                   control={control}
@@ -812,8 +816,8 @@ const RectificationProcessPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="КОЛОНА"
-                      offLabel="ВУЗОЛ"
+                      onLabel={t('toggle_column')}
+                      offLabel={t('toggle_node')}
                       disabled={switchTail}
                     />
                   )}
@@ -823,15 +827,15 @@ const RectificationProcessPage = () => {
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 key={bodySymbol}
-                name={isSwitchOn ? 'rectTimeBody' : 'rectTempTransit'} //bag no symbol for first boot
+                name={isSwitchOn ? 'rectTimeBody' : 'rectTempTransit'} //bug: no symbol for first boot
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="arrow_fork"
-                    label="Перехід на відбір тіла"
+                    label={t('process_rect_transition_selection_body')}
                     value={value}
                     units={bodySymbol}
-                    help={helpM.transition_select_body_m}
+                    help={l === 'en' ? helpM.transition_select_body : helpM.transition_select_body_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTimeBody}
                   />
@@ -849,8 +853,8 @@ const RectificationProcessPage = () => {
                       icon="speed"
                       units={symbol}
                       value={value.value}
-                      label="Зменш.шв.відбору"
-                      help={helpM.decrease_speed_selection_m}
+                      label={t('process_rect_speed_selection_decrease')}
+                      help={l === 'en' ? helpM.decrease_speed_selection : helpM.decrease_speed_selection_m}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -874,8 +878,8 @@ const RectificationProcessPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="БАГАТ"
-                      offLabel="ОДНОК"
+                      onLabel={t('toggle_many')}
+                      offLabel={t('toggle_one')}
                     />
                   )}
                 />
@@ -886,21 +890,21 @@ const RectificationProcessPage = () => {
       </div>
 
       <Dialog
-        header={'Створити новий сценарій'}
+        header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={() => console.log('Створено новий сценарій')}
               className="p-button-text button button-confirm"
@@ -916,21 +920,21 @@ const RectificationProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Перейменувати сценарій'}
+        header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
               className="p-button-text button button-confirm"
@@ -946,21 +950,21 @@ const RectificationProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Видалити сценарій'}
+        header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
               className="p-button-text button button-confirm"
@@ -970,7 +974,7 @@ const RectificationProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: {recipeName}</p>
+        <p>{t('scenario_dialog_name')} {recipeName}</p>
       </Dialog>
     </>
   );

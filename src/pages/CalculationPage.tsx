@@ -12,6 +12,7 @@ import { Button } from 'primereact/button';
 import { alcoholTemperatureTable } from '../constants/calculation';
 import { AxisOptions, Chart } from 'react-charts';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   capacity: number;
@@ -50,7 +51,7 @@ export const linierInterpolation = (
   const result =
     smallestIndicatorValue +
     ((highestIndicatorValue - smallestIndicatorValue) / (highestIndicator - indicator)) *
-      (smallestIndicator - indicator);
+    (smallestIndicator - indicator);
   return result;
 };
 
@@ -191,7 +192,7 @@ export const calculatorPhlegmNumber = (data: FormData) => {
 // Функція для розрахунку ефективності процесу
 function calculateEfficiency(N, R, k) {
   if (R <= 1) {
-    toast.error('Флегмове число (R) повинно бути більше 1.');
+    toast.error(t('calculate_flegm_number_error'));
   }
   return 1 / (1 + N / (k * (R - 1)));
 }
@@ -217,6 +218,7 @@ type ChartData = {
 
 const CalculationPage = () => {
   const key = localStorage.getItem('samogonKey');
+  const { t } = useTranslation();
 
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [phlegmNumber, setPhlegmNumber] = useState(0);
@@ -228,13 +230,13 @@ const CalculationPage = () => {
   });
 
   const schema = yup.object().shape({
-    capacity: yup.number().required('Обов’язкове поле'),
-    power: yup.number().required('Обов’язкове поле'),
-    speedOfDistillation: yup.number().required('Обов’язкове поле'),
-    h_bottom: yup.number().required('Обов’язкове поле'),
-    h_width: yup.number().required('Обов’язкове поле'),
-    h_height: yup.number().required('Обов’язкове поле'),
-    h_top: yup.number().required('Обов’язкове поле'),
+    capacity: yup.number().required(t('calculate_required')),
+    power: yup.number().required(t('calculate_required')),
+    speedOfDistillation: yup.number().required(t('calculate_required')),
+    h_bottom: yup.number().required(t('calculate_required')),
+    h_width: yup.number().required(t('calculate_required')),
+    h_height: yup.number().required(t('calculate_required')),
+    h_top: yup.number().required(t('calculate_required')),
   });
 
   const primaryAxis = React.useMemo(
@@ -273,7 +275,7 @@ const CalculationPage = () => {
     const dataChart = generateEfficiencyTable(res.countTheoretical, 1, 1.1, phlegm, 0.1);
     setResult({ ...res, efficiency: 1 - calculateEfficiency(res.countTheoretical, phlegm, 1) });
     setPhlegmNumber(phlegm);
-    setChartData([{ label: 'Ефективність', data: dataChart }]);
+    setChartData([{ label: t('calculate_efficiency'), data: dataChart }]);
   };
 
   const renderContent = () => {
@@ -290,7 +292,7 @@ const CalculationPage = () => {
                   <InputNumber
                     className="w-full"
                     required
-                    suffix=" мм"
+                    suffix={t('unim_mm')}
                     value={value}
                     mode="decimal"
                     maxFractionDigits={0}
@@ -300,7 +302,7 @@ const CalculationPage = () => {
                     invalid={!!errors.h_height?.message}
                   />
                   <span className="reg-label">
-                    <label>Висота царги</label>
+                    <label>{t('calculate_carga_height')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -315,7 +317,7 @@ const CalculationPage = () => {
                   <InputNumber
                     className="w-full"
                     required
-                    suffix=" мм"
+                    suffix={t('unim_mm')}
                     value={value}
                     mode="decimal"
                     maxFractionDigits={0}
@@ -325,7 +327,7 @@ const CalculationPage = () => {
                     invalid={!!errors.h_width?.message}
                   />
                   <span className="reg-label">
-                    <label>Діаметр царги</label>
+                    <label>{t('calculate_carga_diameter')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -340,7 +342,7 @@ const CalculationPage = () => {
                   <InputNumber
                     className="w-full"
                     required
-                    suffix=" мм"
+                    suffix={t('unim_mm')}
                     value={value}
                     mode="decimal"
                     maxFractionDigits={0}
@@ -350,7 +352,7 @@ const CalculationPage = () => {
                     invalid={!!errors.h_bottom?.message}
                   />
                   <span className="reg-label">
-                    <label>Висота нижнього пижа</label>
+                    <label>{t('calculate_wad_bottom')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -365,7 +367,7 @@ const CalculationPage = () => {
                     className="w-full"
                     required
                     value={value}
-                    suffix=" мм"
+                    suffix={t('unim_mm')}
                     mode="decimal"
                     maxFractionDigits={0}
                     showButtons
@@ -374,7 +376,7 @@ const CalculationPage = () => {
                     invalid={!!errors.h_top?.message}
                   />
                   <span className="reg-label">
-                    <label>Висота верхнього пижа</label>
+                    <label>{t('calculate_wad_top')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -402,7 +404,7 @@ const CalculationPage = () => {
                     invalid={!!errors.capacity?.message}
                   />
                   <span className="reg-label">
-                    <label>Спиртуозність на виході</label>
+                    <label>{t('calculate_alcohol_exit')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -418,7 +420,7 @@ const CalculationPage = () => {
                   <InputNumber
                     className="w-full"
                     required
-                    suffix=" Вт"
+                    suffix={t('unit_w')}
                     value={value}
                     mode="decimal"
                     showButtons
@@ -430,7 +432,7 @@ const CalculationPage = () => {
                     invalid={!!errors.power?.message}
                   />
                   <span className="reg-label">
-                    <label>Потужність</label>
+                    <label>{t('process_power_header')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -445,7 +447,7 @@ const CalculationPage = () => {
                   <InputNumber
                     className="w-full"
                     required
-                    suffix=" л/год"
+                    suffix={t('unit_liter_per_gram')}
                     value={value}
                     mode="decimal"
                     showButtons
@@ -458,7 +460,7 @@ const CalculationPage = () => {
                     invalid={!!errors.speedOfDistillation?.message}
                   />
                   <span className="reg-label">
-                    <label>Швидкість відбору</label>
+                    <label>{t('process_manual_speed_selection')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -486,7 +488,7 @@ const CalculationPage = () => {
                     invalid={!!errors.heatLoss?.message}
                   />
                   <span className="reg-label">
-                    <label>Кількість тепловтрат</label>
+                    <label>{t('calculate_heat_loss')}</label>
                   </span>
                 </FloatLabel>
               )}
@@ -515,29 +517,29 @@ const CalculationPage = () => {
                     invalid={!!errors.temperature?.message}
                   />
                   <span className="reg-label">
-                    <label>Температура спирту на виході</label>
+                    <label>{t('calculate_alcohol_temp')}</label>
                   </span>
                 </FloatLabel>
               )}
             />
-            <Button className="w-full" label="Розрахувати" type="submit" />
+            <Button className="w-full" label={t('calculate_button')} type="submit" />
           </div>
         </form>
         <div style={{ display: 'flex' }} className="text-md flex-column row-gap-3 sm:text-left ml-5 mt-5">
           <div className="reg-label">
-            Флегмове число <b className="text-xl">{phlegmNumber}</b>
+            {t('calculate_flegm_number')} <b className="text-xl">{phlegmNumber}</b>
           </div>
           <div className="reg-label">
-            Об’єм СПН (3.5х3.5 0.25мм) <b className="text-xl">{result.volume} л</b>
+            {t('calculate_spn_volume')} (3.5х3.5 0.25мм) <b className="text-xl">{result.volume} л</b>
           </div>
           <div className="reg-label">
-            Вага СПН (3.5х3.5 0.25мм) <b className="text-xl">{result.weight} кг</b>
+            {t('calculate_spn_weight')} <b className="text-xl">{result.weight} кг</b>
           </div>
           <div className="reg-label">
-            Кількість теоретичних тарілок <b className="text-xl">{result.countTheoretical} шт</b>
+            {t('calculate_plates')} <b className="text-xl">{result.countTheoretical} шт</b>
           </div>
           <div className="reg-label">
-            Ефективність процесу <b className="text-xl">{(result.efficiency * 100).toFixed(2)}%</b>
+            {t('calculate_efficiency_process')} <b className="text-xl">{(result.efficiency * 100).toFixed(2)}%</b>
           </div>
         </div>
       </div>

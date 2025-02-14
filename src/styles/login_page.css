@@ -51,3 +51,11 @@
 .test{
     color: #223051;
 }
+.select-lang .p-button{
+    height: 35px;
+    width: 65px;
+    font-size: 16px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }

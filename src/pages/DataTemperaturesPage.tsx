@@ -4,6 +4,7 @@ import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import '../styles/process_page.css';
 import '../styles/temperatures_page.css';
+import { useTranslation } from 'react-i18next';
 
 
 type TemperatureData = {
@@ -29,7 +30,7 @@ const generateTemperatureData = (): TemperatureData[] => {
 
 const DataTemperaturesPage: React.FC = () => {
   const key = localStorage.getItem('samogonKey');
-  
+  const { t } = useTranslation();
 
   const [data, setData] = useState<{
     label: string;
@@ -43,19 +44,19 @@ const DataTemperaturesPage: React.FC = () => {
 
     const chartData = [
       {
-        label: 'Температура куба',
+        label: t('settings_temp_cube'),
         data: tempData.map(d => ({ primary: d.time, secondary: d.cube })),
       },
       {
-        label: 'Температура царги',
+        label: t('settings_temp_carga'),
         data: tempData.map(d => ({ primary: d.time, secondary: d.column })),
       },
       {
-        label: 'Температура дефлегматора',
+        label: t('settings_temp_defl'),
         data: tempData.map(d => ({ primary: d.time, secondary: d.defleg })),
       },
       {
-        label: 'Температура води',
+        label: t('settings_temp_water'),
         data: tempData.map(d => ({ primary: d.time, secondary: d.water })),
       },
     ];
@@ -99,12 +100,12 @@ const DataTemperaturesPage: React.FC = () => {
 >
   <div style={{height: '100px'}} className="flex flex-row w-full align-items-center justify-content-center"> 
     <ul className="temp-list">
-      <li className="temp-cube">Температура куба</li>
-      <li className="temp-cargi">Температура царги</li>
+      <li className="temp-cube">{t('settings_temp_cube')}</li>
+      <li className="temp-cargi">{t('settings_temp_carga')}</li>
     </ul>
     <ul className="temp-list">
-      <li className="temp-defl">Температура дефлегматора</li>
-      <li className="temp-water">Температура води</li>
+      <li className="temp-defl">{t('settings_temp_defl')}</li>
+      <li className="temp-water">{t('settings_temp_water')}</li>
     </ul>
   </div>
   <div style={{ height: '400px' }} className="flex flex-column w-full align-items-center justify-content-center">
