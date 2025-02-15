@@ -51,7 +51,7 @@ const DistillationProcessPage = () => {
     };
   };
 
-  const [listRecipe, setListRecipe] = useState([]);
+  const [listRecipe, setListRecipe] = useState<string[]>([]);
   const [countRecipe, setCountRecipe] = useState(0);
 
   const fetchRecipe = async () => {
@@ -124,6 +124,7 @@ const DistillationProcessPage = () => {
   const prevFormValues = useRef(formValues);
 
   useEffect(() => {
+    //dontSendPass(); //find out why and set it correctly
     if (JSON.stringify(formValues) !== JSON.stringify(prevFormValues.current)) {
       setIsFormChanging(true);
       prevFormValues.current = formValues;
@@ -219,6 +220,7 @@ const DistillationProcessPage = () => {
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+  const [dialogDownloadVisible, setDialogDownloadVisible] = useState(false);
 
   const [disabledButtonRecipe, setdisabledButtonRecipe] = useState(true);
 
@@ -240,7 +242,7 @@ const DistillationProcessPage = () => {
 
   const recipeRename = async () => {
     const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
-    if (inputElement.value === '') {
+    if (inputElement.value.trim() == '') {
       toast.error('Введіть назву рецепта');
     } else {
       const recipeData = {
@@ -276,6 +278,39 @@ const DistillationProcessPage = () => {
       toast.error('Помилка при видаленні рецепта');
       console.error(error);
     }
+  };
+
+  const recipeCreate = async () => {
+    const inputElement = document.getElementById('create-scenario') as HTMLInputElement;
+    if (inputElement.value.trim() == '') {
+      toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(inputElement.value)) {
+      toast.warning('Рецепт з такою назвою вже існує');
+    } else {
+      const formattedData = formatFormData(formValues);
+      const updatedData = {
+        ...formattedData,
+        n: inputElement.value,
+        r: Number(countRecipe) + 1,
+      };
+      await save(updatedData);
+      await fetchRecipe();
+      setDialogCreateVisible(false);
+      toast.success('Рецепт створено');
+    }
+  };
+
+  const recipeDownload = async () => {
+    const formattedData = formatFormData(formValues);
+    const updatedData = {
+      ...formattedData,
+      n: 'Automation',
+      r: 0,
+    };
+    await save(updatedData);
+    await fetchRecipe();
+    setDialogDownloadVisible(false);
+    toast.success('Рецепт завантажено');
   };
 
   const [status, setStatus] = useState('');
@@ -357,6 +392,14 @@ const DistillationProcessPage = () => {
     }
   };
 
+  const dontSendPass = () => {
+    if (data.distController == 2) {
+      if ((timeBody > 0 && !cubeSwith) || cubeSwith) {
+        setDistCommand(4);
+      }
+    }
+  };
+
   if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
@@ -434,7 +477,7 @@ const DistillationProcessPage = () => {
               <ACIconButton
                 iconName="doc_download"
                 disabled={disabledButtonRecipe}
-                onClick={() => console.log('DocD clicked')}
+                onClick={() => setDialogDownloadVisible(true)}
               />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
               <ACIconButton
@@ -516,7 +559,7 @@ const DistillationProcessPage = () => {
                     className="custom-toggle-button"
                     checked={value}
                     onChange={(e) => onChangeForm(e.value)}
-                    onLabel="Темп"
+                    onLabel="Темп. КУБУ"
                     offLabel="Час"
                     disabled={swithBody}
                   />
@@ -593,7 +636,7 @@ const DistillationProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log('Створено новий сценарій')}
+              onClick={recipeCreate}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -662,6 +705,34 @@ const DistillationProcessPage = () => {
         }
       >
         <p>Сценарій: {recipeName}</p>
+      </Dialog>
+
+      <Dialog
+        header={recipeName}
+        visible={dialogDownloadVisible}
+        onHide={() => setDialogDownloadVisible(false)}
+        style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDownloadVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={recipeDownload}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Завантажити на автоматику?</p>
       </Dialog>
     </>
   );

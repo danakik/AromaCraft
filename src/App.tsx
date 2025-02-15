@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { Slide, ToastContainer } from 'react-toastify';
 import { Layout } from './components/Layout/Layout';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
@@ -27,7 +27,7 @@ const App: React.FC = () => {
         </Route>
 
         <Route path="/" element={<Layout />}>
-          <Route path='device' element={<DevicePage/>}/>
+          <Route path="device" element={<DevicePage />} />
           <Route path="manualprocess" element={<ManualProcessPage />} />
           <Route path="distillationprocess" element={<DistillationProcessPage />} />
           <Route path="rectificationprocess" element={<RectificationProcessPage />} />
@@ -38,7 +38,18 @@ const App: React.FC = () => {
           <Route path="login" element={<LoginPage />} />
         </Route>
       </Routes>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+        theme="colored"
+      />
     </HashRouter>
   );
 };
