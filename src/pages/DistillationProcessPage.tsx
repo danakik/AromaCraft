@@ -37,7 +37,7 @@ type FormData = {
 };
 
 const DistillationProcessPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [reedRecipes] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
@@ -176,7 +176,7 @@ const DistillationProcessPage = () => {
         setDisabledPowers(false);
       }
     }
-  }, [data.version, cubeSwith, timeBody]);
+  }, [data.version, cubeSwith, timeBody, i18n.language]);
 
   useEffect(() => {
     updateBodySwitch();
@@ -333,7 +333,7 @@ const DistillationProcessPage = () => {
 
   useEffect(() => {
     statusUpdate();
-  }, [statusUpdate]);
+  }, [statusUpdate, i18n.language]);
 
   const clickPass = () => {
     if (data.distController == 1) {
