@@ -22,6 +22,7 @@ import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import distillationSaveApi, { useDistillationSaveMutation } from '../api/distillationSave';
+import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 
 type FormData = {
   distTempPower: number;
@@ -88,6 +89,7 @@ const DistillationProcessPage = () => {
     isLoading,
     error,
   } = useGetDataQuery(pageRecipeData, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  useDisableLiProcess(data);
   const { control, watch } = useForm<FormData>({
     values: {
       distTempPower: data.distTempPower,
@@ -134,7 +136,7 @@ const DistillationProcessPage = () => {
       const formattedData = formatFormData(formValues);
       /* console.log(formattedData);
       save(formattedData);
-      protection against children */
+      //protection against children */
 
       setIsFormChanging(false);
     }, 5000);
@@ -189,30 +191,32 @@ const DistillationProcessPage = () => {
   const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
 
   const updateCommandControls = useCallback(() => {
-    setStartLabel(distCommand > 0 ? 'СТОП' : 'СТАРТ');
+    if (data.version != 0) {
+      setStartLabel(distCommand > 0 ? 'СТОП' : 'СТАРТ');
 
-    if (
-      (distCommand != data.distController && distCommand == 2) ||
-      !(distCommand == 2 && data.distController == 2 && timeBody > 0 && data.k3 == 0)
-    ) {
-      if (data.f == 0) {
-        setDistCommand(data.distController);
-        if (distCommand == 4) setDistCommand(0);
+      if (
+        (distCommand != data.distController && distCommand == 2) ||
+        !(distCommand == 2 && data.distController == 2 && timeBody > 0 && data.k3 == 0)
+      ) {
+        if (data.f == 0) {
+          setDistCommand(data.distController);
+          if (distCommand == 4) setDistCommand(0);
+        }
+      }
+
+      if (
+        countRecipe == 0 && //or the number of recipes or what recipe
+        data.distController >= 1 &&
+        data.distController <= 4 &&
+        data.distController != 3 &&
+        distCommand != 0
+      ) {
+        setDisabledButtonSkip(false);
+      } else {
+        setDisabledButtonSkip(true);
       }
     }
-
-    if (
-      countRecipe == 0 &&
-      data.distController >= 1 &&
-      data.distController <= 4 &&
-      data.distController != 3 &&
-      distCommand != 0
-    ) {
-      setDisabledButtonSkip(false);
-    } else {
-      setDisabledButtonSkip(true);
-    }
-  }, [distCommand, data.distController, timeBody, data.k3, data.f, countRecipe]);
+  }, [distCommand, data.distController, timeBody, data.k3, data.f, countRecipe, data.version]);
 
   useEffect(() => {
     updateCommandControls();
@@ -240,26 +244,26 @@ const DistillationProcessPage = () => {
     updateRecipeControls();
   }, [updateRecipeControls]);
 
+  const [newRecipeName, setNewRecipeName] = useState('');
+
   const recipeRename = async () => {
-    const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
-    if (inputElement.value.trim() == '') {
+    if (!newRecipeName.trim()) {
       toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(newRecipeName)) {
+      toast.warning('Рецепт з такою назвою вже існує');
     } else {
       const recipeData = {
         key: key,
         w: 1,
         n1: recipeName,
-        n2: inputElement.value,
+        n2: newRecipeName,
       };
-      try {
-        await renameRecipe(recipeData);
-        await fetchRecipe();
-        setDialogRenameVisible(false);
-        toast.success('Назва рецепта змінена на: ' + inputElement.value);
-      } catch (error) {
-        toast.error('Помилка при зміні назви рецепта');
-        console.error(error);
-      }
+
+      await renameRecipe(recipeData);
+      await fetchRecipe();
+      setDialogRenameVisible(false);
+      setNewRecipeName('');
+      toast.success('Назва рецепта змінена на: ' + newRecipeName);
     }
   };
 
@@ -269,33 +273,31 @@ const DistillationProcessPage = () => {
       w: 1,
       n: recipeName,
     };
-    try {
-      await deleteRecipe(recipeData);
-      await fetchRecipe();
-      setDialogDeleteVisible(false);
-      toast.success('Рецепт видалено');
-    } catch (error) {
-      toast.error('Помилка при видаленні рецепта');
-      console.error(error);
-    }
+
+    await deleteRecipe(recipeData);
+    await fetchRecipe();
+    setDialogDeleteVisible(false);
+    toast.success('Рецепт видалено');
   };
 
+  const [nameCreateRecipe, setNameCreateRecipe] = useState('');
+
   const recipeCreate = async () => {
-    const inputElement = document.getElementById('create-scenario') as HTMLInputElement;
-    if (inputElement.value.trim() == '') {
+    if (!nameCreateRecipe.trim()) {
       toast.error('Введіть назву рецепта');
-    } else if (listRecipe.includes(inputElement.value)) {
+    } else if (listRecipe.includes(nameCreateRecipe)) {
       toast.warning('Рецепт з такою назвою вже існує');
     } else {
       const formattedData = formatFormData(formValues);
       const updatedData = {
         ...formattedData,
-        n: inputElement.value,
+        n: nameCreateRecipe,
         r: Number(countRecipe) + 1,
       };
       await save(updatedData);
       await fetchRecipe();
       setDialogCreateVisible(false);
+      setNameCreateRecipe('');
       toast.success('Рецепт створено');
     }
   };
@@ -487,11 +489,10 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              {!hideButtonSkip && <Button label="Пропуск" className="button-skip" disabled={disabledButtonSkip} />}
-              {!hideButtonStart && <Button label={startLabel} className="button-start" />}
-
-              {/* <Button label="++" onClick={() => { setDistCommand((prev) => prev + 1); console.log(distCommand); }} />
-              <Button label="--" onClick={() => { setDistCommand((prev) => prev - 1); console.log(distCommand) }} /> */}
+              {!hideButtonSkip && (
+                <Button label="Пропуск" className="button-skip" disabled={disabledButtonSkip} /* onClick={clickPass} */ />
+              )}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
             </div>
           </div>
 
@@ -645,7 +646,11 @@ const DistillationProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="create-scenario" style={{ width: '80%' }} />
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+            onChange={(e) => setNameCreateRecipe(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -675,7 +680,7 @@ const DistillationProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="rename-scenario" style={{ width: '80%' }} />
+          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
 

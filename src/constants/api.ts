@@ -74,6 +74,9 @@ export const initialSortedData: SortedData = {
   transitBody: 0,
   rectTempTransit: 0,
   rectController: 0,
+  rectPause: 0,
+  cycles: 0,
+  rectError: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,

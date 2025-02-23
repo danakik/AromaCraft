@@ -97,6 +97,9 @@ const samogonApi = createApi({
           transitBody: parseNumber(data[111]),
           rectTempTransit: parseNumber(data[136]),
           rectController: parseNumber(data[10]),
+          rectPause: parseNumber(data[86]),
+          cycles: parseNumber(data[35]),
+          rectError: parseNumber(data[14]),
 
           mashingPauses: parseNumber(data[47]),
           mashingHeat: parseNumber(data[48]),

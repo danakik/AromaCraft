@@ -13,6 +13,7 @@ import reedRecipeApi from '../api/recipeApi';
 import renameRecipeApi from '../api/renameRecipeApi';
 import deleteRecipeApi from '../api/deleteRecipeApi';
 import distillationSaveApi from '../api/distillationSave';
+import rectificationSaveApi from '../api/rectificationSaveApi';
 
 const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ const store = configureStore({
     [renameRecipeApi.reducerPath]: renameRecipeApi.reducer,
     [deleteRecipeApi.reducerPath]: deleteRecipeApi.reducer,
     [distillationSaveApi.reducerPath]: distillationSaveApi.reducer,
+    [rectificationSaveApi.reducerPath]: rectificationSaveApi.reducer,
     key: keyReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -44,6 +46,7 @@ const store = configureStore({
       renameRecipeApi.middleware,
       deleteRecipeApi.middleware,
       distillationSaveApi.middleware,
+      rectificationSaveApi.middleware,
     ),
 });
 

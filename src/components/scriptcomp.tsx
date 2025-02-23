@@ -57,7 +57,7 @@ export const ACScriptComp: React.FC<ACScriptCompProps> = ({ options, onChange })
           className="button-arrow button-group"
         />
         <Button
-          label={formattedOptions[selectedIndex]?.label || 'Немає даних'}
+          label={formattedOptions[selectedIndex]?.label || 'Loading...'}
           className="button-group button-script"
         />
         <Button

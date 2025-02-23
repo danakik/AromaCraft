@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { ACBlockTempSmall } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -7,7 +7,7 @@ import { ACIconButton } from '../components/iconbutton';
 import { ACSlider } from '../components/knob';
 import { ACCounterLabel } from '../components/counter';
 import { ACSwitch } from '../components/switch';
-import { ACRegulator } from '../components/regulatorscomp';
+import { ACRegulator, ACRegulatorSpeed } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Dialog } from 'primereact/dialog';
@@ -20,11 +20,13 @@ import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
-import { debounce, values } from 'lodash';
+import { debounce, gt, values } from 'lodash';
 import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
+import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
+import { useRectificationSaveMutation } from '../api/rectificationSaveApi';
 
 type FormData = {
   rectTempHead: number;
@@ -73,10 +75,13 @@ type FormData = {
   rectSwitchCube: boolean;
   rectSwitchCarge: boolean;
   rectTempTransit: number;
+  cycles: number;
 };
 
 const RectificationProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
+  const [isFormChanging, setIsFormChanging] = useState(false);
+  const [save] = useRectificationSaveMutation();
   const [recipeName, setRecipeName] = useState('');
   const [recipeNumber, setRecipeNumber] = useState('');
   const [reedRecipe] = useReedRecipeMutation();
@@ -90,7 +95,7 @@ const RectificationProcessPage = () => {
     };
   };
 
-  const [listRecipe, setListRecipe] = useState([]);
+  const [listRecipe, setListRecipe] = useState<string[]>([]);
   const [countRecipe, setCountRecipe] = useState(0);
 
   const fetchRecipe = async () => {
@@ -117,14 +122,16 @@ const RectificationProcessPage = () => {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(pageRecipeData, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageRecipeData, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+
+  useDisableLiProcess(data);
 
   const handleScenarioChange = (label: string, value: string) => {
     setRecipeName(label);
     setRecipeNumber(value);
   };
 
-  const { control, watch } = useForm<FormData>({
+  const { control, watch, setValue } = useForm<FormData>({
     values: {
       rectTempHead: data.rectTempHead,
       rectPercentHead: {
@@ -172,64 +179,167 @@ const RectificationProcessPage = () => {
       rectSwitchCube: !!data.rectSwitchCube,
       rectSwitchCarge: !!data.rectSwitchCarge,
       rectTempTransit: data.rectTempTransit,
+      cycles: data.cycles,
     },
   });
+
+  const formatFormData = (formValues: FormData) => {
+    return {
+      key: key,
+      e: recipeNumber,
+      n: recipeName,
+      r: rectCommand,
+      cY: formValues.cycles,
+      pR: formValues.rectAcceleration,
+      pO: formValues.rectPower,
+      tR: formValues.rectTempPower,
+      tO: formValues.rectTempStop,
+      tA: formValues.rectTempError,
+      tG: formValues.rectTempHead,
+      gG: formValues.rectGystHead,
+      tT: formValues.rectTempBody,
+      gT: formValues.rectGystBody,
+      sG: formValues.rectPercentHead.true_value,
+      sT: formValues.rectPercentBody.true_value,
+      sK: formValues.rectTimeStab,
+      cC: formValues.rectCyclesNumber,
+      tC: formValues.rectDecreaseTemp,
+      sC: formValues.rectDecreaseSpeed.true_value,
+      sY: formValues.rectDecreaseCycle.true_value,
+      vV: view(),
+      pT: formValues.rectPowerBody,
+      bT: formValues.rectSpeedTail.true_value,
+      oT: formValues.rectCubeTail,
+      tB: formValues.rectTimeBody,
+      cG: formValues.rectSpeedCarge.true_value,
+      sU: formValues.rectSwitchCube,
+      sA: formValues.rectSwitchCarge,
+      sS: formValues.rectSelectCarge,
+      rE: formValues.rectEndCycle,
+      rT: formValues.rectSwitchTail,
+      rP: formValues.rectPowerTail,
+      rI: formValues.rectTempTransit,
+    };
+  };
+
+  const view = () => {
+    if ((rectCommand == 4 || data.rectController == 4) && data.version == 1) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+
+  const formValues = watch();
+  const prevFormValues = useRef(formValues);
+
+  useEffect(() => {
+    if (JSON.stringify(formValues) !== JSON.stringify(prevFormValues.current)) {
+      setIsFormChanging(true);
+      prevFormValues.current = formValues;
+    }
+
+    const debouncedLog = debounce(() => {
+      const formattedData = formatFormData(formValues);
+      /*console.log(formattedData);
+      save(formattedData);
+      //protection against children */
+
+      setIsFormChanging(false);
+    }, 5000);
+
+    if (isFormChanging) {
+      debouncedLog();
+    }
+
+    return () => {
+      debouncedLog.cancel();
+    };
+  }, [formValues, isFormChanging]);
 
   const [switchTail, setSwitchTail] = useState(true);
   const [speedTail, setSpeedTail] = useState(true);
   const [powerTail, setPowerTail] = useState(true);
   const [tempTail, setTempTail] = useState(true);
-  const [endCycle, setEndCycle] = useState(true);
-  const [tempSelectCarge, setSelectCarge] = useState(true);
-  const [disabledTimeBody, setDisabledTimeBody] = useState(false);
+  const [endCycle, setEndCycle] = useState(false);
+  const [tempSelectCarge, setSelectCarge] = useState(false);
   const [disabledCarge, setDisabledCarge] = useState(true);
   const hasTailSwitch = watch('rectSwitchTail');
   const hasCargeSwitch = watch('rectSwitchCarge');
-  const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [symbol, setSymbol] = useState('');
-  const [bodySymbol, setBodySymbol] = useState('');
+  const [disabledSwitchCube, setDisabledSwitchCube] = useState(true);
+
+  const manageSwitchLogic = useCallback(() => {
+    if (data.version != 0) {
+      if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
+        setDisabledSwitchCube(false);
+        setDisabledCarge(false);
+      }
+
+      if (data.version >= 4.2) {
+        setSpeedTail(hasTailSwitch);
+        setPowerTail(!hasTailSwitch);
+
+        if (data.rectController == 0) {
+          setSwitchTail(false);
+        } else {
+          setSwitchTail(true);
+        }
+      } else {
+        setSwitchTail(true);
+      }
+
+      if (!hasCargeSwitch && data.rectController != 4) {
+        setSelectCarge(true);
+      } else if (hasCargeSwitch && data.rectController == 4) {
+        setSelectCarge(false);
+      }
+    }
+  }, [data.version, data.rectController, hasTailSwitch, hasCargeSwitch]);
 
   useEffect(() => {
-    if (data.version !== 0) {
-      if (data.version >= 4.2) {
-        setSwitchTail(false);
-        if (hasTailSwitch) {
-          setSpeedTail(true);
-          setPowerTail(false);
-        } else {
-          setSpeedTail(false);
-          setPowerTail(true);
+    manageSwitchLogic();
+  }, [manageSwitchLogic]);
+
+  const [rectCommand, setRectCommand] = useState(0);
+  const [startLabel, setStartLabel] = useState('СТАРТ');
+  const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
+  const cycles = watch('cycles');
+
+  const updateCommandControls = useCallback(() => {
+    if (data.version != 0) {
+      setStartLabel(rectCommand > 0 ? 'СТОП' : 'СТАРТ');
+
+      if (data.f == 0) {
+        setRectCommand(data.rectController);
+        if (rectCommand == 6) {
+          setRectCommand(0);
         }
       }
-
-      if ((data.version >= 3.2 && data.version < 4) || data.version >= 4.2) {
-        setDisabledCarge(false);
-        setEndCycle(false);
-        if (hasCargeSwitch) {
-          setSelectCarge(false);
-        } else {
-          setSelectCarge(true);
-        }
+      if (
+        (recipeNumber == '0' && data.rectController >= 1 && data.rectController < 4 && rectCommand != 0) ||
+        (data.rectController == 4 && cycles > 0)
+      ) {
+        setDisabledButtonSkip(false);
+      } else {
+        setDisabledButtonSkip(true);
       }
 
-      if (data.version >= 4 && !hasTailSwitch) {
-        setSpeedTail(false);
-      }
-
-      if (data.version >= 4) {
+      if (data.rectController >= 3 && data.rectController < 7) {
         setTempTail(false);
       }
+    }
+  }, [data.f, data.rectController, cycles, rectCommand, recipeNumber, data.version]);
 
-      if (data.transitBody == 0) {
-        setDisabledTimeBody(true);
-      } else if (data.transitBody == 1) {
-        setDisabledTimeBody(false);
-        setIsSwitchOn(true);
-        setBodySymbol('хв');
-      } else if (data.transitBody == 2) {
-        setDisabledTimeBody(false);
-        setIsSwitchOn(false);
-        setBodySymbol('°C');
+  useEffect(() => {
+    updateCommandControls();
+  }, [updateCommandControls]);
+
+  const cycc = useCallback(() => {
+    if (data.version != 0) {
+      if ((data.version >= 4 && data.version <= 4.1) || data.version < 3.2) {
+        setEndCycle(true);
+        setSelectCarge(true);
       }
 
       if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
@@ -238,42 +348,56 @@ const RectificationProcessPage = () => {
         setSymbol('л/г');
       }
     }
-  }, [data, hasTailSwitch, hasCargeSwitch]);
+  }, [data.version, data.selection]);
+
+  useEffect(() => {
+    cycc();
+  }, [cycc]);
 
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
-
+  const [dialogDownloadVisible, setDialogDownloadVisible] = useState(false);
+  const [hideButtonStart, setHideButtonStart] = useState(false);
+  const [hideButtonSkip, setHideButtonSkip] = useState(false);
   const [disabledButtonRecipe, setDisabledButtonRecipe] = useState(true);
 
-  useEffect(() => {
+  const updateRecipeControls = useCallback(() => {
     if (recipeNumber == '0') {
       setDisabledButtonRecipe(true);
+      setHideButtonStart(false);
+      setHideButtonSkip(false);
     } else {
       setDisabledButtonRecipe(false);
+      setHideButtonStart(true);
+      setHideButtonSkip(true);
     }
   }, [recipeNumber]);
 
+  useEffect(() => {
+    updateRecipeControls();
+  }, [updateRecipeControls]);
+
+  const [newRecipeName, setNewRecipeName] = useState('');
+
   const recipeRename = async () => {
-    const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
-    if (inputElement.value === '') {
+    if (!newRecipeName.trim()) {
       toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(newRecipeName)) {
+      toast.warning('Рецепт з такою назвою вже існує');
     } else {
       const recipeData = {
         key: key,
         w: 2,
         n1: recipeName,
-        n2: inputElement.value,
+        n2: newRecipeName,
       };
-      try {
-        await renameRecipe(recipeData);
-        await fetchRecipe();
-        setDialogRenameVisible(false);
-        toast.success('Назва рецепта змінена на: ' + inputElement.value);
-      } catch (error) {
-        toast.error('Помилка при зміні назви рецепта');
-        console.error(error);
-      }
+
+      await renameRecipe(recipeData);
+      await fetchRecipe();
+      setDialogRenameVisible(false);
+      setNewRecipeName('');
+      toast.success('Назва рецепта змінена на: ' + newRecipeName);
     }
   };
 
@@ -283,18 +407,139 @@ const RectificationProcessPage = () => {
       w: 2,
       n: recipeName,
     };
-    try {
-      await deleteRecipe(recipeData);
+
+    await deleteRecipe(recipeData);
+    await fetchRecipe();
+    setDialogDeleteVisible(false);
+    toast.success('Рецепт видалено');
+  };
+
+  const [nameCreateRecipe, setNameCreateRecipe] = useState('');
+
+  const recipeCreate = async () => {
+    if (!nameCreateRecipe.trim()) {
+      toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(nameCreateRecipe)) {
+      toast.warning('Рецепт з такою назвою вже існує');
+    } else {
+      const formattedData = formatFormData(formValues);
+      const updatedData = {
+        ...formattedData,
+        n: nameCreateRecipe,
+        r: Number(countRecipe) + 1,
+      };
+      await save(updatedData);
       await fetchRecipe();
-      setDialogDeleteVisible(false);
-      toast.success('Рецепт видалено');
-    } catch (error) {
-      toast.error('Помилка при видаленні рецепта');
-      console.error(error);
+      setDialogCreateVisible(false);
+      setNameCreateRecipe('');
+      toast.success('Рецепт створено');
     }
   };
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>; // из-за списка рецепта дольше загрузка страницы
+  const recipeDownload = async () => {
+    const formattedData = formatFormData(formValues);
+    const updatedData = {
+      ...formattedData,
+      n: 'Automation',
+      r: 0,
+    };
+    await save(updatedData);
+    await fetchRecipe();
+    setDialogDownloadVisible(false);
+    toast.success('Рецепт завантажено');
+  };
+
+  const clickPass = async () => {
+    switch (data.rectController) {
+      case 1:
+        setRectCommand(2);
+        break;
+      case 2:
+        setRectCommand(3);
+        break;
+      case 3:
+        setRectCommand(4);
+        setValue('cycles', 0);
+        break;
+      case 4:
+        if (cycles > 0 && cycles + 1 < data.rectCyclesNumber) {
+          setValue('cycles', cycles + 1);
+        } else {
+          setRectCommand(5);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const clickStart = async () => {
+    if (rectCommand == 0) {
+      setRectCommand(1);
+    } else {
+      setRectCommand(0);
+    }
+  };
+
+  const [status, setStatus] = useState('');
+
+  const statusUpdate = useCallback(() => {
+    let updateStatus = '';
+
+    switch (data.rectController) {
+      case 0:
+        updateStatus = 'Очікування';
+        break;
+      case 1:
+        updateStatus = 'Розгін';
+        break;
+      case 2:
+        updateStatus = 'Пауза 00:' + data.rectPause;
+        break;
+      case 3:
+        updateStatus = 'Відбір голів';
+        break;
+      case 4:
+        updateStatus = 'Відбір тіла ЦИКЛ' + cycles;
+        break;
+      case 5:
+        updateStatus = 'Зупинка';
+        break;
+      default:
+        updateStatus = 'Завершено';
+        break;
+    }
+    switch (data.rectError) {
+      case 0:
+        updateStatus += ', помилок нема';
+        break;
+      case 1:
+        updateStatus = 'Помилка t° куба';
+        break;
+      case 2:
+        updateStatus = 'Помилка t° царг';
+        break;
+      case 3:
+        updateStatus = 'Помилка t° дефл.';
+        break;
+      case 4:
+        updateStatus = 'Помилка t° води';
+        break;
+      case 5:
+        updateStatus = 'Помилка перегрів';
+        break;
+      default:
+        updateStatus = 'Невідома помилка';
+        break;
+    }
+    setStatus(updateStatus);
+  }, [data.rectError, data.rectController, data.rectPause, cycles]);
+
+  useEffect(() => {
+    statusUpdate();
+  }, [statusUpdate]);
+
+  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -304,7 +549,7 @@ const RectificationProcessPage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
         <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
+          <ACStatusComp status_text={status} />
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
@@ -337,6 +582,7 @@ const RectificationProcessPage = () => {
                         initialValue={value}
                         help={helpM.temp_selection_heads_m}
                         onChange={(e) => onChangeForm(e.value)}
+                        readonly={tempTail}
                       />
                     )}
                   />
@@ -398,7 +644,6 @@ const RectificationProcessPage = () => {
                         initialValue={value}
                         help={helpM.temp_selection_tails_m}
                         onChange={(e) => onChangeForm(e.value)}
-                        readonly={tempTail}
                       />
                     )}
                   />
@@ -490,8 +735,14 @@ const RectificationProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" className="button-skip" />
-              <Button label="Старт" className="button-start" />
+              {!hideButtonSkip && (
+                <Button
+                  label="Пропуск"
+                  className="button-skip"
+                  disabled={disabledButtonSkip} /* onClick={clickPass} */
+                />
+              )}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
             </div>
           </div>
 
@@ -536,7 +787,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужн.відбору(тіло)"
+                    label="Потужн.відбору тіло"
                     value={value}
                     units="%"
                     help={helpM.power_selection_body_m}
@@ -552,7 +803,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужн.відбору(хвости)"
+                    label="Потужн. відбору хвост."
                     value={value}
                     units="%"
                     help={helpM.power_selection_tails_m}
@@ -573,7 +824,7 @@ const RectificationProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Шв.відбору(голів)"
+                    label="Шв.відбору голів"
                     value={value.value}
                     units={symbol}
                     help={helpM.speed_selection_heads_m}
@@ -598,10 +849,11 @@ const RectificationProcessPage = () => {
                 name="rectPercentBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
+                  <ACRegulatorSpeed
                     icon="ten"
-                    label="Шв.відбору(тіла)"
+                    label="Шв.відбору тіла"
                     value={value.value}
+                    true_value={value.true_value}
                     units={symbol}
                     help={helpM.speed_selection_body_m}
                     onChange={(e) => {
@@ -821,22 +1073,39 @@ const RectificationProcessPage = () => {
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller
-                key={bodySymbol}
-                name={isSwitchOn ? 'rectTimeBody' : 'rectTempTransit'} //bag no symbol for first boot
-                control={control}
-                render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
-                    icon="arrow_fork"
-                    label="Перехід на відбір тіла"
-                    value={value}
-                    units={bodySymbol}
-                    help={helpM.transition_select_body_m}
-                    onChange={(e) => onChangeForm(e.value)}
-                    disabled={disabledTimeBody}
-                  />
-                )}
-              />
+              {data.transitBody == 1 && (
+                <Controller
+                  name="rectTimeBody"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACRegulator
+                      icon="time"
+                      label="Перехід на відбір тіла"
+                      value={value}
+                      units={'хв'}
+                      help={helpM.transition_select_body_m} // different hints are needed
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
+                />
+              )}
+
+              {data.transitBody == 2 && (
+                <Controller
+                  name="rectTempTransit"
+                  control={control}
+                  render={({ field: { onChange: onChangeForm, value } }) => (
+                    <ACRegulator
+                      icon="temp"
+                      label="Перехід на відбір тіла"
+                      value={value}
+                      units={'°C'}
+                      help={helpM.transition_select_body_m} // different hints are needed
+                      onChange={(e) => onChangeForm(e.value)}
+                    />
+                  )}
+                />
+              )}
             </div>
 
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -876,6 +1145,7 @@ const RectificationProcessPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="БАГАТ"
                       offLabel="ОДНОК"
+                      disabled={disabledSwitchCube}
                     />
                   )}
                 />
@@ -902,7 +1172,7 @@ const RectificationProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log('Створено новий сценарій')}
+              onClick={recipeCreate}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -911,7 +1181,11 @@ const RectificationProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="create-scenario" style={{ width: '80%' }} />
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+            onChange={(e) => setNameCreateRecipe(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -941,7 +1215,7 @@ const RectificationProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="rename-scenario" style={{ width: '80%' }} />
+          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
 
@@ -971,6 +1245,34 @@ const RectificationProcessPage = () => {
         }
       >
         <p>Сценарій: {recipeName}</p>
+      </Dialog>
+
+      <Dialog
+        header={recipeName}
+        visible={dialogDownloadVisible}
+        onHide={() => setDialogDownloadVisible(false)}
+        style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDownloadVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={recipeDownload}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Завантажити на автоматику?</p>
       </Dialog>
     </>
   );

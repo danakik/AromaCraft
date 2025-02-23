@@ -70,6 +70,9 @@ export type SortedData = {
   transitBody: number;
   rectTempTransit: number;
   rectController: number;
+  rectPause: number;
+  cycles: number;
+  rectError: number;
 
   mashingPauses: number;
   mashingHeat: number;
