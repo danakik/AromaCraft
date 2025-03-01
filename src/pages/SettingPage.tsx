@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
@@ -35,14 +35,17 @@ const SettingPage = () => {
   const key = localStorage.getItem('samogonKey');
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useSaveSettingMutation();
-  const dataSamagon = useMemo (() => {
+  const dataSamagon = useMemo(() => {
     return {
       key: key,
-        };
-  },[key]);
+    };
+  }, [key]);
 
-
-  const { data = initialSortedData, isLoading, error } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -92,7 +95,6 @@ const SettingPage = () => {
       save(formattedData); 
       protection against children */
 
-
       setIsFormChanging(false);
     }, 5000);
 
@@ -107,16 +109,86 @@ const SettingPage = () => {
 
   const [isBarometr, setIsBarometr] = useState(false);
   const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}мм`);
-  useEffect(() => {
+  const br = useCallback(() => {
     if (data.version !== 0) {
-      if (data.version >= 2.5 && data.version < 4) {
+      if (data.version >= 4) {
         setIsBarometr(true);
+        setLableBarometr(`${data.settingValueBrometr}мм`);
+      } else {
+        setIsBarometr(false);
         setLableBarometr('нема');
       }
     }
-  }, [data]);
+  }, [data.version, data.settingValueBrometr]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  useEffect(() => {
+    br();
+  }, [br]);
+
+  const [whichTransitBody, setWhichTransitBody] = useState(true);
+
+  const checkTransitBodySwitch = useCallback(() => {
+    if (data.version >= 2.5 && data.version <= 4.3) {
+      setWhichTransitBody(true);
+    } else {
+      setWhichTransitBody(false);
+    }
+  }, [data.version]);
+
+  useEffect(() => {
+    checkTransitBodySwitch();
+  }, [checkTransitBodySwitch]);
+
+  const [disabledSpeedSelection, setDisabledSpeedSelection] = useState(true);
+  const [disabledTEN, setDisabledTEN] = useState(true);
+  const [disabledHeat, setDisabledHeat] = useState(true);
+  const [disabledSelection, setDisabledSelection] = useState(true);
+  const [disabledTransitBody, setDisabledTransitBody] = useState(true);
+  const [disabledBarometr, setDisabledBarometr] = useState(true);
+  const[disavledSwitchTail, setDisavledSwitchTail] = useState(true);
+  const processStarted = useCallback(() => {
+    console.log('isBarometr:', isBarometr);
+    if (data.version !== 0) {
+      if (
+        data.distController === 0 &&
+        data.rectController === 0 &&
+        data.mashingController === 0 &&
+        data.handController === 0
+      ) {
+        if (data.version >= 2.5) {
+          setDisabledSpeedSelection(false);
+        }
+        if (isBarometr) {
+          setDisabledBarometr(false);
+        }
+        setDisabledTEN(false);
+        setDisabledHeat(false);
+        setDisabledSelection(false);
+        setDisabledTransitBody(false);
+        setDisavledSwitchTail(false);
+      } else {
+        setDisabledSpeedSelection(true);
+        setDisabledTEN(true);
+        setDisabledHeat(true);
+        setDisabledBarometr(true);
+        setDisabledSelection(true);
+        setDisabledTransitBody(true);
+        setDisavledSwitchTail(true);
+      }
+    }
+  }, [data.version, data.distController, data.rectController, data.mashingController, data.handController, isBarometr]);
+
+  useEffect(() => {
+    processStarted();
+  }, [processStarted, isBarometr]);
+
+  useEffect(() => {
+    console.log(disabledBarometr);
+  }, [disabledBarometr]);
+
+  
+
+  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -124,9 +196,6 @@ const SettingPage = () => {
       <header className="mb-1">
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
-        </div>
-        <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
         </div>
       </header>
       <div className="flex flex-row w-full h-screen align-items-start justify-content-start">
@@ -140,7 +209,6 @@ const SettingPage = () => {
                   initialValue={Number(data.tempCube)}
                   help={helpM.set_temp_cube_m}
                   readonly
-
                 />
                 <Controller
                   name="settingTempCupe"
@@ -256,6 +324,7 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="Регул"
                       offLabel="Розет"
+                      disabled={disabledHeat}
                     />
                   )}
                 />
@@ -273,6 +342,7 @@ const SettingPage = () => {
                     units="Вт"
                     help={helpM.set_ten_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={disabledTEN}
                   />
                 )}
               />
@@ -284,26 +354,45 @@ const SettingPage = () => {
                 name="settingBrometr"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={isBarometr} />
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledBarometr} />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
                 <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
-                <Controller
-                  name="transitBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACThreeStateButton
-                      firstStateLabel="Рівень"
-                      secondStateLabel="Час"
-                      thirdStateLabel="Датчик"
-                      initialState={value}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+                {!whichTransitBody && (
+                  <Controller
+                    name="transitBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACThreeStateButton
+                        firstStateLabel="Рівень"
+                        secondStateLabel="Час"
+                        thirdStateLabel="Датчик"
+                        initialState={value}
+                        onChange={(e) => onChangeForm(e.value)}
+                        disabled={disabledTransitBody}
+                      />
+                    )}
+                  />
+                )}
+                {whichTransitBody && (
+                  <Controller
+                    name="transitBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ToggleButton
+                        className="custom-toggle-button"
+                        checked={!!value}
+                        onChange={(e) => onChangeForm(e.value)}
+                        onLabel="Час"
+                        offLabel="Рівень"
+                        disabled={disabledTransitBody}
+                      />
+                    )}
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -319,10 +408,11 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="Вбік"
                       offLabel="Вниз"
+                      disabled={disavledSwitchTail}
                     />
                   )}
-
-                />              </div>
+                />
+              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
@@ -337,10 +427,11 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel="л/г"
                       offLabel="%"
+                      disabled={disabledSelection}
                     />
                   )}
-                />              </div>
-
+                />
+              </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
@@ -354,6 +445,7 @@ const SettingPage = () => {
                     units="л/г"
                     help={helpM.set_speed_20_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={disabledSpeedSelection}
                   />
                 )}
               />

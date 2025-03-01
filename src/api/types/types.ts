@@ -83,6 +83,8 @@ export type SortedData = {
   mashingCoolTemp: number;
   mashingCoolGyst: number;
   mashingController: number;
+  errorMashing: number;
+  mashingVarkaMinute: number;
 
   mashingTemp0: number;
   mashingTemp1: number;

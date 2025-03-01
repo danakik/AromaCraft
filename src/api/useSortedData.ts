@@ -86,6 +86,8 @@ interface SortedData {
   mashingCoolTemp: number;
   mashingCoolGyst: number;
   mashingController: number;
+  errorMashing: number;
+  mashingVarkaMinute: number;
 
   mashingTemp0: number;
   mashingTemp1: number;
@@ -215,6 +217,8 @@ const initialSortedData: SortedData = {
   mashingCoolTemp: 0,
   mashingCoolGyst: 0,
   mashingController: 0,
+  errorMashing: 0,
+  mashingVarkaMinute: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,
@@ -362,6 +366,8 @@ const useSortedData = (key: string | null) => {
       mashingCoolTemp: parseNumber(newData[53]),
       mashingCoolGyst: parseNumber(newData[54]),
       mashingController: parseNumber(newData[12]),
+      errorMashing: parseNumber(newData[16]),
+      mashingVarkaMinute: parseNumber(newData[88]),
 
       mashingTemp0: parseNumber(newData[55]),
       mashingTemp1: parseNumber(newData[56]),

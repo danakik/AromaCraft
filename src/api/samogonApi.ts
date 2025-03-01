@@ -110,6 +110,8 @@ const samogonApi = createApi({
           mashingCoolTemp: parseNumber(data[53]),
           mashingCoolGyst: parseNumber(data[54]),
           mashingController: parseNumber(data[12]),
+          errorMashing: parseNumber(data[16]),
+          mashingVarkaMinute: parseNumber(data[88]),
 
           mashingTemp0: parseNumber(data[55]),
           mashingTemp1: parseNumber(data[56]),

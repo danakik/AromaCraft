@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ACBlockTempSmall } from '../components/blocktemp';
@@ -26,6 +26,8 @@ import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
+import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
+import { useMashingSaveMutation } from '../api/mashingSaveApi';
 
 type FormData = {
   mashingPauses: number;
@@ -75,9 +77,10 @@ type MashingType = `mashing${'Temp' | 'Gyst' | 'Time'}${0 | 1 | 2 | 3 | 4 | 5 | 
 
 const MashingProcessPage = () => {
   const key = localStorage.getItem('samogonKey');
-
+  const [isFormChanging, setIsFormChanging] = useState(false);
+  const [save] = useMashingSaveMutation();
   const [recipeName, setRecipeName] = useState('');
-  const [recipeNumber, setRecipeNumber] = useState('');
+  const [recipeNumber, setRecipeNumber] = useState(0);
   const [reedRecipes] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
@@ -89,7 +92,7 @@ const MashingProcessPage = () => {
     };
   };
 
-  const [listRecipe, setListRecipe] = useState([]);
+  const [listRecipe, setListRecipe] = useState<string[]>([]);
   const [countRecipe, setCountRecipe] = useState(0);
 
   const fetchRecipe = async () => {
@@ -116,18 +119,12 @@ const MashingProcessPage = () => {
     data = initialSortedData,
     isLoading,
     error,
-  } = useGetDataQuery(pageRecipeData, { pollingInterval: SYNC_INTERVAL });
+  } = useGetDataQuery(pageRecipeData, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
-  const handleScenarioChange = (label: string, value: string) => {
+  const handleScenarioChange = (label: string, value: number) => {
     setRecipeName(label);
     setRecipeNumber(value);
   };
-
-  useEffect(() => {
-    if (recipeName !== '') {
-      console.log(pageRecipeData);
-    }
-  }, [recipeName]);
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -175,6 +172,80 @@ const MashingProcessPage = () => {
     },
   });
 
+  const formatFormData = (formValues: FormData) => {
+    return {
+      key: key,
+      e: recipeNumber,
+      n: recipeName,
+      m: mashCommand,
+      p: formValues.mashingPauses,
+      h: formValues.mashingHeat ? 1 : 0,
+      c: formValues.mashingCool ? 1 : 0,
+      t1: formValues.mashingTemp0,
+      t2: formValues.mashingTemp1,
+      t3: formValues.mashingTemp2,
+      t4: formValues.mashingTemp3,
+      t5: formValues.mashingTemp4,
+      t6: formValues.mashingTemp5,
+      t7: formValues.mashingTemp6,
+      t8: formValues.mashingTemp7,
+      t9: formValues.mashingTemp8,
+      t10: formValues.mashingTemp9,
+      g1: formValues.mashingGyst0,
+      g2: formValues.mashingGyst1,
+      g3: formValues.mashingGyst2,
+      g4: formValues.mashingGyst3,
+      g5: formValues.mashingGyst4,
+      g6: formValues.mashingGyst5,
+      g7: formValues.mashingGyst6,
+      g8: formValues.mashingGyst7,
+      g9: formValues.mashingGyst8,
+      g10: formValues.mashingGyst9,
+      v1: formValues.mashingTime0,
+      v2: formValues.mashingTime1,
+      v3: formValues.mashingTime2,
+      v4: formValues.mashingTime3,
+      v5: formValues.mashingTime4,
+      v6: formValues.mashingTime5,
+      v7: formValues.mashingTime6,
+      v8: formValues.mashingTime7,
+      v9: formValues.mashingTime8,
+      v10: formValues.mashingTime9,
+      tV: formValues.mashingHeatTemp,
+      pV: formValues.mashingHeatPower,
+      vV: formValues.mashingHeatTime,
+      tC: formValues.mashingCoolTemp,
+      gC: formValues.mashingCoolGyst,
+    };
+  };
+
+  const formValues = watch();
+  const prevFormValues = useRef(formValues);
+
+  useEffect(() => {
+    if (JSON.stringify(formValues) !== JSON.stringify(prevFormValues.current)) {
+      setIsFormChanging(true);
+      prevFormValues.current = formValues;
+    }
+
+    const debouncedLog = debounce(() => {
+      const formattedData = formatFormData(formValues);
+      console.log(formattedData);
+      save(formattedData);
+      //protection against children
+
+      setIsFormChanging(false);
+    }, 5000);
+
+    if (isFormChanging) {
+      debouncedLog();
+    }
+
+    return () => {
+      debouncedLog.cancel();
+    };
+  }, [formValues, isFormChanging]);
+
   const howMuchPause = watch('mashingPauses');
   const hasMashingHeat = watch('mashingHeat');
   const isFreezeMode = watch('mashingCool');
@@ -182,37 +253,212 @@ const MashingProcessPage = () => {
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
   const [dialogDeleteVisible, setDialogDeleteVisible] = useState(false);
+  const [dialogDownloadVisible, setDialogDownloadVisible] = useState(false);
+  const [disabledButtonRecipe, setDisabledButtonRecipe] = useState(true);
 
-  const [disabledButtonRecipe, setdisabledButtonRecipe] = useState(true);
+  useDisableLiProcess(data);
+  const [startLabel, setStartLabel] = useState('СТАРТ');
+  const [passLabel, setPassLabel] = useState('ПРОПУСК');
+  const [mashCommand, setMashCommand] = useState(0);
+  const [hideButtonStart, setHideButtonStart] = useState(false);
+  const [hideButtonSkip, setHideButtonSkip] = useState(false);
+  const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
+  const updateCommandControls = useCallback(() => {
+    if (data.version != 0) {
+      setStartLabel(mashCommand > 0 ? 'СТОП' : 'СТАРТ');
+
+      switch (data.mashingController) {
+        case 11:
+          setPassLabel('ПОЧ. ВАРКИ');
+          break;
+        case 12:
+          setPassLabel('ПРОПУСК');
+          break;
+        case 13:
+          setPassLabel('ПОЧ. ОХОЛОДЖ.');
+          break;
+        default:
+          setPassLabel('ПРОПУСК');
+          break;
+      }
+
+      if (countRecipe === 0 && data.mashingController >= 1 && data.mashingController <= 14 && mashCommand != 0) {
+        setDisabledButtonSkip(false);
+      } else {
+        setDisabledButtonSkip(true);
+      }
+    }
+  }, [data.mashingController, data.version]);
 
   useEffect(() => {
-    if (recipeNumber == '0') {
-      setdisabledButtonRecipe(true);
+    updateCommandControls();
+  }, [updateCommandControls]);
+
+  const updateRecipeControls = useCallback(() => {
+    if (recipeNumber === 0) {
+      setDisabledButtonRecipe(true);
+      setHideButtonStart(false);
+      setHideButtonSkip(false);
     } else {
-      setdisabledButtonRecipe(false);
+      setDisabledButtonRecipe(false);
+      setHideButtonStart(true);
+      setHideButtonSkip(true);
     }
   }, [recipeNumber]);
 
+  useEffect(() => {
+    updateRecipeControls();
+  }, [updateRecipeControls]);
+
+  const clickPass = async () => {
+    if (data.mashingController > 0 && data.mashingController < howMuchPause) {
+      setMashCommand(mashCommand + 1);
+    } else if (data.mashingController <= 10) {
+      if (hasMashingHeat) {
+        setMashCommand(11);
+      } else if (isFreezeMode) {
+        setMashCommand(13);
+      } else {
+        setMashCommand(0);
+      }
+    } else if (data.mashingController === 11) {
+      setMashCommand(12);
+    } else if (data.mashingController === 12) {
+      if (isFreezeMode) {
+        setMashCommand(13);
+      } else {
+        setMashCommand(0);
+      }
+    } else if (data.mashingController === 13) {
+      setMashCommand(14);
+    } else if (data.mashingController === 14) {
+      setMashCommand(0);
+    }
+  };
+
+  const clickStart = async () => {
+    if (mashCommand === 0) {
+      if (howMuchPause > 0) {
+        setMashCommand(1);
+      } else if (hasMashingHeat) {
+        setMashCommand(12);
+      } else if (isFreezeMode) {
+        setMashCommand(14);
+      } else {
+        setMashCommand(0);
+      }
+    }
+  };
+
+  const checkMashingState = useCallback(() => {
+    if (data.version != 0 && mashCommand != data.mashingController) {
+      if (data.f) {
+        setMashCommand(data.mashingController);
+        if (mashCommand === 15) {
+          setMashCommand(0);
+        }
+      }
+    }
+  }, [data.mashingHeat, data.mashingCool, data.mashingController, data.f, data.version, mashCommand]);
+
+  useEffect(() => {
+    checkMashingState();
+  }, [checkMashingState]);
+
+  const [status, setStatus] = useState('');
+
+  const statusUpdate = useCallback(() => {
+    let updateStatus = '';
+
+    switch (data.mashingController) {
+      case 0:
+        updateStatus = 'Очікування';
+        break;
+      case 11:
+        updateStatus = 'Очікування варки';
+        break;
+      case 12:
+        updateStatus = `Варка ${data.mashingHeatPower}% - ${data.mashingVarkaMinute} хв`;
+        break;
+      case 13:
+        updateStatus = 'Очікування охолодження';
+        break;
+      case 14:
+        updateStatus = `Охолодження ${data.mashingCoolTemp}°`;
+        break;
+      default:
+        if (data.mashingController <= 10) {
+          const mashingTemps = [
+            data.mashingTemp0,
+            data.mashingTemp1,
+            data.mashingTemp2,
+            data.mashingTemp3,
+            data.mashingTemp4,
+            data.mashingTemp5,
+            data.mashingTemp6,
+            data.mashingTemp7,
+            data.mashingTemp8,
+            data.mashingTemp9,
+          ];
+          const temp = mashingTemps[data.mashingController - 1];
+
+          updateStatus = `Пауза ${data.mashingController} - ${temp}°`;
+        } else {
+          updateStatus = 'Завершено';
+        }
+        break;
+    }
+    switch (data.errorMashing) {
+      case 0:
+        updateStatus += ', помилок нема';
+        break;
+      case 1:
+        updateStatus = 'Помилка t° куба';
+        break;
+      default:
+        break;
+    }
+    setStatus(updateStatus);
+  }, [
+    data.mashingController,
+    data.errorMashing,
+    data.mashingVarkaMinute,
+    data.mashingHeatPower,
+    data.mashingCoolTemp,
+    data.mashingTemp0,
+    data.mashingTemp1,
+    data.mashingTemp2,
+    data.mashingTemp3,
+    data.mashingTemp4,
+    data.mashingTemp5,
+    data.mashingTemp6,
+    data.mashingTemp7,
+    data.mashingTemp8,
+    data.mashingTemp9,
+  ]);
+
+  useEffect(() => {
+    statusUpdate();
+  }, [statusUpdate]);
+
+  const [newRecipeName, setNewRecipeName] = useState('');
   const recipeRename = async () => {
-    const inputElement = document.getElementById('rename-scenario') as HTMLInputElement;
-    if (inputElement.value === '') {
+    if (!newRecipeName.trim()) {
       toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(newRecipeName)) {
+      toast.warning('Рецепт з такою назвою вже існує');
     } else {
       const recipeData = {
         key: key,
         w: 3,
         n1: recipeName,
-        n2: inputElement.value,
+        n2: newRecipeName,
       };
-      try {
-        await renameRecipe(recipeData);
-        await fetchRecipe();
-        setDialogRenameVisible(false);
-        toast.success('Назва рецепта змінена на: ' + inputElement.value);
-      } catch (error) {
-        toast.error('Помилка при зміні назви рецепта');
-        console.error(error);
-      }
+      await renameRecipe(recipeData);
+      await fetchRecipe();
+      setDialogRenameVisible(false);
+      setNewRecipeName('');
+      toast.success('Назва рецепта змінена на: ' + newRecipeName);
     }
   };
 
@@ -233,7 +479,42 @@ const MashingProcessPage = () => {
     }
   };
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  const [nameCreateRecipe, setNameCreateRecipe] = useState('');
+
+  const recipeCreate = async () => {
+    if (!nameCreateRecipe.trim()) {
+      toast.error('Введіть назву рецепта');
+    } else if (listRecipe.includes(nameCreateRecipe)) {
+      toast.warning('Рецепт з такою назвою вже існує');
+    } else {
+      const formattedData = formatFormData(formValues);
+      const updatedData = {
+        ...formattedData,
+        n: nameCreateRecipe,
+        e: Number(countRecipe) + 1,
+      };
+      await save(updatedData);
+      await fetchRecipe();
+      setDialogCreateVisible(false);
+      setNameCreateRecipe('');
+      toast.success('Рецепт створено');
+    }
+  };
+
+  const recipeDownload = async () => {
+    const formattedData = formatFormData(formValues);
+    const updatedData = {
+      ...formattedData,
+      n: 'Automation',
+      e: 0,
+    };
+    await save(updatedData);
+    await fetchRecipe();
+    setDialogDownloadVisible(false);
+    toast.success('Рецепт завантажено');
+  };
+
+  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   const generatePauseBlocks = () => {
@@ -305,7 +586,7 @@ const MashingProcessPage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
         <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
+          <ACStatusComp status_text={status} />
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
@@ -350,7 +631,7 @@ const MashingProcessPage = () => {
               <ACIconButton
                 iconName="doc_download"
                 disabled={disabledButtonRecipe}
-                onClick={() => console.log('DocD clicked')}
+                onClick={() => setDialogDownloadVisible(true)}
               />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
               <ACIconButton
@@ -360,8 +641,14 @@ const MashingProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-              <Button label="Пропуск" className="button-skip" />
-              <Button label="Старт" className="button-start" />
+              {!hideButtonSkip && (
+                <Button
+                  label={passLabel}
+                  className="button-skip"
+                  disabled={disabledButtonSkip} /* onClick={clickPass} */
+                />
+              )}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
             </div>
           </div>
           <div className="block p-3  w-full">
@@ -515,7 +802,7 @@ const MashingProcessPage = () => {
             <Button
               label="Підтвердити"
               icon="pi pi-check"
-              onClick={() => console.log('Створено новий сценарій')}
+              onClick={recipeCreate}
               className="p-button-text button button-confirm"
               style={{ width: '150px' }}
               autoFocus
@@ -524,7 +811,11 @@ const MashingProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="create-scenario" style={{ width: '80%' }} />
+          <InputText
+            id="create-scenario"
+            style={{ width: '80%' }}
+            onChange={(e) => setNameCreateRecipe(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -554,7 +845,7 @@ const MashingProcessPage = () => {
         }
       >
         <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
-          <InputText id="rename-scenario" style={{ width: '80%' }} />
+          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
 
@@ -584,6 +875,34 @@ const MashingProcessPage = () => {
         }
       >
         <p>Сценарій: {recipeName}</p>
+      </Dialog>
+
+      <Dialog
+        header={recipeName}
+        visible={dialogDownloadVisible}
+        onHide={() => setDialogDownloadVisible(false)}
+        style={{ width: '500px' }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              label="Скасувати"
+              icon="pi pi-times"
+              onClick={() => setDialogDownloadVisible(false)}
+              className="p-button-text button button-cancel"
+              style={{ width: '150px' }}
+            />
+            <Button
+              label="Підтвердити"
+              icon="pi pi-check"
+              onClick={recipeDownload}
+              className="p-button-text button button-confirm"
+              style={{ width: '150px' }}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <p>Завантажити на автоматику?</p>
       </Dialog>
     </>
   );

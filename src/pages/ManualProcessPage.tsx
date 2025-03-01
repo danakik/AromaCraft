@@ -162,15 +162,15 @@ const ManualProcessPage = () => {
         setDisabledK4(true);
       }
 
-      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+      if (data.selection === 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
-      } else if (data.selection == 1 && data.version >= 2.5) {
+      } else if (data.selection === 1 && data.version >= 2.5) {
         setSymbol('л/г');
       }
     }
   }, [data]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (

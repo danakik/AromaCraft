@@ -27,13 +27,13 @@ export function useDisableLiProcess(data: any) {
 
     /*     const updateLiState = () => {
       enableAll.forEach(enableLi);
-      if (data.distAcceleration == 100) {
+      if (data.distAcceleration === 100) {
         idsHand.forEach(disableLi);
-      } else if (data.distAcceleration == 99) {
+      } else if (data.distAcceleration === 99) {
         idsDist.forEach(disableLi);
-      } else if (data.distAcceleration == 98) {
+      } else if (data.distAcceleration === 98) {
         idsRect.forEach(disableLi);
-      } else if (data.distAcceleration == 97) {
+      } else if (data.distAcceleration === 97) {
         idsMash.forEach(disableLi);
       }
     }; */
@@ -48,10 +48,10 @@ export function useDisableLiProcess(data: any) {
       } else if (data.mashingController >= 1 && data.mashingController != 15) {
         idsMash.forEach(disableLi);
       } else if (
-        data.distController == 0 &&
-        data.handController == 0 &&
-        data.rectController == 0 &&
-        data.mashingController == 0
+        data.distController === 0 &&
+        data.handController === 0 &&
+        data.rectController === 0 &&
+        data.mashingController === 0
       ) {
         enableAll.forEach(enableLi);
       }

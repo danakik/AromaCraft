@@ -83,7 +83,7 @@ const RectificationProcessPage = () => {
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [save] = useRectificationSaveMutation();
   const [recipeName, setRecipeName] = useState('');
-  const [recipeNumber, setRecipeNumber] = useState('');
+  const [recipeNumber, setRecipeNumber] = useState(0);
   const [reedRecipe] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
@@ -126,7 +126,7 @@ const RectificationProcessPage = () => {
 
   useDisableLiProcess(data);
 
-  const handleScenarioChange = (label: string, value: string) => {
+  const handleScenarioChange = (label: string, value: number) => {
     setRecipeName(label);
     setRecipeNumber(value);
   };
@@ -212,18 +212,18 @@ const RectificationProcessPage = () => {
       oT: formValues.rectCubeTail,
       tB: formValues.rectTimeBody,
       cG: formValues.rectSpeedCarge.true_value,
-      sU: formValues.rectSwitchCube,
-      sA: formValues.rectSwitchCarge,
+      sU: formValues.rectSwitchCube ? 1 : 0,
+      sA: formValues.rectSwitchCarge ? 1 : 0,
       sS: formValues.rectSelectCarge,
       rE: formValues.rectEndCycle,
-      rT: formValues.rectSwitchTail,
+      rT: formValues.rectSwitchTail ? 1 : 0,
       rP: formValues.rectPowerTail,
       rI: formValues.rectTempTransit,
     };
   };
 
   const view = () => {
-    if ((rectCommand == 4 || data.rectController == 4) && data.version == 1) {
+    if ((rectCommand === 4 || data.rectController === 4) && data.version === 1) {
       return 1;
     } else {
       return 0;
@@ -241,9 +241,9 @@ const RectificationProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      /*console.log(formattedData);
+      console.log(formattedData);
       save(formattedData);
-      //protection against children */
+      //protection against children
 
       setIsFormChanging(false);
     }, 5000);
@@ -280,7 +280,7 @@ const RectificationProcessPage = () => {
         setSpeedTail(hasTailSwitch);
         setPowerTail(!hasTailSwitch);
 
-        if (data.rectController == 0) {
+        if (data.rectController === 0) {
           setSwitchTail(false);
         } else {
           setSwitchTail(true);
@@ -291,7 +291,7 @@ const RectificationProcessPage = () => {
 
       if (!hasCargeSwitch && data.rectController != 4) {
         setSelectCarge(true);
-      } else if (hasCargeSwitch && data.rectController == 4) {
+      } else if (hasCargeSwitch && data.rectController === 4) {
         setSelectCarge(false);
       }
     }
@@ -310,15 +310,15 @@ const RectificationProcessPage = () => {
     if (data.version != 0) {
       setStartLabel(rectCommand > 0 ? 'СТОП' : 'СТАРТ');
 
-      if (data.f == 0) {
+      if (data.f === 0 && data.rectController != rectCommand) {
         setRectCommand(data.rectController);
-        if (rectCommand == 6) {
+        if (rectCommand === 6) {
           setRectCommand(0);
         }
       }
       if (
-        (recipeNumber == '0' && data.rectController >= 1 && data.rectController < 4 && rectCommand != 0) ||
-        (data.rectController == 4 && cycles > 0)
+        (recipeNumber === 0 && data.rectController >= 1 && data.rectController < 4 && rectCommand != 0) ||
+        (data.rectController === 4 && cycles > 0)
       ) {
         setDisabledButtonSkip(false);
       } else {
@@ -335,24 +335,24 @@ const RectificationProcessPage = () => {
     updateCommandControls();
   }, [updateCommandControls]);
 
-  const cycc = useCallback(() => {
+  const updateCycleState = useCallback(() => {
     if (data.version != 0) {
       if ((data.version >= 4 && data.version <= 4.1) || data.version < 3.2) {
         setEndCycle(true);
         setSelectCarge(true);
       }
 
-      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+      if (data.selection === 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
-      } else if (data.selection == 1 && data.version >= 2.5) {
+      } else if (data.selection === 1 && data.version >= 2.5) {
         setSymbol('л/г');
       }
     }
   }, [data.version, data.selection]);
 
   useEffect(() => {
-    cycc();
-  }, [cycc]);
+    updateCycleState();
+  }, [updateCycleState]);
 
   const [dialogCreateVisible, setDialogCreateVisible] = useState(false);
   const [dialogRenameVisible, setDialogRenameVisible] = useState(false);
@@ -363,7 +363,7 @@ const RectificationProcessPage = () => {
   const [disabledButtonRecipe, setDisabledButtonRecipe] = useState(true);
 
   const updateRecipeControls = useCallback(() => {
-    if (recipeNumber == '0') {
+    if (recipeNumber === 0) {
       setDisabledButtonRecipe(true);
       setHideButtonStart(false);
       setHideButtonSkip(false);
@@ -426,7 +426,7 @@ const RectificationProcessPage = () => {
       const updatedData = {
         ...formattedData,
         n: nameCreateRecipe,
-        r: Number(countRecipe) + 1,
+        e: Number(countRecipe) + 1,
       };
       await save(updatedData);
       await fetchRecipe();
@@ -441,7 +441,7 @@ const RectificationProcessPage = () => {
     const updatedData = {
       ...formattedData,
       n: 'Automation',
-      r: 0,
+      e: 0,
     };
     await save(updatedData);
     await fetchRecipe();
@@ -474,7 +474,7 @@ const RectificationProcessPage = () => {
   };
 
   const clickStart = async () => {
-    if (rectCommand == 0) {
+    if (rectCommand === 0) {
       setRectCommand(1);
     } else {
       setRectCommand(0);
@@ -494,13 +494,13 @@ const RectificationProcessPage = () => {
         updateStatus = 'Розгін';
         break;
       case 2:
-        updateStatus = 'Пауза 00:' + data.rectPause;
+        updateStatus = 'Пауза 00: ' + data.rectPause;
         break;
       case 3:
         updateStatus = 'Відбір голів';
         break;
       case 4:
-        updateStatus = 'Відбір тіла ЦИКЛ' + cycles;
+        updateStatus = 'Відбір тіла ЦИКЛ ' + cycles;
         break;
       case 5:
         updateStatus = 'Зупинка';
@@ -539,7 +539,7 @@ const RectificationProcessPage = () => {
     statusUpdate();
   }, [statusUpdate]);
 
-  if (isLoading || data.version == 0) return <p>Завантаження...</p>;
+  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
   if (error) return <p>Помилка у завантаженні даних.</p>;
 
   return (
@@ -652,7 +652,7 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
-                        units="л/г"
+                        units={symbol}
                         value={value.value}
                         label="Швидкість"
                         help={helpM.speed_selection_tails_m}
@@ -725,7 +725,7 @@ const RectificationProcessPage = () => {
               <ACIconButton
                 iconName="doc_download"
                 disabled={disabledButtonRecipe}
-                onClick={() => console.log('DocD clicked')}
+                onClick={() => setDialogDownloadVisible(true)}
               />
               <ACIconButton iconName="doc_add" onClick={() => setDialogCreateVisible(true)} />
               <ACIconButton
@@ -1073,7 +1073,7 @@ const RectificationProcessPage = () => {
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              {data.transitBody == 1 && (
+              {data.transitBody === 1 && (
                 <Controller
                   name="rectTimeBody"
                   control={control}
@@ -1090,7 +1090,7 @@ const RectificationProcessPage = () => {
                 />
               )}
 
-              {data.transitBody == 2 && (
+              {data.transitBody === 2 && (
                 <Controller
                   name="rectTempTransit"
                   control={control}
