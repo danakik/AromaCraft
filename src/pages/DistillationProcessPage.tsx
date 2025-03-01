@@ -176,7 +176,7 @@ const DistillationProcessPage = () => {
         setDisabledPowers(false);
       }
     }
-  }, [data.version, cubeSwith, timeBody]);
+  }, [data.version, cubeSwith, timeBody, i18n.language]);
 
   useEffect(() => {
     updateBodySwitch();
