@@ -462,7 +462,7 @@ const MashingProcessPage = () => {
       await fetchRecipe();
       setDialogRenameVisible(false);
       setNewRecipeName('');
-      toast.success(t('scenario_rename_success' + newRecipeName);
+      toast.success(t('scenario_rename_success' + newRecipeName));
 
     }
   };
