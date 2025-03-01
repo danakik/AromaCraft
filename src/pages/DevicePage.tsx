@@ -23,6 +23,7 @@ import { Dialog } from 'primereact/dialog';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
+import { useTranslation } from 'react-i18next';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -40,7 +41,7 @@ const DevicePage = () => {
 
   useDisableLiProcess(data)
 
-  
+  const { t } = useTranslation();
 
   return (
     <>
@@ -58,16 +59,10 @@ const DevicePage = () => {
         <UnderTextIcon style={{ position: 'absolute', top: 309, left: 818, transform: 'scale(-1, -1)' }} />
         <UnderTextIcon style={{ position: 'absolute', top: 567, left: 844, transform: 'scale(-1, -1)' }} />
 
-        {createExplainingDiv('#2942e1', String(data.tempWater), 'Вода', { top: 70, left: 84 }, helpM.temp_water_m)}
-        {createExplainingDiv(
-          '#e74a4a',
-          String(data.tempDef),
-          'Дефлагматор',
-          { top: 58, left: 816.5 },
-          helpM.temp_defl_m,
-        )}
-        {createExplainingDiv('#e7764a', String(data.tempCargi), 'Царга', { top: 271, left: 827 }, helpM.temp_cargi_m)}
-        {createExplainingDiv('#9e4ae7', String(data.tempCube), 'Куб', { top: 529, left: 860 }, helpM.temp_cube_m)}
+        {createExplainingDiv('#2942e1', String(data.tempWater), t('water'), { top: 70, left: 84 }, helpM.temp_water_m)}
+        {createExplainingDiv('#e74a4a', String(data.tempDef), t('defl'), { top: 58, left: 816.5 }, helpM.temp_defl_m,)}
+        {createExplainingDiv('#e7764a', String(data.tempCargi), t('carga'), { top: 271, left: 827 }, helpM.temp_cargi_m)}
+        {createExplainingDiv('#9e4ae7', String(data.tempCube), t('cube'), { top: 529, left: 860 }, helpM.temp_cube_m)}
         <p
           className="textBlockTemp"
           style={{
@@ -80,7 +75,7 @@ const DevicePage = () => {
             fontWeight: 400,
           }}
         >
-          ПОДАЧА ВОДИ
+          {t('device_water_supply')}
         </p>
         <p
           className="textBlockTemp"
@@ -94,7 +89,7 @@ const DevicePage = () => {
             fontWeight: 400,
           }}
         >
-          ВІДБІР
+          {t('device_selection')}
         </p>
         <p
           className="textBlockTemp"
@@ -108,7 +103,7 @@ const DevicePage = () => {
             fontWeight: 400,
           }}
         >
-          КЛАПАН ГОЛІВ
+          {t('device_valve_head')}
         </p>
 
         <div
@@ -136,12 +131,7 @@ const DevicePage = () => {
           <VectorIcon style={{ position: 'absolute', top: 357, left: 180 }} />
           <VectorIcon style={{ position: 'absolute', top: 463, left: 180 }} />
           <VectorIcon style={{ position: 'absolute', top: 19, left: 357 }} />
-          <KlapanIcon
-            width={83.09}
-            height={14.6}
-            color="black"
-            style={{ position: 'absolute', top: 84.2, left: 354.5, transform: 'rotate(90deg)' }}
-          />
+          <KlapanIcon width={83.09} height={14.6} color="black" style={{ position: 'absolute', top: 84.2, left: 354.5, transform: 'rotate(90deg)' }}/>
           <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 77.09, left: 383.6 }} />
           <DashedIcon style={{ position: 'absolute', top: 13.47, left: 462.58 }} />
           <OutsideSeparatorIcon style={{ position: 'absolute', top: 267.22, left: 24.7 }} />
@@ -151,10 +141,7 @@ const DevicePage = () => {
           <SeparatorIcon style={{ position: 'absolute', top: 272.83, left: 51.65 }} />
           <SeparatorIcon style={{ position: 'absolute', top: 235.73, left: 488.41 }} width={95.44} />
           <SeparatorIcon style={{ position: 'absolute', top: 280.69, left: 488.41 }} width={95.44} />
-          <SeparatorIcon
-            style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }}
-            width={95.44}
-          />
+          <SeparatorIcon style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }} width={95.44} />
         </div>
       </div>
     </>

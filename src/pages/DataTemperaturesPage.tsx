@@ -6,6 +6,7 @@ import '../styles/process_page.css';
 import '../styles/temperatures_page.css';
 import { useStatisticsDataQuery } from '../api/statisticsDataApi';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 type TemperatureData = {
   time: number;
@@ -30,6 +31,7 @@ type TemperatureData = {
 const DataTemperaturesPage: React.FC = () => {
   const key = localStorage.getItem('samogonKey');
   const { data: statisticsData } = useStatisticsDataQuery(key || '');
+  const { t } = useTranslation();
 
   const [data, setData] = useState<
     {
@@ -38,30 +40,7 @@ const DataTemperaturesPage: React.FC = () => {
     }[]
   >([]);
 
-  /* useEffect(() => {
-    const tempData = generateTemperatureData();
 
-    const chartData = [
-      {
-        label: 'Температура куба',
-        data: tempData.map((d) => ({ primary: d.time, secondary: d.cube })),
-      },
-      {
-        label: 'Температура царги',
-        data: tempData.map((d) => ({ primary: d.time, secondary: d.column })),
-      },
-      {
-        label: 'Температура дефлегматора',
-        data: tempData.map((d) => ({ primary: d.time, secondary: d.defleg })),
-      },
-      {
-        label: 'Температура води',
-        data: tempData.map((d) => ({ primary: d.time, secondary: d.water })),
-      },
-    ];
-
-    setData(chartData);
-  }, []); */
 
   const primaryAxis = React.useMemo<AxisOptions<{ primary: Date }>>(
     () => ({
@@ -144,32 +123,32 @@ const DataTemperaturesPage: React.FC = () => {
         <div style={{ float: 'left' }}></div>
       </header>
       <div
-        className="flex flex-column gap-2 w-full align-items-start justify-content-start"
-        style={{ height: '100vh' }}
-      >
-        <div style={{ height: '100px' }} className="flex flex-row w-full align-items-center justify-content-center">
-          <ul className="temp-list">
-            <li className="temp-cube">Температура куба</li>
-            <li className="temp-cargi">Температура царги</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-defl">Температура дефлегматора</li>
-            <li className="temp-water">Температура води</li>
-          </ul>
-        </div>
-        <div style={{ height: '400px' }} className="flex flex-column w-full align-items-center justify-content-center">
-          {data.length > 0 && (
-            <Chart
-              options={{
-                data,
-                primaryAxis,
-                secondaryAxes,
-                dark: true,
-              }}
-            />
-          )}
-        </div>
-      </div>
+  className="flex flex-column gap-2 w-full align-items-start justify-content-start"
+  style={{ height: '100vh' }} 
+>
+  <div style={{height: '100px'}} className="flex flex-row w-full align-items-center justify-content-center"> 
+    <ul className="temp-list">
+      <li className="temp-cube">{t('settings_temp_cube')}</li>
+      <li className="temp-cargi">{t('settings_temp_carga')}</li>
+    </ul>
+    <ul className="temp-list">
+      <li className="temp-defl">{t('settings_temp_defl')}</li>
+      <li className="temp-water">{t('settings_temp_water')}</li>
+    </ul>
+  </div>
+  <div style={{ height: '400px' }} className="flex flex-column w-full align-items-center justify-content-center">
+    {data.length > 0 && (
+      <Chart
+        options={{
+          data,
+          primaryAxis,
+          secondaryAxes,
+          dark: true,
+        }}
+      />
+    )}
+  </div>
+</div>
     </>
   );
 };

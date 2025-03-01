@@ -16,6 +16,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { ACThreeStateButton } from '../components/threestatebutton';
 import { debounce } from 'lodash';
 import { useSaveSettingMutation } from '../api/settingSave';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   settingTempCupe: number;
@@ -40,6 +41,7 @@ const SettingPage = () => {
       key: key,
     };
   }, [key]);
+  const { t } = useTranslation();
 
   const {
     data = initialSortedData,
@@ -108,15 +110,16 @@ const SettingPage = () => {
   }, [formValues, isFormChanging]);
 
   const [isBarometr, setIsBarometr] = useState(false);
-  const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}мм`);
+  const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}${t('unim_mm')}`);
   const br = useCallback(() => {
+
     if (data.version !== 0) {
       if (data.version >= 4) {
         setIsBarometr(true);
-        setLableBarometr(`${data.settingValueBrometr}мм`);
+        setLableBarometr(`${data.settingValueBrometr}${t('unim_mm')}`);
       } else {
         setIsBarometr(false);
-        setLableBarometr('нема');
+        setLableBarometr(t('settings_no_barometer'));
       }
     }
   }, [data.version, data.settingValueBrometr]);
@@ -188,8 +191,10 @@ const SettingPage = () => {
 
   
 
-  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка у завантаженні даних.</p>;
+  if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
+  if (error) return <p>{t('loading_error_t')}</p>;
+
+  let l = localStorage.getItem('language');
 
   return (
     <>
@@ -198,122 +203,118 @@ const SettingPage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
       </header>
-      <div className="flex flex-row w-full h-screen align-items-start justify-content-start">
-        <div className="flex flex-column w-3/4 h-full align-items-start justify-content-start">
-          <div className="grid grid-cols-2 w-full gap-3 p-3">
-            <div className="col flex flex-col items-center gap-3 p-2 -mt-3">
-              <div className="block col-6">
-                <ACKnob
-                  label="Темп. куба"
-                  color="purple"
-                  initialValue={Number(data.tempCube)}
-                  help={helpM.set_temp_cube_m}
-                  readonly
-                />
-                <Controller
-                  name="settingTempCupe"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units="°C "
-                      value={value}
-                      label="Зміна темп. куба"
-                      help={helpM.set_temp_cube_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-              </div>
-              <div className="block col-6">
-                <ACKnob
-                  label="Темп. царги"
-                  color="orange"
-                  initialValue={Number(data.tempCargi)}
-                  help={helpM.set_temp_cargi_m}
-                  readonly
-                />
 
-                <Controller
-                  name="settingTempCarge"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units="°C "
-                      value={value}
-                      label="Зміна темп. царги"
-                      help={helpM.set_temp_cargi_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-              </div>
+      <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
+        <div className="flex flex-column w-1/4 p-2">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 w-full" style={{ minWidth: '420px', maxWidth: '600px' }}>
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
+              <ACKnob
+                label={t('settings_temp_cube')}
+                color="purple"
+                initialValue={Number(data.tempCube)}
+                help={l === 'en' ? helpM.set_temp_cube : helpM.set_temp_cube_m}
+                readonly
+              />
+              <Controller
+                name="settingTempCupe"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="°C "
+                    value={value}
+                    label={t('settings_temp_cube_change')}
+                    help={l === 'en' ? helpM.set_temp_cube : helpM.set_temp_cube_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
             </div>
-            <div className="col flex flex-col items-center gap-3 p-2 -mt-3">
-              <div className="block col-6">
-                <ACKnob
-                  label="Темп. дефлегматора"
-                  color="red"
-                  initialValue={Number(data.tempDef)}
-                  help={helpM.set_temp_defl_m}
-                  readonly
-                />
-                <Controller
-                  name="settingTempDef"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units="°C "
-                      value={value}
-                      label="Зміна темп. дефл."
-                      help={helpM.set_temp_defl_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-              </div>
-              <div className="block col-6">
-                <ACKnob
-                  label="Темп. води"
-                  color="blue"
-                  initialValue={Number(data.tempWater)}
-                  help={helpM.set_temp_water_m}
-                  readonly
-                />
-                <Controller
-                  name="settingTempWater"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACCounterLabel
-                      units="°C "
-                      value={value}
-                      label="Зміна темп. води"
-                      help={helpM.set_temp_water_m}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
-              </div>
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
+              <ACKnob
+                label={t('settings_temp_carga')}
+                color="orange"
+                initialValue={Number(data.tempCargi)}
+                help={l === 'en' ? helpM.set_temp_cargi : helpM.set_temp_cargi_m}
+                readonly
+              />
+              <Controller
+                name="settingTempCarge"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="°C "
+                    value={value}
+                    label={t('settings_temp_carga_change')}
+                    help={l === 'en' ? helpM.set_temp_cargi : helpM.set_temp_cargi_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
+              <ACKnob
+                label={t('settings_temp_defl')}
+                color="red"
+                initialValue={Number(data.tempDef)}
+                help={l === 'en' ? helpM.set_temp_defl : helpM.set_temp_defl_m}
+                readonly
+              />
+              <Controller
+                name="settingTempDef"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="°C "
+                    value={value}
+                    label={t('settings_temp_defl_change')}
+                    help={l === 'en' ? helpM.set_temp_defl : helpM.set_temp_defl_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
+            </div>
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
+              <ACKnob
+                label={t('settings_temp_water')}
+                color="blue"
+                initialValue={Number(data.tempWater)}
+                help={l === 'en' ? helpM.set_temp_water : helpM.set_temp_water_m}
+                readonly
+              />
+              <Controller
+                name="settingTempWater"
+                control={control}
+                render={({ field: { onChange: onChangeForm, value } }) => (
+                  <ACCounterLabel
+                    units="°C "
+                    value={value}
+                    label={t('settings_temp_water_change')}
+                    help={l === 'en' ? helpM.set_temp_water : helpM.set_temp_water_m}
+                    onChange={(e) => onChangeForm(e.value)}
+                  />
+                )}
+              />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-column align-items-start justify-content-start gap-3 w-1/4 -ml-3">
-          <div className="block p-2 flex-1 w-full">
-            <h3>Повідомлення</h3>
+        <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4">
+          <div className="block p-3 w-full">
+            <h3>{t('settings_message')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Button
-                label="Зробити запит"
+                label={t('settings_request')}
                 style={{ backgroundColor: '#9e4ae7', borderColor: '#9e4ae7', color: '#fff' }}
               />
-              <h3>Пристрій: </h3>
+              <h3>{t('settings_device')}</h3>
               <h3>DESKTOP-5253</h3>
             </div>
           </div>
-          <div className="block p-2">
-            <h3>Налаштування</h3>
+          <div className="block p-3 w-full">
+            <h3>{t('menu_settings')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="pid" label="Встановлення нагріву" help={helpM.set_warm_m} />
+                <ACRegulator icon="pid" label={t('settings_set_heat')} help={l === 'en' ? helpM.set_warm : helpM.set_warm_m} />
                 <Controller
                   name="settingSeatHeat"
                   control={control}
@@ -322,8 +323,8 @@ const SettingPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="Регул"
-                      offLabel="Розет"
+                      onLabel={t('toggle_regul')}
+                      offLabel={t('toggle_socket')}
                       disabled={disabledHeat}
                     />
                   )}
@@ -337,10 +338,10 @@ const SettingPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="ТЕН"
+                    label={t('settings_ten')}
                     value={value}
-                    units="Вт"
-                    help={helpM.set_ten_m}
+                    units={t('unit_w')}
+                    help={l === 'en' ? helpM.set_ten : helpM.set_ten_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTEN}
                   />
@@ -348,8 +349,7 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="antena_bars" label={`Барометр, ${lableBarometr}`} help={helpM.barometer_m} />
-
+              <ACRegulator icon="antena_bars" label={`${t('settings_barometer')}, ${lableBarometr}`} help={l === 'en' ? helpM.barometer : helpM.barometer_m} />
               <Controller
                 name="settingBrometr"
                 control={control}
@@ -360,16 +360,17 @@ const SettingPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="valve_heads" label="Відбір голів" help={helpM.set_selection_heads_m} />
+
+                <ACRegulator icon="valve_heads" label="Відбір голів" help={l === 'en' ? helpM.set_selection_heads : helpM.set_selection_heads_m} />
                 {!whichTransitBody && (
                   <Controller
                     name="transitBody"
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACThreeStateButton
-                        firstStateLabel="Рівень"
-                        secondStateLabel="Час"
-                        thirdStateLabel="Датчик"
+                        firstStateLabel={t('toggle_level')}
+                        secondStateLabel={t('toggle_time')}
+                        thirdStateLabel={t('toggle_time')}
                         initialState={value}
                         onChange={(e) => onChangeForm(e.value)}
                         disabled={disabledTransitBody}
@@ -386,18 +387,19 @@ const SettingPage = () => {
                         className="custom-toggle-button"
                         checked={!!value}
                         onChange={(e) => onChangeForm(e.value)}
-                        onLabel="Час"
-                        offLabel="Рівень"
+                        onLabel={t('toggle_time')}
+                        offLabel={t('toggle_level')}
                         disabled={disabledTransitBody}
                       />
                     )}
                   />
                 )}
+
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="arrow_fork" label="Перемикач голів" help={helpM.set_change_heads_m} />
+                <ACRegulator icon="arrow_fork" label={t('settings_switch_heads')} help={l === 'en' ? helpM.set_change_heads : helpM.set_change_heads_m} />
                 <Controller
                   name="switchTail"
                   control={control}
@@ -406,17 +408,18 @@ const SettingPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="Вбік"
-                      offLabel="Вниз"
+                      onLabel={t('toggle_aside')}
+                      offLabel={t('toggle_down')}
                       disabled={disavledSwitchTail}
                     />
                   )}
+
                 />
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="select_valve" label="Встановлення відбору" help={helpM.set_selection_m} />
+                <ACRegulator icon="select_valve" label={t('settings_selection_setup')} help={l === 'en' ? helpM.set_selection : helpM.set_selection_m} />
                 <Controller
                   name="selection"
                   control={control}
@@ -425,7 +428,7 @@ const SettingPage = () => {
                       className="custom-toggle-button"
                       checked={value}
                       onChange={(e) => onChangeForm(e.value)}
-                      onLabel="л/г"
+                      onLabel={t('unit_liter_per_gram')}
                       offLabel="%"
                       disabled={disabledSelection}
                     />
@@ -440,10 +443,10 @@ const SettingPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="speed"
-                    label="Швидкість при 20%"
+                    label={t('settings_speed')}
                     value={value}
-                    units="л/г"
-                    help={helpM.set_speed_20_m}
+                    units={t('unit_liter_per_gram')}
+                    help={l === 'en' ? helpM.set_speed_20 : helpM.set_speed_20_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledSpeedSelection}
                   />

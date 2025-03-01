@@ -28,6 +28,7 @@ import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useMashingSaveMutation } from '../api/mashingSaveApi';
+import { useTranslation } from 'react-i18next';
 
 type FormData = {
   mashingPauses: number;
@@ -84,6 +85,8 @@ const MashingProcessPage = () => {
   const [reedRecipes] = useReedRecipeMutation();
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
+
+  const { t } = useTranslation();
 
   const pageRecipe = () => {
     return {
@@ -444,9 +447,10 @@ const MashingProcessPage = () => {
   const [newRecipeName, setNewRecipeName] = useState('');
   const recipeRename = async () => {
     if (!newRecipeName.trim()) {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(newRecipeName)) {
       toast.warning('Рецепт з такою назвою вже існує');
+
     } else {
       const recipeData = {
         key: key,
@@ -458,7 +462,8 @@ const MashingProcessPage = () => {
       await fetchRecipe();
       setDialogRenameVisible(false);
       setNewRecipeName('');
-      toast.success('Назва рецепта змінена на: ' + newRecipeName);
+      toast.success(t('scenario_rename_success' + newRecipeName);
+
     }
   };
 
@@ -472,9 +477,9 @@ const MashingProcessPage = () => {
       await deleteRecipe(recipeData);
       await fetchRecipe();
       setDialogDeleteVisible(false);
-      toast.success('Рецепт видалено');
+      toast.success(t('scenario_delete_success'));
     } catch (error) {
-      toast.error('Помилка при видаленні рецепта');
+      toast.error(t('scenario_delete_error'));
       console.error(error);
     }
   };
@@ -514,8 +519,12 @@ const MashingProcessPage = () => {
     toast.success('Рецепт завантажено');
   };
 
-  if (isLoading || data.version === 0) return <p>Завантаження...</p>;
-  if (error) return <p>Помилка у завантаженні даних.</p>;
+
+  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
+  if (error) return <p>{t('loading_error')}</p>;
+
+  let l = localStorage.getItem('language');
+
 
   const generatePauseBlocks = () => {
     const blocks = [];
@@ -538,10 +547,10 @@ const MashingProcessPage = () => {
               control={control}
               render={({ field: { onChange: onChangeForm, value } }) => (
                 <ACKnob
-                  label={`Температура паузи ${i + 1}`}
+                  label={`${t('process_mashing_temp_pause')} ${i + 1}`}
                   color={knobColor}
                   initialValue={value}
-                  help={helpM.temp_pause_m}
+                  help={l === 'en' ? helpM.temp_pause : helpM.temp_pause_m}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -551,10 +560,10 @@ const MashingProcessPage = () => {
               control={control}
               render={({ field: { onChange: onChangeForm, value } }) => (
                 <ACSlider
-                  label={`Гістерезис паузи ${i + 1}`}
+                  label={`${t('process_mashing_gist_pause')} ${i + 1}`}
                   color={sliderColor}
                   initialValue={value}
-                  help={helpM.temp_selection_heads_m}
+                  help={l === 'en' ? helpM.gist_pause : helpM.gist_pause_m}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -564,10 +573,10 @@ const MashingProcessPage = () => {
               control={control}
               render={({ field: { onChange: onChangeForm, value } }) => (
                 <ACCounterLabel
-                  label={`Час паузи ${i + 1}`}
+                  label={`${t('process_mashing_time_pause')} ${i + 1}`}
                   value={value}
-                  units="хв"
-                  help={helpM.temp_pause_m}
+                  units={t('unit_minutes')}
+                  help={l === 'en' ? helpM.time_pause : helpM.time_pause_m}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -593,16 +602,16 @@ const MashingProcessPage = () => {
         <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name="Куб" color="purple" temp={String(data.tempCube)} help={helpM.temp_cube_m} />
+              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Царга" color="orange" temp={String(data.tempCargi)} help={helpM.temp_cargi_m} />
+              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Дефлегматор" color="red" temp={String(data.tempDef)} help={helpM.temp_defl_m} />
+              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name="Вода" color="blue" temp={String(data.tempWater)} help={helpM.temp_water_m} />
+              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
             </div>
           </div>
           <div
@@ -620,7 +629,7 @@ const MashingProcessPage = () => {
           style={{ maxHeight: '658px', overflowY: 'auto', width: '80%', borderRadius: '12px', paddingRight: '4px' }}
         >
           <div className="block p-3 w-full">
-            <h3>Автоматика</h3>
+            <h3>{t('process_scenario_header')}</h3>
             <div className="flex align-items-center justify-content-center">
               <ACScriptComp options={listRecipe} onChange={handleScenarioChange} />
               <ACIconButton
@@ -641,6 +650,7 @@ const MashingProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
+
               {!hideButtonSkip && (
                 <Button
                   label={passLabel}
@@ -649,10 +659,11 @@ const MashingProcessPage = () => {
                 />
               )}
               {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
+
             </div>
           </div>
           <div className="block p-3  w-full">
-            <h3>Паузи</h3>
+            <h3>{t('process_mashing_pauses_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
                 name="mashingPauses"
@@ -660,11 +671,11 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="list"
-                    label="Кількість пауз"
+                    label={t('process_mashing_pauses_number')}
                     value={value}
                     units=" "
                     hint="pauses"
-                    help={helpM.pauses_m}
+                    help={l === 'en' ? helpM.pauses : helpM.pauses_m}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -672,9 +683,9 @@ const MashingProcessPage = () => {
             </div>
           </div>
           <div className="block p-3  w-full">
-            <h3>Варка</h3>
+            <h3>{t('process_mashing_boiling')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_plus" label="Варка" help={helpM.temp_brew_m} />
+              <ACRegulator icon="temp_plus" label={t('process_mashing_boiling')} help={l === 'en' ? helpM.temp_brew : helpM.temp_brew_m} />
               <Controller
                 name="mashingHeat"
                 control={control}
@@ -690,10 +701,10 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
-                    label="Температура варки"
+                    label={t('process_mashing_temp_boiling')}
                     units="°C"
                     value={value}
-                    help={helpM.temp_brew_m}
+                    help={l === 'en' ? helpM.temp_brew : helpM.temp_brew_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -707,10 +718,10 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="ten"
-                    label="Потужність варки"
+                    label={t('process_mashing_power_boiling')}
                     units="%"
                     value={value}
-                    help={helpM.power_brew_m}
+                    help={l === 'en' ? helpM.power_brew : helpM.power_brew_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -724,10 +735,10 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="timer"
-                    label="Час варки"
-                    units="хв"
+                    label={t('process_mashing_time_boiling')}
+                    units={t('unit_minutes')}
                     value={value}
-                    help={helpM.time_brew_m}
+                    help={l === 'en' ? helpM.time_brew : helpM.time_brew_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -736,9 +747,9 @@ const MashingProcessPage = () => {
             </div>
           </div>
           <div className="block p-3  w-full">
-            <h3>Охолодженння</h3>
+            <h3>{t('process_mashing_cooling')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_minus" label="Охолодження" help={helpM.temp_freeze_m} />
+              <ACRegulator icon="temp_minus" label={t('process_mashing_cooling')} help={l === 'en' ? helpM.temp_freeze : helpM.temp_freeze_m} />
               <Controller
                 name="mashingCool"
                 control={control}
@@ -754,10 +765,10 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp"
-                    label="Температура охолодження"
+                    label={t('process_mashing_temp_cooling')}
                     units="°C"
                     value={value}
-                    help={helpM.temp_freeze_m}
+                    help={l === 'en' ? helpM.temp_freeze : helpM.temp_freeze_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!isFreezeMode}
                   />
@@ -771,10 +782,10 @@ const MashingProcessPage = () => {
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
                     icon="temp_minus"
-                    label="Гістерезис охолодження"
+                    label={t('process_mashing_gist_cooling')}
                     units="°C"
                     value={value}
-                    help={helpM.temp_freeze_m}
+                    help={l === 'en' ? helpM.gist_freeze : helpM.gist_freeze_m}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!isFreezeMode}
                   />
@@ -786,21 +797,21 @@ const MashingProcessPage = () => {
       </div>
 
       <Dialog
-        header={'Створити новий сценарій'}
+        header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeCreate}
               className="p-button-text button button-confirm"
@@ -820,21 +831,21 @@ const MashingProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Перейменувати сценарій'}
+        header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
               className="p-button-text button button-confirm"
@@ -850,21 +861,21 @@ const MashingProcessPage = () => {
       </Dialog>
 
       <Dialog
-        header={'Видалити сценарій'}
+        header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
         style={{ width: '500px' }}
         footer={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
               className="p-button-text button button-cancel"
               style={{ width: '150px' }}
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
               className="p-button-text button button-confirm"

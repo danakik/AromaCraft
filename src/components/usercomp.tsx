@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/usercomp.css';
@@ -8,9 +9,11 @@ type UserCompProps = {
 };
 
 export const ACUserComp: React.FC<UserCompProps> = ({ serial_number }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="ac-user-comp flex flex-wrap gap-3">
-      <span className="serial-number">Серійний номер: {serial_number}</span>
+      <span className="serial-number">{t('usercomp')} {serial_number}</span>
     </div>
   );
 };

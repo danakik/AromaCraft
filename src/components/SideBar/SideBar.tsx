@@ -7,29 +7,43 @@ import ProcessIcon from '../../assets/icons/process_icon';
 import DataIcon from '../../assets/icons/data_icon';
 import SettingsIcon from '../../assets/icons/settings_icon';
 import ExitIcon from '../../assets/icons/exit_icon';
-import GlobeIcon from '../../assets/icons/globe_icon';
 import { SelectButton } from 'primereact/selectbutton';
+import i18n from '../../i18n/config';
+import { useTranslation } from 'react-i18next';
 import './SideBar.css';
 
 export const SideBar = (props: PanelMenuProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const [expandedKeys, setExpandedKeys] = useState<Record<string, boolean>>({});
 
-  const selectButtonOptions = [
-    { label: 'ENG', value: '1' },
-    { label: 'UKR', value: '2' },
-];
+  const defaultLanguage = localStorage.getItem('language') || 'uk';
+  const [selectedOption, setSelectedOption] = useState(defaultLanguage);
 
-const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  useEffect(() => {
+    i18n.changeLanguage(defaultLanguage);
+    setSelectedOption(defaultLanguage);
+  }, []);
+
+  const handleLanguageChange = (value: string) => {
+    setSelectedOption(value);
+    i18n.changeLanguage(value);
+    localStorage.setItem('language', value);
+  };
+
+  const selectButtonOptions = [
+    { label: 'ENG', value: 'en' },
+    { label: 'UKR', value: 'uk' },
+  ];
 
   const homeIcon = useMemo(
     () =>
       HomeIcon({
-        width: 22,
-        height: 23,
-        viewBox: '0 0 22 23',
+        width: 20,
+        height: 21,
+        viewBox: '0 0 23 24',
         fill: 'none',
         xmlns: 'http://www.w3.org/2000/svg',
         color: 'white',
@@ -37,15 +51,21 @@ const [selectedOption, setSelectedOption] = useState<string | null>(null);
     [],
   );
   const exitIcon = useMemo(
-    () => ExitIcon({ width: 16, height: 16, viewBox: '0 0 16 16', xmlns: 'http://www.w3.org/2000/svg' }),
+    () =>
+      ExitIcon({
+        width: 20,
+        height: 20,
+        viewBox: '0 0 20 20',
+        xmlns: 'http://www.w3.org/2000/svg'
+      }),
     [],
   );
   const processIcon = useMemo(
     () =>
       ProcessIcon({
-        width: 20,
-        height: 20,
-        viewBox: '0 0 20 20',
+        width: 23,
+        height: 23,
+        viewBox: '0 0 23 23',
         fill: 'none',
         xmlns: 'http://www.w3.org/2000/svg',
         color: 'white',
@@ -59,137 +79,106 @@ const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const settingsIcon = useMemo(
     () =>
       SettingsIcon({
-        width: 22,
-        height: 22,
-        viewBox: '0 0 22 22',
+        width: 20,
+        height: 20,
+        viewBox: '0 0 20 20',
         xmlns: 'http://www.w3.org/2000/svg',
         color: 'white',
       }),
     [],
   );
-  const globeIcon = useMemo(() => GlobeIcon({ width: 24, height: 24, viewBox: '0 0 24 24' }), []);
 
   const mainPageMenuItems: MenuItem[] = useMemo(
     () => [
-       {
-        label: '',
-        icon: globeIcon,
-        template: (item) => {
-          return (
-              <div className="flex align-items-center">
-                  <i className={`pi ${item.icon}`}></i>
-                  <div className="select-lang">
-                  <SelectButton
-                      value={selectedOption}
-                      options={selectButtonOptions}
-                      onChange={(e) => setSelectedOption(e.value)}
-                      optionLabel="label"
-                  />
-                  </div>
-              </div>
-          );
-      },
-    }, 
       {
-        label: 'Головна',
+        label: t('menu_main'),
         icon: homeIcon,
         command: () => navigate('/main'),
         className: location.pathname === '/main' ? 'active' : '',
       },
       {
-        label: 'Вийти',
+        label: t('menu_exit'),
         icon: exitIcon,
         command: () => navigate('/login'),
         className: location.pathname === '/login' ? 'active' : '',
       },
     ],
-    [navigate, location.pathname, homeIcon, exitIcon, globeIcon, selectedOption],
+    [navigate, location.pathname, homeIcon, exitIcon, t],
   );
 
   const defaultMenuItems: MenuItem[] = useMemo(
     () => [
-      /* {
-        label: '',
-        icon: globeIcon,
-        template: (item) => {
-          return (
-              <div className="flex align-items-center">
-                  <i className={`pi ${item.icon}`}></i>
-                  <SelectButton
-                      value={selectedOption}
-                      options={selectButtonOptions}
-                      onChange={(e) => setSelectedOption(e.value)}
-                      optionLabel="label"
-                      className="p-button-rounded select-button"
-                  />
-              </div>
-          );
-      },
-    }, */
       {
-        label: 'Головна',
+        label: t('menu_main'),
         icon: homeIcon,
         command: () => navigate('/device'),
         className: location.pathname === '/device' ? 'active' : '',
       },
       {
         key: 'process',
-        label: 'Процеси',
+        label: t('menu_process'),
         icon: processIcon,
         items: [
           {
-            label: 'Ручний',
+            label: t('menu_process_manual'),
             command: () => navigate('/manualprocess'),
             className: location.pathname === '/manualprocess' ? 'active' : '',
           },
           {
-            label: 'Дистиляція',
+            label: t('menu_process_distillation'),
             command: () => navigate('/distillationprocess'),
             className: location.pathname === '/distillationprocess' ? 'active' : '',
           },
           {
-            label: 'Ректифікація',
+            label: t('menu_process_rectification'),
             command: () => navigate('/rectificationprocess'),
             className: location.pathname === '/rectificationprocess' ? 'active' : '',
           },
           {
-            label: 'Затирання',
+            label: t('menu_process_mashing'),
             command: () => navigate('/mashingprocess'),
             className: location.pathname === '/mashingprocess' ? 'active' : '',
+            /*           command: (event) => {
+                         if (!event.item.disabled) {
+                           navigate('/mashingprocess');
+                         }
+                       },
+                       className: location.pathname === '/mashingprocess' ? 'active' : '',
+                       disabled: true, */
           },
         ],
       },
       {
         key: 'data',
-        label: 'Дані',
-        icon: dataIcon,       
-            items: [
+        label: t('menu_data'),
+        icon: dataIcon,
+        items: [
           {
-            label: 'Розрахунок параметрів колони',
+            label: t('menu_data_column_param'),
             command: () => navigate('/calculation'),
             className: location.pathname === '/calculation' ? 'active' : '',
           },
-           {
-            label: 'Температури',
+          {
+            label: t('menu_data_temperatures'),
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',
           },
         ],
       },
       {
-        label: 'Налаштування',
+        label: t('menu_settings'),
         icon: settingsIcon,
         command: () => navigate('/setting'),
         className: location.pathname === '/setting' ? 'active' : '',
       },
       {
-        label: 'Вийти',
+        label: t('menu_exit'),
         icon: exitIcon,
         command: () => navigate('/main'),
         className: location.pathname === '/main' ? 'active' : '',
       },
     ],
-    [navigate, location.pathname, homeIcon, processIcon, dataIcon, settingsIcon, exitIcon],
+    [navigate, location.pathname, homeIcon, processIcon, dataIcon, settingsIcon, exitIcon, t],
   );
 
   const menuItems = location.pathname === '/main' ? mainPageMenuItems : defaultMenuItems;
@@ -200,16 +189,13 @@ const [selectedOption, setSelectedOption] = useState<string | null>(null);
     if (
       location.pathname.startsWith('/manualprocess') ||
       location.pathname.startsWith('/distillationprocess') ||
-      location.pathname.startsWith('/rectificationprocess')
+      location.pathname.startsWith('/rectificationprocess') ||
+      location.pathname.startsWith('/mashingprocess')
     ) {
       newExpandedKeys['process'] = true;
     }
 
-/*     if (location.pathname.startsWith('/datatemperatures') || location.pathname.startsWith('/calculation')) {
-      newExpandedKeys['data'] = true;
-    } */
-
-    if (location.pathname.startsWith('/calculation')) {
+    if (location.pathname.startsWith('/datatemperatures') || location.pathname.startsWith('/calculation')) {
       newExpandedKeys['data'] = true;
     }
 
@@ -217,12 +203,31 @@ const [selectedOption, setSelectedOption] = useState<string | null>(null);
   }, [location.pathname]);
 
   return (
-    <PanelMenu
-      model={menuItems}
-      className="custom-panelmenu"
-      expandedKeys={expandedKeys}
-      onExpandedKeysChange={setExpandedKeys}
-      multiple
-    />
+    <>
+      <div className="flex flex-column align-items-stretch justify-content-between w-full h-full">
+        <div className="flex-1 flex flex-column align-items-start justify-content-start w-full">
+          <div className="flex flex-column align-items-center justify-content-center w-full">
+            <PanelMenu
+              model={menuItems}
+              className="custom-panelmenu"
+              expandedKeys={expandedKeys}
+              onExpandedKeysChange={setExpandedKeys}
+              multiple
+            />
+          </div>
+        </div>
+        <div className="flex flex-row align-items-center justify-content-center w-full select-lang" style={{ marginTop: 'auto', marginBottom: '40px' }}>
+          {/* <i className="pi pi-globe" style={{ fontSize: '1.2rem' }}></i> */}
+          <SelectButton
+            value={selectedOption}
+            options={selectButtonOptions}
+            onChange={(e) => handleLanguageChange(e.value)}
+            optionLabel="label"
+            dataKey="value"
+            className="custom-select-button"
+          />
+        </div>
+      </div>
+    </>
   );
 };
