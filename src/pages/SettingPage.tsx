@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { ACKnob } from '../components/knob';
@@ -41,10 +41,13 @@ const SettingPage = () => {
       key: key,
     };
   }, [key]);
-
   const { t } = useTranslation();
 
-  const { data = initialSortedData, isLoading, error } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -94,7 +97,6 @@ const SettingPage = () => {
       save(formattedData); 
       protection against children */
 
-
       setIsFormChanging(false);
     }, 5000);
 
@@ -109,16 +111,87 @@ const SettingPage = () => {
 
   const [isBarometr, setIsBarometr] = useState(false);
   const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}${t('unim_mm')}`);
-  useEffect(() => {
+  const br = useCallback(() => {
+
     if (data.version !== 0) {
-      if (data.version >= 2.5 && data.version < 4) {
+      if (data.version >= 4) {
         setIsBarometr(true);
+        setLableBarometr(`${data.settingValueBrometr}${t('unim_mm')}`);
+      } else {
+        setIsBarometr(false);
         setLableBarometr(t('settings_no_barometer'));
       }
     }
-  }, [data]);
+  }, [data.version, data.settingValueBrometr]);
 
-  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
+  useEffect(() => {
+    br();
+  }, [br]);
+
+  const [whichTransitBody, setWhichTransitBody] = useState(true);
+
+  const checkTransitBodySwitch = useCallback(() => {
+    if (data.version >= 2.5 && data.version <= 4.3) {
+      setWhichTransitBody(true);
+    } else {
+      setWhichTransitBody(false);
+    }
+  }, [data.version]);
+
+  useEffect(() => {
+    checkTransitBodySwitch();
+  }, [checkTransitBodySwitch]);
+
+  const [disabledSpeedSelection, setDisabledSpeedSelection] = useState(true);
+  const [disabledTEN, setDisabledTEN] = useState(true);
+  const [disabledHeat, setDisabledHeat] = useState(true);
+  const [disabledSelection, setDisabledSelection] = useState(true);
+  const [disabledTransitBody, setDisabledTransitBody] = useState(true);
+  const [disabledBarometr, setDisabledBarometr] = useState(true);
+  const[disavledSwitchTail, setDisavledSwitchTail] = useState(true);
+  const processStarted = useCallback(() => {
+    console.log('isBarometr:', isBarometr);
+    if (data.version !== 0) {
+      if (
+        data.distController === 0 &&
+        data.rectController === 0 &&
+        data.mashingController === 0 &&
+        data.handController === 0
+      ) {
+        if (data.version >= 2.5) {
+          setDisabledSpeedSelection(false);
+        }
+        if (isBarometr) {
+          setDisabledBarometr(false);
+        }
+        setDisabledTEN(false);
+        setDisabledHeat(false);
+        setDisabledSelection(false);
+        setDisabledTransitBody(false);
+        setDisavledSwitchTail(false);
+      } else {
+        setDisabledSpeedSelection(true);
+        setDisabledTEN(true);
+        setDisabledHeat(true);
+        setDisabledBarometr(true);
+        setDisabledSelection(true);
+        setDisabledTransitBody(true);
+        setDisavledSwitchTail(true);
+      }
+    }
+  }, [data.version, data.distController, data.rectController, data.mashingController, data.handController, isBarometr]);
+
+  useEffect(() => {
+    processStarted();
+  }, [processStarted, isBarometr]);
+
+  useEffect(() => {
+    console.log(disabledBarometr);
+  }, [disabledBarometr]);
+
+  
+
+  if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
   let l = localStorage.getItem('language');
@@ -129,10 +202,8 @@ const SettingPage = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
-        </div>
       </header>
+
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
         <div className="flex flex-column w-1/4 p-2">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-3 w-full" style={{ minWidth: '420px', maxWidth: '600px' }}>
@@ -254,6 +325,7 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel={t('toggle_regul')}
                       offLabel={t('toggle_socket')}
+                      disabled={disabledHeat}
                     />
                   )}
                 />
@@ -271,6 +343,7 @@ const SettingPage = () => {
                     units={t('unit_w')}
                     help={l === 'en' ? helpM.set_ten : helpM.set_ten_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={disabledTEN}
                   />
                 )}
               />
@@ -281,26 +354,47 @@ const SettingPage = () => {
                 name="settingBrometr"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={isBarometr} />
+                  <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledBarometr} />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="valve_heads" label={t('status_selection_heads')} help={l === 'en' ? helpM.set_selection_heads : helpM.set_selection_heads_m} />
-                <Controller
-                  name="transitBody"
-                  control={control}
-                  render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACThreeStateButton
-                      firstStateLabel={t('toggle_level')}
-                      secondStateLabel={t('toggle_time')}
-                      thirdStateLabel={t('toggle_sensor')}
-                      initialState={value}
-                      onChange={(e) => onChangeForm(e.value)}
-                    />
-                  )}
-                />
+
+                <ACRegulator icon="valve_heads" label="Відбір голів" help={l === 'en' ? helpM.set_selection_heads : helpM.set_selection_heads_m} />
+                {!whichTransitBody && (
+                  <Controller
+                    name="transitBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ACThreeStateButton
+                        firstStateLabel={t('toggle_level')}
+                        secondStateLabel={t('toggle_time')}
+                        thirdStateLabel={t('toggle_time')}
+                        initialState={value}
+                        onChange={(e) => onChangeForm(e.value)}
+                        disabled={disabledTransitBody}
+                      />
+                    )}
+                  />
+                )}
+                {whichTransitBody && (
+                  <Controller
+                    name="transitBody"
+                    control={control}
+                    render={({ field: { onChange: onChangeForm, value } }) => (
+                      <ToggleButton
+                        className="custom-toggle-button"
+                        checked={!!value}
+                        onChange={(e) => onChangeForm(e.value)}
+                        onLabel={t('toggle_time')}
+                        offLabel={t('toggle_level')}
+                        disabled={disabledTransitBody}
+                      />
+                    )}
+                  />
+                )}
+
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -316,6 +410,7 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel={t('toggle_aside')}
                       offLabel={t('toggle_down')}
+                      disabled={disavledSwitchTail}
                     />
                   )}
 
@@ -335,11 +430,11 @@ const SettingPage = () => {
                       onChange={(e) => onChangeForm(e.value)}
                       onLabel={t('unit_liter_per_gram')}
                       offLabel="%"
+                      disabled={disabledSelection}
                     />
                   )}
                 />
               </div>
-
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <Controller
@@ -353,6 +448,7 @@ const SettingPage = () => {
                     units={t('unit_liter_per_gram')}
                     help={l === 'en' ? helpM.set_speed_20 : helpM.set_speed_20_m}
                     onChange={(e) => onChangeForm(e.value)}
+                    disabled={disabledSpeedSelection}
                   />
                 )}
               />

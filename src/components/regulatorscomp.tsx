@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/regulators.css';
@@ -22,8 +22,10 @@ import ArrowCurveIcon from '../assets/icons/arrow_curve_icon';
 import ArrowForkIcon from '../assets/icons/arrow_fork_icon';
 import ABarsIcon from '../assets/icons/antena_bars_icon';
 import BreakdownIcon from '../assets/icons/breakdown_icon';
+import { Button } from 'primereact/button';
+import { InputNumber } from 'primereact/inputnumber';
 
-type RegulatorProps = {
+type RegulatorProps1 = {
   icon: string;
   color?: string;
   label: string;
@@ -35,7 +37,7 @@ type RegulatorProps = {
   hint?: string;
 };
 
-export const ACRegulator: React.FC<RegulatorProps> = ({
+export const ACRegulator: React.FC<RegulatorProps1> = ({
   icon,
   color,
   label,
@@ -44,7 +46,7 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
   help = '',
   onChange,
   disabled = false,
-  hint
+  hint,
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -129,8 +131,6 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
       break;
   }
 
-  
-
   return (
     <div className="ac-regulator">
       <div className="ac-left-content">
@@ -142,7 +142,113 @@ export const ACRegulator: React.FC<RegulatorProps> = ({
         </span>
       </div>
       <div className="ac-right-content">
-        {units != null && <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint}/>}
+        {units != null && (
+          <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint} />
+        )}
+      </div>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+        <p>{help}</p>
+      </Dialog>
+    </div>
+  );
+};
+
+type RegulatorProps2 = {
+  value: number;
+  true_value: number;
+  units: string;
+  label: string;
+  help: string;
+  icon?: string;
+  color?: string;
+  disabled?: boolean;
+  onChange?: (e: { value: number }) => void;
+};
+
+export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
+  value,
+  true_value,
+  units,
+  label,
+  help,
+  icon,
+  color = 'white',
+  onChange,
+  disabled = false,
+}) => {
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [count, setCount] = useState(value);
+  const [t_count, setT_count] = useState(true_value);
+
+  const handleLabelClick = () => setDialogVisible(true);
+  const hideDialog = () => setDialogVisible(false);
+
+  const handleIncrement = () => {
+    if (t_count < 100) {
+      const newTCount = t_count + 1;
+      setT_count(newTCount);
+      onChange?.({ value: newTCount });
+    }
+  };
+
+  const handleDecrement = () => {
+    if (t_count > 0) {
+      const newTCount = t_count - 1;
+      setT_count(newTCount);
+      onChange?.({ value: newTCount });
+    }
+  };
+
+  const handleInputChange = (e: any) => {
+    setT_count(e.value);
+    onChange?.({ value: e.value });
+  };
+
+  useEffect(() => setCount(value), [value]);
+  useEffect(() => setT_count(true_value), [true_value]);
+
+  let IconComponent;
+  switch (icon) {
+    case 'speed':
+      IconComponent = SpeedIcon;
+      break;
+    case 'temp':
+      IconComponent = TempIcon;
+      break;
+    case 'time':
+      IconComponent = TimeIcon;
+      break;
+    default:
+      IconComponent = null;
+  }
+
+  return (
+    <div className="ac-regulator">
+      <div className="ac-left-content">
+        {IconComponent && <IconComponent style={{ color, cursor: 'pointer' }} onClick={handleLabelClick} />}
+        <p className="reg-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
+          {label}
+        </p>
+      </div>
+      <div className="ac-right-content">
+        <div className="flex flex-wrap gap-3 justify-content-center align-items-center flex flex-vertical-center">
+          <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled} />
+          <div className="custom-input">
+            <InputNumber
+              suffix={units}
+              value={count}
+              onChange={handleInputChange}
+              min={0}
+              max={100}
+              step={1}
+              mode="decimal"
+              minFractionDigits={0}
+              maxFractionDigits={2}
+              disabled={disabled}
+            />
+          </div>
+          <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
+        </div>
       </div>
       <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
         <p>{help}</p>

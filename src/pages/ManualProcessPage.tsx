@@ -165,19 +165,19 @@ const ManualProcessPage = () => {
         setDisabledK4(true);
       }
 
-      if (data.selection == 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
+      if (data.selection === 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
         setSymbol('%');
-      } else if (data.selection == 1 && data.version >= 2.5) {
+      } else if (data.selection === 1 && data.version >= 2.5) {
         setSymbol(t('unit_liter_per_gram'));
       }
     }
   }, [data]);
 
-  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
+  let l = localStorage.getItem('language');
+  if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
-  let l = localStorage.getItem('language');
-
+ 
   return (
     <>
       <header className="mb-1">

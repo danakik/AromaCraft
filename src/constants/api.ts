@@ -74,6 +74,9 @@ export const initialSortedData: SortedData = {
   transitBody: 0,
   rectTempTransit: 0,
   rectController: 0,
+  rectPause: 0,
+  cycles: 0,
+  rectError: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -84,6 +87,8 @@ export const initialSortedData: SortedData = {
   mashingCoolTemp: 0, 
   mashingCoolGyst: 0,
   mashingController: 0,
+  errorMashing: 0,
+  mashingVarkaMinute: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,

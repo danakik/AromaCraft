@@ -70,6 +70,9 @@ export type SortedData = {
   transitBody: number;
   rectTempTransit: number;
   rectController: number;
+  rectPause: number;
+  cycles: number;
+  rectError: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -80,6 +83,8 @@ export type SortedData = {
   mashingCoolTemp: number;
   mashingCoolGyst: number;
   mashingController: number;
+  errorMashing: number;
+  mashingVarkaMinute: number;
 
   mashingTemp0: number;
   mashingTemp1: number;

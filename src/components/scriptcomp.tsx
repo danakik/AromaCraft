@@ -5,13 +5,13 @@ import '../styles/scriptcomp.css';
 
 type ACScriptCompProps = {
   options: string[];
-  onChange?: (label: string, value: string) => void;
+  onChange?: (label: string, value: number) => void;
 };
 
 export const ACScriptComp: React.FC<ACScriptCompProps> = ({ options, onChange }) => {
   const formattedOptions = options.map((label, index) => ({
     label,
-    value: index.toString(),
+    value: index,
   }));
 
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -56,10 +56,7 @@ export const ACScriptComp: React.FC<ACScriptCompProps> = ({ options, onChange })
           aria-label="Previous scenario"
           className="button-arrow button-group"
         />
-        <Button
-          label={formattedOptions[selectedIndex]?.label || 'Немає даних'}
-          className="button-group button-script"
-        />
+        <Button label={formattedOptions[selectedIndex]?.label || 'Loading...'} className="button-group button-script" />
         <Button
           icon="pi pi-chevron-right button-arrow"
           onClick={handleNext}

@@ -4,8 +4,9 @@ import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import '../styles/process_page.css';
 import '../styles/temperatures_page.css';
+import { useStatisticsDataQuery } from '../api/statisticsDataApi';
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-
 
 type TemperatureData = {
   time: number;
@@ -13,76 +14,105 @@ type TemperatureData = {
   column: number;
   defleg: number;
   water: number;
-}
+};
 
-const generateTemperatureData = (): TemperatureData[] => {
-
+/* const generateTemperatureData = (): TemperatureData[] => {
   const temperatureData = Array.from({ length: 240 }, (_, index) => ({
-    time: index, 
-    cube: 75 + Math.random() * 6 - 3, 
-    column: 70 + Math.random() * 6 - 3, 
-    defleg: 60 + Math.random() * 4 - 2, 
-    water: 20 + Math.random() * 3 - 1, 
+    time: index,
+    cube: 75 + Math.random() * 6 - 3,
+    column: 70 + Math.random() * 6 - 3,
+    defleg: 60 + Math.random() * 4 - 2,
+    water: 20 + Math.random() * 3 - 1,
   }));
 
   return temperatureData;
-};
+}; */
 
 const DataTemperaturesPage: React.FC = () => {
   const key = localStorage.getItem('samogonKey');
+  const { data: statisticsData } = useStatisticsDataQuery(key || '');
   const { t } = useTranslation();
 
-  const [data, setData] = useState<{
-    label: string;
-    data: { primary: number; secondary: number }[];
-  }[]>([]);
-
-  useEffect(() => {
-
-    const tempData = generateTemperatureData();
-    
-
-    const chartData = [
-      {
-        label: t('settings_temp_cube'),
-        data: tempData.map(d => ({ primary: d.time, secondary: d.cube })),
-      },
-      {
-        label: t('settings_temp_carga'),
-        data: tempData.map(d => ({ primary: d.time, secondary: d.column })),
-      },
-      {
-        label: t('settings_temp_defl'),
-        data: tempData.map(d => ({ primary: d.time, secondary: d.defleg })),
-      },
-      {
-        label: t('settings_temp_water'),
-        data: tempData.map(d => ({ primary: d.time, secondary: d.water })),
-      },
-    ];
-
-    setData(chartData);
-  }, []);
+  const [data, setData] = useState<
+    {
+      label: string;
+      data: { primary: Date; secondary: number }[];
+    }[]
+  >([]);
 
 
-  const primaryAxis = React.useMemo<AxisOptions<{ primary: number }>>(
+
+  const primaryAxis = React.useMemo<AxisOptions<{ primary: Date }>>(
     () => ({
-      getValue: (datum) => datum.primary, 
-      elementType: 'line', 
+      getValue: (datum) => datum.primary,
+      scaleType: 'time',
+      formatters: {
+        tooltip: (date) => date.toLocaleTimeString(),
+      },
     }),
-    []
+    [],
   );
 
- 
   const secondaryAxes = React.useMemo<AxisOptions<{ secondary: number }>[]>(
     () => [
       {
-        getValue: (datum) => datum.secondary, 
-        elementType: 'line', 
+        getValue: (datum) => datum.secondary,
+        elementType: 'line',
       },
     ],
-    []
+    [],
   );
+
+  function sortData(rawData: any[]) {
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+      toast.error('москалі спиздили УСЕ');
+      return [];
+    }
+
+    const sortedData: {
+      temp0: { primary: Date; secondary: number }[];
+      temp1: { primary: Date; secondary: number }[];
+      temp2: { primary: Date; secondary: number }[];
+      temp3: { primary: Date; secondary: number }[];
+      baro: { primary: Date; secondary: number }[];
+    } = {
+      temp0: [],
+      temp1: [],
+      temp2: [],
+      temp3: [],
+      baro: [],
+    };
+
+    rawData.slice(0, 100).forEach((entry, index) => {
+      if (!Array.isArray(entry) || entry.length < 6) {
+        console.error(`Ошибка в элементе ${index}:`, entry);
+        return;
+      }
+
+      const timestamp = new Date(entry[0] * 1000);
+      const newTime = new Date(timestamp).getTime();
+      sortedData.temp0.push({ primary: timestamp, secondary: entry[1].toFixed(2) });
+      sortedData.temp1.push({ primary: timestamp, secondary: entry[2].toFixed(2) });
+      sortedData.temp2.push({ primary: timestamp, secondary: entry[3].toFixed(2) });
+      sortedData.temp3.push({ primary: timestamp, secondary: entry[4].toFixed(2) });
+      sortedData.baro.push({ primary: timestamp, secondary: entry[5].toFixed(2) });
+    });
+
+    return [
+      { label: 'Куб', data: sortedData.temp0 },
+      { label: 'Царга', data: sortedData.temp1 },
+      { label: 'Дефлегматор', data: sortedData.temp2 },
+      { label: 'Вода', data: sortedData.temp3 },
+      { label: 'Баро', data: sortedData.baro },
+    ];
+  }
+
+  useEffect(() => {
+    const formattedData = sortData(statisticsData);
+    setData(formattedData);
+  }, [statisticsData]);
+
+  console.log('Финальные данные:', data);
 
   return (
     <>
@@ -90,9 +120,7 @@ const DataTemperaturesPage: React.FC = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
-        </div>
+        <div style={{ float: 'left' }}></div>
       </header>
       <div
   className="flex flex-column gap-2 w-full align-items-start justify-content-start"

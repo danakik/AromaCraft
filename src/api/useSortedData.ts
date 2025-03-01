@@ -73,6 +73,9 @@ interface SortedData {
   transitBody: number;
   rectTempTransit: number;
   rectController: number;
+  rectPause: number;
+  cycles: number;
+  rectError: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -83,6 +86,8 @@ interface SortedData {
   mashingCoolTemp: number;
   mashingCoolGyst: number;
   mashingController: number;
+  errorMashing: number;
+  mashingVarkaMinute: number;
 
   mashingTemp0: number;
   mashingTemp1: number;
@@ -199,6 +204,9 @@ const initialSortedData: SortedData = {
   transitBody: 0,
   rectTempTransit: 0,
   rectController: 0,
+  rectPause: 0,
+  cycles: 0,
+  rectError: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -209,6 +217,8 @@ const initialSortedData: SortedData = {
   mashingCoolTemp: 0,
   mashingCoolGyst: 0,
   mashingController: 0,
+  errorMashing: 0,
+  mashingVarkaMinute: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,
@@ -327,7 +337,7 @@ const useSortedData = (key: string | null) => {
       rectDecreaseTemp: parseNumber(newData[103]),
       rectDecreaseSpeed: parseNumber(newData[104]),
       rectController: parseNumber(newData[10]),
-
+      rectError: parseNumber(newData[14]),
       rectTempError: parseNumber(newData[32]),
       rectTimeStab: parseNumber(newData[33]),
       rectCubeTail: parseNumber(newData[117]),
@@ -344,6 +354,8 @@ const useSortedData = (key: string | null) => {
       rectSelectCarge: parseNumber(newData[128]),
       transitBody: parseNumber(newData[111]),
       rectTempTransit: parseNumber(newData[136]),
+      rectPause: parseNumber(newData[86]),
+      cycles: parseNumber(newData[35]),
 
       mashingPauses: parseNumber(newData[47]),
       mashingHeat: parseNumber(newData[48]),
@@ -354,6 +366,8 @@ const useSortedData = (key: string | null) => {
       mashingCoolTemp: parseNumber(newData[53]),
       mashingCoolGyst: parseNumber(newData[54]),
       mashingController: parseNumber(newData[12]),
+      errorMashing: parseNumber(newData[16]),
+      mashingVarkaMinute: parseNumber(newData[88]),
 
       mashingTemp0: parseNumber(newData[55]),
       mashingTemp1: parseNumber(newData[56]),
