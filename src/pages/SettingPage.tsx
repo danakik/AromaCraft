@@ -134,9 +134,9 @@ const SettingPage = () => {
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
-        <div className="flex flex-column w-3/4 p-2">
-          <div className="grid grid-cols-2 gap-3 w-full">
-            <div className="block flex-1 p-2 col-6">
+        <div className="flex flex-column w-1/4 p-2">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 w-full" style={{ minWidth: '420px', maxWidth: '600px' }}>
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
               <ACKnob
                 label={t('settings_temp_cube')}
                 color="purple"
@@ -158,7 +158,7 @@ const SettingPage = () => {
                 )}
               />
             </div>
-            <div className="block flex-1 p-2 col-6">
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
               <ACKnob
                 label={t('settings_temp_carga')}
                 color="orange"
@@ -180,7 +180,7 @@ const SettingPage = () => {
                 )}
               />
             </div>
-            <div className="block flex-1 p-2 col-6">
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
               <ACKnob
                 label={t('settings_temp_defl')}
                 color="red"
@@ -202,7 +202,7 @@ const SettingPage = () => {
                 )}
               />
             </div>
-            <div className="block flex-1 p-2 col-6">
+            <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
               <ACKnob
                 label={t('settings_temp_water')}
                 color="blue"
@@ -227,7 +227,7 @@ const SettingPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-1/4">
+        <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4">
           <div className="block p-3 w-full">
             <h3>{t('settings_message')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
