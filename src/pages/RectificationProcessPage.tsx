@@ -747,7 +747,7 @@ const RectificationProcessPage = () => {
             <div className="flex align-items-center justify-content-center">
               {!hideButtonSkip && (
                 <Button
-                  label=t('process_skip')
+                  label={t('process_skip')}
                   className="button-skip"
                   disabled={disabledButtonSkip} /* onClick={clickPass} */
                 />
