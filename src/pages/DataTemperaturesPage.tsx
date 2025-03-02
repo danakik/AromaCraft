@@ -99,11 +99,11 @@ const DataTemperaturesPage: React.FC = () => {
     });
 
     return [
-      { label: 'Куб', data: sortedData.temp0 },
-      { label: 'Царга', data: sortedData.temp1 },
-      { label: 'Дефлегматор', data: sortedData.temp2 },
-      { label: 'Вода', data: sortedData.temp3 },
-      { label: 'Баро', data: sortedData.baro },
+      { label: t('cube'), data: sortedData.temp0 },
+      { label: t('carga'), data: sortedData.temp1 },
+      { label: t('defl'), data: sortedData.temp2 },
+      { label: t('water'), data: sortedData.temp3 },
+      { label: t('settings_barometer'), data: sortedData.baro },
     ];
   }
 
@@ -120,7 +120,9 @@ const DataTemperaturesPage: React.FC = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}></div>
+        <div style={{ float: 'left' }}>
+{/*           <ACStatusComp status_text={'Очікування...'} /> */}
+        </div>
       </header>
       <div
   className="flex flex-column gap-2 w-full align-items-start justify-content-start"

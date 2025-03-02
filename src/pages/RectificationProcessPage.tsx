@@ -6,7 +6,6 @@ import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACSlider } from '../components/knob';
 import { ACCounterLabel } from '../components/counter';
-import { ACSwitch } from '../components/switch';
 import { ACRegulator, ACRegulatorSpeed } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
@@ -14,7 +13,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
 import 'primereact/resources/themes/lara-light-purple/theme.css';
-import * as helpM from '../components/help_messages';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
@@ -305,13 +303,13 @@ const RectificationProcessPage = () => {
   }, [manageSwitchLogic]);
 
   const [rectCommand, setRectCommand] = useState(0);
-  const [startLabel, setStartLabel] = useState('СТАРТ');
+  const [startLabel, setStartLabel] = useState(t('process_start1'));
   const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
   const cycles = watch('cycles');
 
   const updateCommandControls = useCallback(() => {
     if (data.version != 0) {
-      setStartLabel(rectCommand > 0 ? 'СТОП' : 'СТАРТ');
+      setStartLabel(rectCommand > 0 ? t('process_start2') : t('process_start1'));
 
       if (data.f === 0 && data.rectController != rectCommand) {
         setRectCommand(data.rectController);
@@ -388,9 +386,9 @@ const RectificationProcessPage = () => {
   const recipeRename = async () => {
 
     if (!newRecipeName.trim()) {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(newRecipeName)) {
-      toast.warning('Рецепт з такою назвою вже існує');
+      toast.warning(t('scenario_name_error'));
 
     } else {
       const recipeData = {
@@ -419,16 +417,16 @@ const RectificationProcessPage = () => {
     await deleteRecipe(recipeData);
     await fetchRecipe();
     setDialogDeleteVisible(false);
-    toast.success('Рецепт видалено');
+    toast.success(t('scenario_delete_success'));
   };
 
   const [nameCreateRecipe, setNameCreateRecipe] = useState('');
 
   const recipeCreate = async () => {
     if (!nameCreateRecipe.trim()) {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(nameCreateRecipe)) {
-      toast.warning('Рецепт з такою назвою вже існує');
+      toast.warning(t('scenario_name_error'));
     } else {
       const formattedData = formatFormData(formValues);
       const updatedData = {
@@ -440,7 +438,7 @@ const RectificationProcessPage = () => {
       await fetchRecipe();
       setDialogCreateVisible(false);
       setNameCreateRecipe('');
-      toast.success('Рецепт створено');
+      toast.success(t('scenario_create_success'));
     }
   };
 
@@ -454,7 +452,7 @@ const RectificationProcessPage = () => {
     await save(updatedData);
     await fetchRecipe();
     setDialogDownloadVisible(false);
-    toast.success('Рецепт завантажено');
+    toast.success(t('scenario_download_success'));
   };
 
   const clickPass = async () => {
@@ -496,48 +494,48 @@ const RectificationProcessPage = () => {
 
     switch (data.rectController) {
       case 0:
-        updateStatus = 'Очікування';
+        updateStatus = t('status_waiting');
         break;
       case 1:
-        updateStatus = 'Розгін';
+        updateStatus = t('status_acceleration');
         break;
       case 2:
-        updateStatus = 'Пауза 00: ' + data.rectPause;
+        updateStatus = t('status_pause') + data.rectPause;
         break;
       case 3:
-        updateStatus = 'Відбір голів';
+        updateStatus = t('status_selection_heads');
         break;
       case 4:
-        updateStatus = 'Відбір тіла ЦИКЛ ' + cycles;
+        updateStatus = t('status_selection_body_cycle') + cycles;
         break;
       case 5:
-        updateStatus = 'Зупинка';
+        updateStatus = t('status_stop');
         break;
       default:
-        updateStatus = 'Завершено';
+        updateStatus = t('status_completed');
         break;
     }
     switch (data.rectError) {
       case 0:
-        updateStatus += ', помилок нема';
+        updateStatus += t('status_success');
         break;
       case 1:
-        updateStatus = 'Помилка t° куба';
+        updateStatus = t('status_error_cube');
         break;
       case 2:
-        updateStatus = 'Помилка t° царг';
+        updateStatus = t('status_error_column');
         break;
       case 3:
-        updateStatus = 'Помилка t° дефл.';
+        updateStatus = t('status_error_defl');
         break;
       case 4:
-        updateStatus = 'Помилка t° води';
+        updateStatus = t('status_error_water');
         break;
       case 5:
-        updateStatus = 'Помилка перегрів';
+        updateStatus = t('status_error_heat');
         break;
       default:
-        updateStatus = 'Невідома помилка';
+        updateStatus = t('status_error_unknown');
         break;
     }
     setStatus(updateStatus);
@@ -549,8 +547,6 @@ const RectificationProcessPage = () => {
 
   if (isLoading || data.version == 0) return <p>{t('loading')}</p>; // из-за списка рецепта дольше загрузка страницы
   if (error) return <p>{t('loading_error_t')}</p>;
-
-  let l = localStorage.getItem('language');
 
   return (
     <>
@@ -566,16 +562,16 @@ const RectificationProcessPage = () => {
         <div className="flex flex-column w-1/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
+              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
+              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
+              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
+              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
             </div>
           </div>
           <div className="flex flex-column align-items-center justify-content-center w-full">
@@ -590,7 +586,7 @@ const RectificationProcessPage = () => {
                         label={t('process_rect_temp_selection_heads')}
                         color="blue"
                         initialValue={value}
-                        help={l === 'en' ? helpM.temp_selection_heads : helpM.temp_selection_heads_m}
+                        help={t('help_temp_selection_heads')}
                         onChange={(e) => onChangeForm(e.value)}
                         readonly={tempTail}
                       />
@@ -604,7 +600,7 @@ const RectificationProcessPage = () => {
                         units=" °C"
                         value={value}
                         label={t('process_rect_gist_selection_heads')}
-                        help={l === 'en' ? helpM.gist_selection_heads : helpM.gist_selection_heads_m}
+                        help={t('help_gist_selection_heads')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -622,7 +618,7 @@ const RectificationProcessPage = () => {
                         label={t('process_rect_temp_selection_body')}
                         color="orange"
                         initialValue={value}
-                        help={l === 'en' ? helpM.temp_selection_body : helpM.temp_selection_body_m}
+                        help={t('help_temp_selection_body')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -635,7 +631,7 @@ const RectificationProcessPage = () => {
                         units=" °C"
                         value={value}
                         label={t('process_rect_gist_selection_body')}
-                        help={l === 'en' ? helpM.gist_selection_body : helpM.gist_selection_body_m}
+                        help={t('help_gist_selection_body')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -652,7 +648,7 @@ const RectificationProcessPage = () => {
                         label={t('process_rect_temp_selection_tails')}
                         color="red"
                         initialValue={value}
-                        help={l === 'en' ? helpM.temp_selection_tails : helpM.temp_selection_tails_m}
+                        help={t('help_temp_selection_tails')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -665,7 +661,7 @@ const RectificationProcessPage = () => {
                         units={symbol}
                         value={value.value}
                         label={t('process_speed_selection_tails')}
-                        help={l === 'en' ? helpM.speed_selection_tails : helpM.speed_selection_tails_m}
+                        help={t('help_speed_selection_tails')}
                         onChange={(e) => {
                           const updatedValue = calculateHandPercent(
                             e.value,
@@ -695,7 +691,7 @@ const RectificationProcessPage = () => {
                         color="purple"
                         label={t('process_temp_stop')}
                         initialValue={value}
-                        help={l === 'en' ? helpM.temp_stop : helpM.temp_stop_m}
+                        help={t('help_temp_stop')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -708,7 +704,7 @@ const RectificationProcessPage = () => {
                         label={t('process_rect_column_stabilization')}
                         value={value}
                         units={t('unit_minutes')}
-                        help={l === 'en' ? helpM.stabilisation_column : helpM.stabilisation_column_m}
+                        help={t('help_stabilisation_column')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
                     )}
@@ -768,7 +764,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_acceleration')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_acceleration : helpM.power_acceleration_m}
+                    help={t('help_power_acceleration')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -784,7 +780,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_selection')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_selection : helpM.power_selection_m}
+                    help={t('help_power_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -800,7 +796,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_selection_body')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_selection_body : helpM.power_selection_body_m}
+                    help={t('help_power_selection_body')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -816,7 +812,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_power_selection_tails')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_selection_tails : helpM.power_selection_tails_m}
+                    help={t('help_power_selection_tails')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={powerTail}
                   />
@@ -837,7 +833,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_speeed_selection_heads')}
                     value={value.value}
                     units={symbol}
-                    help={l === 'en' ? helpM.speed_selection_heads : helpM.speed_selection_heads_m}
+                    help={t('help_speed_selection_heads')}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -865,7 +861,7 @@ const RectificationProcessPage = () => {
                     value={value.value}
                     true_value={value.true_value}
                     units={symbol}
-                    help={l === 'en' ? helpM.speed_selection_body : helpM.speed_selection_body_m}
+                    help={t('help_speed_selection_body')}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -894,7 +890,7 @@ const RectificationProcessPage = () => {
                       label={t('process_rect_speed_carga_decrease')}
                       value={value.value}
                       units={symbol}
-                      help={l === 'en' ? helpM.decrease_speed_cargi : helpM.decrease_speed_cargi_m}
+                      help={t('help_decrease_speed_cargi')}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -941,7 +937,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_cycles_number')}
                     value={value}
                     units=" "
-                    help={l === 'en' ? helpM.cycles : helpM.cycles_m}
+                    help={t('help_cycles')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -957,7 +953,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_cycles_limit')}
                     value={value}
                     units={t('unit_minutes')}
-                    help={l === 'en' ? helpM.border_cycles : helpM.border_cycles_m}
+                    help={t('help_border_cycles')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={endCycle}
                   />
@@ -974,7 +970,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_cycles_reduction')}
                     value={value.value}
                     units={symbol}
-                    help={l === 'en' ? helpM.decrease_cycles : helpM.decrease_cycles_m}
+                    help={t('help_decrease_cycles')}
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -1006,7 +1002,7 @@ const RectificationProcessPage = () => {
                     label={t('process_temp_transition')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.temp_transition : helpM.temp_transition_m}
+                    help={t('help_temp_transition')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -1022,7 +1018,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_temp_cube_decrease')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.decrease_selection : helpM.decrease_selection_m}
+                    help={t('help_decrease_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -1039,7 +1035,7 @@ const RectificationProcessPage = () => {
                     label={t('process_temp_breakdown')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.temp_breakdown : helpM.temp_breakdown_m}
+                    help={t('help_temp_breakdown')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -1056,7 +1052,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_temp_carga_decrease')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.temp_selection_cargi : helpM.temp_selection_cargi_m}
+                    help={t('help_temp_selection_cargi')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={tempSelectCarge}
                   />
@@ -1065,7 +1061,7 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <div className="flex flex-row align-items-center justify-content-center w-full">
-                <ACRegulator icon="arrow_curve" label={t('process_rect_selection_tails')} help={helpM.selection_tails_m} />
+                <ACRegulator icon="arrow_curve" label={t('process_rect_selection_tails')} help={t('help_selection_tails')} />
                 <Controller
                   name="rectSwitchTail"
                   control={control}
@@ -1094,7 +1090,7 @@ const RectificationProcessPage = () => {
                       label="Перехід на відбір тіла"
                       value={value}
                       units={'хв'}
-                      help={helpM.transition_select_body_m} // different hints are needed
+                      help={t('help_transition_select_body')} // different hints are needed
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -1111,7 +1107,7 @@ const RectificationProcessPage = () => {
                       label="Перехід на відбір тіла"
                       value={value}
                       units={'°C'}
-                      help={helpM.transition_select_body_m} // different hints are needed
+                      help={t('help_transition_select_body2')} // different hints are needed
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -1131,7 +1127,7 @@ const RectificationProcessPage = () => {
                       units={symbol}
                       value={value.value}
                       label={t('process_rect_speed_selection_decrease')}
-                      help={l === 'en' ? helpM.decrease_speed_selection : helpM.decrease_speed_selection_m}
+                      help={t('help_decrease_speed_selection')}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,

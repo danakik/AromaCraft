@@ -7,7 +7,6 @@ import { ACCounterLabel } from '../components/counter';
 import { Button } from 'primereact/button';
 import { ACSwitch } from '../components/switch';
 import '../styles/process_page.css';
-import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
@@ -194,8 +193,6 @@ const SettingPage = () => {
   if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
-  let l = localStorage.getItem('language');
-
   return (
     <>
       <header className="mb-1">
@@ -212,7 +209,7 @@ const SettingPage = () => {
                 label={t('settings_temp_cube')}
                 color="purple"
                 initialValue={Number(data.tempCube)}
-                help={l === 'en' ? helpM.set_temp_cube : helpM.set_temp_cube_m}
+                help={t('help_temp_cube')}
                 readonly
               />
               <Controller
@@ -223,7 +220,7 @@ const SettingPage = () => {
                     units="°C "
                     value={value}
                     label={t('settings_temp_cube_change')}
-                    help={l === 'en' ? helpM.set_temp_cube : helpM.set_temp_cube_m}
+                    help={t('help_set_temp_cube')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -234,7 +231,7 @@ const SettingPage = () => {
                 label={t('settings_temp_carga')}
                 color="orange"
                 initialValue={Number(data.tempCargi)}
-                help={l === 'en' ? helpM.set_temp_cargi : helpM.set_temp_cargi_m}
+                help={t('help_temp_cargi')}
                 readonly
               />
               <Controller
@@ -245,7 +242,7 @@ const SettingPage = () => {
                     units="°C "
                     value={value}
                     label={t('settings_temp_carga_change')}
-                    help={l === 'en' ? helpM.set_temp_cargi : helpM.set_temp_cargi_m}
+                    help={t('help_set_temp_cargi')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -256,7 +253,7 @@ const SettingPage = () => {
                 label={t('settings_temp_defl')}
                 color="red"
                 initialValue={Number(data.tempDef)}
-                help={l === 'en' ? helpM.set_temp_defl : helpM.set_temp_defl_m}
+                help={t('help_temp_defl')}
                 readonly
               />
               <Controller
@@ -267,7 +264,7 @@ const SettingPage = () => {
                     units="°C "
                     value={value}
                     label={t('settings_temp_defl_change')}
-                    help={l === 'en' ? helpM.set_temp_defl : helpM.set_temp_defl_m}
+                    help={t('help_set_temp_defl')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -278,7 +275,7 @@ const SettingPage = () => {
                 label={t('settings_temp_water')}
                 color="blue"
                 initialValue={Number(data.tempWater)}
-                help={l === 'en' ? helpM.set_temp_water : helpM.set_temp_water_m}
+                help={t('help_temp_water')}
                 readonly
               />
               <Controller
@@ -289,7 +286,7 @@ const SettingPage = () => {
                     units="°C "
                     value={value}
                     label={t('settings_temp_water_change')}
-                    help={l === 'en' ? helpM.set_temp_water : helpM.set_temp_water_m}
+                    help={t('help_set_temp_water')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -314,7 +311,7 @@ const SettingPage = () => {
             <h3>{t('menu_settings')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="pid" label={t('settings_set_heat')} help={l === 'en' ? helpM.set_warm : helpM.set_warm_m} />
+                <ACRegulator icon="pid" label={t('settings_set_heat')} help={t('help_set_warm')} />
                 <Controller
                   name="settingSeatHeat"
                   control={control}
@@ -341,7 +338,7 @@ const SettingPage = () => {
                     label={t('settings_ten')}
                     value={value}
                     units={t('unit_w')}
-                    help={l === 'en' ? helpM.set_ten : helpM.set_ten_m}
+                    help={t('help_set_ten')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTEN}
                   />
@@ -349,7 +346,7 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="antena_bars" label={`${t('settings_barometer')}, ${lableBarometr}`} help={l === 'en' ? helpM.barometer : helpM.barometer_m} />
+              <ACRegulator icon="antena_bars" label={`${t('settings_barometer')}, ${lableBarometr}`} help={t('help_barometer')} />
               <Controller
                 name="settingBrometr"
                 control={control}
@@ -361,7 +358,7 @@ const SettingPage = () => {
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
 
-                <ACRegulator icon="valve_heads" label="Відбір голів" help={l === 'en' ? helpM.set_selection_heads : helpM.set_selection_heads_m} />
+                <ACRegulator icon="valve_heads" label="Відбір голів" help={t('help_set_selection_heads')} />
                 {!whichTransitBody && (
                   <Controller
                     name="transitBody"
@@ -399,7 +396,7 @@ const SettingPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="arrow_fork" label={t('settings_switch_heads')} help={l === 'en' ? helpM.set_change_heads : helpM.set_change_heads_m} />
+                <ACRegulator icon="arrow_fork" label={t('settings_switch_heads')} help={t('help_set_change_heads')} />
                 <Controller
                   name="switchTail"
                   control={control}
@@ -419,7 +416,7 @@ const SettingPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-                <ACRegulator icon="select_valve" label={t('settings_selection_setup')} help={l === 'en' ? helpM.set_selection : helpM.set_selection_m} />
+                <ACRegulator icon="select_valve" label={t('settings_selection_setup')} help={t('help_set_selection')} />
                 <Controller
                   name="selection"
                   control={control}
@@ -446,7 +443,7 @@ const SettingPage = () => {
                     label={t('settings_speed')}
                     value={value}
                     units={t('unit_liter_per_gram')}
-                    help={l === 'en' ? helpM.set_speed_20 : helpM.set_speed_20_m}
+                    help={t('help_set_speed_20')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledSpeedSelection}
                   />

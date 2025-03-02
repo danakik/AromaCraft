@@ -11,7 +11,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
-import * as helpM from '../components/help_messages';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
@@ -264,7 +263,7 @@ const DistillationProcessPage = () => {
       toast.error(t('scenario_rename_error1')); // Error if field is empty
       return;
     } else if (listRecipe.includes(newRecipeName)) {
-      toast.warning('Рецепт з такою назвою вже існує'); // Warning if name is already taken
+      toast.warning(t('scenario_name_error')); // Warning if name is already taken
       return;
     } else {
       // Data object for renaming a recipe
@@ -304,7 +303,7 @@ const DistillationProcessPage = () => {
       toast.error(t('scenario_rename_error1')); // Error if field is empty
       return;
     } else if (listRecipe.includes(nameCreateRecipe)) {
-      toast.warning('Рецепт з такою назвою вже існує'); // Warning if name is already taken
+      toast.warning(t('scenario_name_error')); // Warning if name is already taken
       return;
     } else {
       // we take the form for saving page data
@@ -319,7 +318,7 @@ const DistillationProcessPage = () => {
       await fetchRecipe(); // api call for new recipe list
       setDialogCreateVisible(false);
       setNameCreateRecipe('');
-      toast.success('Рецепт створено');
+      toast.success(t('scenario_create_success'));
 
     }
   };
@@ -336,7 +335,7 @@ const DistillationProcessPage = () => {
     await save(updatedData); //api call for save distillation page
     await fetchRecipe(); // api call for new recipe list
     setDialogDownloadVisible(false);
-    toast.success('Рецепт завантажено');
+    toast.success(t('scenario_download_success'));
   };
 
   const [status, setStatus] = useState('');
@@ -429,7 +428,6 @@ const DistillationProcessPage = () => {
       }
     }
   };
-  let l = localStorage.getItem('language');
   if (isLoading || data.version === 0) return <p>t('loading')</p>;
   if (error) return <p>t('loading_error_t')</p>;
 
@@ -448,16 +446,16 @@ const DistillationProcessPage = () => {
         <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
+              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
+              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
+              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
+              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
             </div>
           </div>
 
@@ -471,7 +469,7 @@ const DistillationProcessPage = () => {
                     label={t('process_temp_transition') + strHead}
                     color="red"
                     initialValue={value}
-                    help={l === 'en' ? helpM.temp_transition : helpM.temp_transition_m}
+                    help={t('help_temp_transition')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -486,7 +484,7 @@ const DistillationProcessPage = () => {
                     color="purple"
                     label={t('process_temp_stop')}
                     initialValue={value}
-                    help={l === 'en' ? helpM.temp_stop : helpM.temp_stop_m}
+                    help={t('help_temp_stop')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -543,7 +541,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_acceleration')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_acceleration : helpM.power_acceleration_m}
+                    help={t('help_power_acceleration')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -559,7 +557,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_selection_body')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_selection_body : helpM.power_selection_body_m}
+                    help={t('help_power_selection_body')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledPowers}
                   />
@@ -576,7 +574,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_selection') + strHead}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.power_selection : helpM.power_selection_m}
+                    help={t('help_power_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -586,7 +584,7 @@ const DistillationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>{t('process_other')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
-              <ACRegulator icon="arrow_fork" label={t('process_dist_transition_body')} help={l === 'en' ? helpM.temp_transition_body : helpM.temp_transition_body_m} />
+              <ACRegulator icon="arrow_fork" label={t('process_dist_transition_body')} help={t('help_temp_transition_body')} />
               <Controller
                 name="distCubeSwitch"
                 control={control}
@@ -612,7 +610,7 @@ const DistillationProcessPage = () => {
                     label={t('process_dist_temp_transition_body')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.temp_transition_body : helpM.temp_transition_body_m}
+                    help={t('help_temp_transition_body')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledBody}
                   />
@@ -629,7 +627,7 @@ const DistillationProcessPage = () => {
                     label={t('process_dist_time_transition_body')}
                     value={value}
                     units={t('unit_minutes')}
-                    help={l === 'en' ? helpM.time_body_transition : helpM.time_body_transition_m}
+                    help={t('help_time_body_transition')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTime}
                   />
@@ -646,7 +644,7 @@ const DistillationProcessPage = () => {
                     label={t('process_temp_breakdown')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.temp_breakdown : helpM.temp_breakdown_m}
+                    help={t('help_temp_breakdown')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -772,7 +770,7 @@ const DistillationProcessPage = () => {
           </div>
         }
       >
-        <p>Завантажити на автоматику?</p>
+        <p>{t('scenarion_question')}</p>
       </Dialog>
     </>
   );

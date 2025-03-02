@@ -15,7 +15,6 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import '../styles/process_page.css';
-import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
@@ -260,28 +259,28 @@ const MashingProcessPage = () => {
   const [disabledButtonRecipe, setDisabledButtonRecipe] = useState(true);
 
   useDisableLiProcess(data);
-  const [startLabel, setStartLabel] = useState('СТАРТ');
-  const [passLabel, setPassLabel] = useState('ПРОПУСК');
+  const [startLabel, setStartLabel] = useState(t('process_start1'));
+  const [passLabel, setPassLabel] = useState(t('process_skip'));
   const [mashCommand, setMashCommand] = useState(0);
   const [hideButtonStart, setHideButtonStart] = useState(false);
   const [hideButtonSkip, setHideButtonSkip] = useState(false);
   const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
   const updateCommandControls = useCallback(() => {
     if (data.version != 0) {
-      setStartLabel(mashCommand > 0 ? 'СТОП' : 'СТАРТ');
+      setStartLabel(mashCommand > 0 ? t('process_start2') : t('process_start1'));
 
       switch (data.mashingController) {
         case 11:
-          setPassLabel('ПОЧ. ВАРКИ');
+          setPassLabel(t('status_start_boiling'));
           break;
         case 12:
-          setPassLabel('ПРОПУСК');
+          setPassLabel(t('process_skip'));
           break;
         case 13:
-          setPassLabel('ПОЧ. ОХОЛОДЖ.');
+          setPassLabel(t('status_start_cooling'));
           break;
         default:
-          setPassLabel('ПРОПУСК');
+          setPassLabel(t('process_skip'));
           break;
       }
 
@@ -375,19 +374,19 @@ const MashingProcessPage = () => {
 
     switch (data.mashingController) {
       case 0:
-        updateStatus = 'Очікування';
+        updateStatus = t('status_waiting');
         break;
       case 11:
-        updateStatus = 'Очікування варки';
+        updateStatus = t('status_waiting_boiling');
         break;
       case 12:
-        updateStatus = `Варка ${data.mashingHeatPower}% - ${data.mashingVarkaMinute} хв`;
+        updateStatus = `${t('status_boiling')} ${data.mashingHeatPower}% - ${data.mashingVarkaMinute} ${t('unit_minutes')}`;
         break;
       case 13:
-        updateStatus = 'Очікування охолодження';
+        updateStatus = t('status_waiting_cooling');
         break;
       case 14:
-        updateStatus = `Охолодження ${data.mashingCoolTemp}°`;
+        updateStatus = `${t('status_cooling')} ${data.mashingCoolTemp}°`;
         break;
       default:
         if (data.mashingController <= 10) {
@@ -405,18 +404,18 @@ const MashingProcessPage = () => {
           ];
           const temp = mashingTemps[data.mashingController - 1];
 
-          updateStatus = `Пауза ${data.mashingController} - ${temp}°`;
+          updateStatus = `${t('status_pause_number')} ${data.mashingController} - ${temp}°`;
         } else {
-          updateStatus = 'Завершено';
+          updateStatus = t('status_completed');
         }
         break;
     }
     switch (data.errorMashing) {
       case 0:
-        updateStatus += ', помилок нема';
+        updateStatus += t('status_success');
         break;
       case 1:
-        updateStatus = 'Помилка t° куба';
+        updateStatus = t('status_error_cube');
         break;
       default:
         break;
@@ -449,7 +448,7 @@ const MashingProcessPage = () => {
     if (!newRecipeName.trim()) {
       toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(newRecipeName)) {
-      toast.warning('Рецепт з такою назвою вже існує');
+      toast.warning(t('scenario_name_error'));
 
     } else {
       const recipeData = {
@@ -488,9 +487,9 @@ const MashingProcessPage = () => {
 
   const recipeCreate = async () => {
     if (!nameCreateRecipe.trim()) {
-      toast.error('Введіть назву рецепта');
+      toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(nameCreateRecipe)) {
-      toast.warning('Рецепт з такою назвою вже існує');
+      toast.warning(t('scenario_name_error'));
     } else {
       const formattedData = formatFormData(formValues);
       const updatedData = {
@@ -502,7 +501,7 @@ const MashingProcessPage = () => {
       await fetchRecipe();
       setDialogCreateVisible(false);
       setNameCreateRecipe('');
-      toast.success('Рецепт створено');
+      toast.success(t('scenario_create_success'));
     }
   };
 
@@ -516,15 +515,12 @@ const MashingProcessPage = () => {
     await save(updatedData);
     await fetchRecipe();
     setDialogDownloadVisible(false);
-    toast.success('Рецепт завантажено');
+    toast.success(t('scenario_download_success'));
   };
 
 
   if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error')}</p>;
-
-  let l = localStorage.getItem('language');
-
 
   const generatePauseBlocks = () => {
     const blocks = [];
@@ -550,7 +546,7 @@ const MashingProcessPage = () => {
                   label={`${t('process_mashing_temp_pause')} ${i + 1}`}
                   color={knobColor}
                   initialValue={value}
-                  help={l === 'en' ? helpM.temp_pause : helpM.temp_pause_m}
+                  help={t('help_temp_pause')}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -563,7 +559,7 @@ const MashingProcessPage = () => {
                   label={`${t('process_mashing_gist_pause')} ${i + 1}`}
                   color={sliderColor}
                   initialValue={value}
-                  help={l === 'en' ? helpM.gist_pause : helpM.gist_pause_m}
+                  help={t('help_gist_pause')}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -576,7 +572,7 @@ const MashingProcessPage = () => {
                   label={`${t('process_mashing_time_pause')} ${i + 1}`}
                   value={value}
                   units={t('unit_minutes')}
-                  help={l === 'en' ? helpM.time_pause : helpM.time_pause_m}
+                  help={t('help_time_pause')}
                   onChange={(e) => onChangeForm(e.value)}
                 />
               )}
@@ -602,16 +598,16 @@ const MashingProcessPage = () => {
         <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
+              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
+              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
+              <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
+              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
             </div>
           </div>
           <div
@@ -675,7 +671,7 @@ const MashingProcessPage = () => {
                     value={value}
                     units=" "
                     hint="pauses"
-                    help={l === 'en' ? helpM.pauses : helpM.pauses_m}
+                    help={t('help_pauses')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -685,7 +681,7 @@ const MashingProcessPage = () => {
           <div className="block p-3  w-full">
             <h3>{t('process_mashing_boiling')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_plus" label={t('process_mashing_boiling')} help={l === 'en' ? helpM.temp_brew : helpM.temp_brew_m} />
+              <ACRegulator icon="temp_plus" label={t('process_mashing_boiling')} help={t('help_temp_brew')} />
               <Controller
                 name="mashingHeat"
                 control={control}
@@ -704,7 +700,7 @@ const MashingProcessPage = () => {
                     label={t('process_mashing_temp_boiling')}
                     units="°C"
                     value={value}
-                    help={l === 'en' ? helpM.temp_brew : helpM.temp_brew_m}
+                    help={t('help_temp_brew')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -721,7 +717,7 @@ const MashingProcessPage = () => {
                     label={t('process_mashing_power_boiling')}
                     units="%"
                     value={value}
-                    help={l === 'en' ? helpM.power_brew : helpM.power_brew_m}
+                    help={t('help_power_brew')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -738,7 +734,7 @@ const MashingProcessPage = () => {
                     label={t('process_mashing_time_boiling')}
                     units={t('unit_minutes')}
                     value={value}
-                    help={l === 'en' ? helpM.time_brew : helpM.time_brew_m}
+                    help={t('help_time_brew')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!hasMashingHeat}
                   />
@@ -749,7 +745,7 @@ const MashingProcessPage = () => {
           <div className="block p-3  w-full">
             <h3>{t('process_mashing_cooling')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="temp_minus" label={t('process_mashing_cooling')} help={l === 'en' ? helpM.temp_freeze : helpM.temp_freeze_m} />
+              <ACRegulator icon="temp_minus" label={t('process_mashing_cooling')} help={t('help_temp_freeze')} />
               <Controller
                 name="mashingCool"
                 control={control}
@@ -768,7 +764,7 @@ const MashingProcessPage = () => {
                     label={t('process_mashing_temp_cooling')}
                     units="°C"
                     value={value}
-                    help={l === 'en' ? helpM.temp_freeze : helpM.temp_freeze_m}
+                    help={t('help_temp_freeze')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!isFreezeMode}
                   />
@@ -785,7 +781,7 @@ const MashingProcessPage = () => {
                     label={t('process_mashing_gist_cooling')}
                     units="°C"
                     value={value}
-                    help={l === 'en' ? helpM.gist_freeze : helpM.gist_freeze_m}
+                    help={t('help_gist_freeze')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={!isFreezeMode}
                   />

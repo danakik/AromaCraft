@@ -8,7 +8,6 @@ import { ACCounterSpeed } from '../components/counter';
 import { ACRegulator } from '../components/regulatorscomp';
 import { ACSwitch } from '../components/switch';
 import '../styles/process_page.css';
-import * as helpM from '../components/help_messages';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
@@ -173,11 +172,9 @@ const ManualProcessPage = () => {
     }
   }, [data]);
 
-  let l = localStorage.getItem('language');
   if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
- 
   return (
     <>
       <header className="mb-1">
@@ -192,16 +189,16 @@ const ManualProcessPage = () => {
         <div className="flex flex-column w-3/4 ">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={l === 'en' ? helpM.temp_cube : helpM.temp_cube_m} />
+              <ACBlockTemp name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={l === 'en' ? helpM.temp_cargi : helpM.temp_cargi_m} />
+              <ACBlockTemp name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={l === 'en' ? helpM.temp_defl : helpM.temp_defl_m} />
+              <ACBlockTemp name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={l === 'en' ? helpM.temp_water : helpM.temp_water_m} />
+              <ACBlockTemp name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
             </div>
           </div>
 
@@ -216,7 +213,7 @@ const ManualProcessPage = () => {
                       label={t('process_manual_temp_selection')}
                       color="orange"
                       initialValue={value}
-                      help={l === 'en' ? helpM.temp_selection : helpM.temp_selection_m}
+                      help={t('help_temp_selection')}
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -230,7 +227,7 @@ const ManualProcessPage = () => {
                       true_value={value.true_value}
                       units={symbol}
                       label={t('process_manual_speed_selection')}
-                      help={l === 'en' ? helpM.speed_selection : helpM.speed_selection_m}
+                      help={t('help_speed_selection')}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -258,7 +255,7 @@ const ManualProcessPage = () => {
                       label={t('process_manual_gist_selection')}
                       color="blue"
                       initialValue={value}
-                      help={l === 'en' ? helpM.gist_selection : helpM.gist_selection_m}
+                      help={t('help_gist_selection')}
                       onChange={(e) => onChangeForm(e.value)}
                     />
                   )}
@@ -272,7 +269,7 @@ const ManualProcessPage = () => {
                       true_value={value.true_value}
                       units={symbol}
                       label={t('process_speed_selection_tails')}
-                      help={l === 'en' ? helpM.speed_selection_tails : helpM.speed_selection_tails_m}
+                      help={t('help_speed_selection_tails')}
                       disabled={disabledK4}
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
@@ -306,7 +303,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_heater')}
                     value={value}
                     units="%"
-                    help={l === 'en' ? helpM.ten : helpM.ten_m}
+                    help={t('help_ten')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -329,7 +326,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_pid')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.pid : helpM.pid_m}
+                    help={t('help_pid')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -347,7 +344,7 @@ const ManualProcessPage = () => {
           <div className="block p-3  w-full">
             <h3>{t('process_manual_valve_header')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="water" label={t('process_manual_valve_water')} help={l === 'en' ? helpM.water : helpM.water_m} />
+              <ACRegulator icon="water" label={t('process_manual_valve_water')} help={t('help_water')} />
               <Controller
                 name="handK1"
                 control={control}
@@ -357,7 +354,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="select_valve" label={t('process_manual_valve_selection')} help={l === 'en' ? helpM.selection : helpM.selection_m} />
+              <ACRegulator icon="select_valve" label={t('process_manual_valve_selection')} help={t('help_selection')} />
               <Controller
                 name="handK2"
                 control={control}
@@ -367,7 +364,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="valve_heads" label={t('process_manual_valve_heads')} help={l === 'en' ? helpM.heads : helpM.heads_m} />
+              <ACRegulator icon="valve_heads" label={t('process_manual_valve_heads')} help={t('help_heads')} />
               <Controller
                 name="handK3"
                 control={control}
@@ -377,7 +374,7 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-              <ACRegulator icon="valve_tails" label={t('process_manual_valve_tails')} help={l === 'en' ? helpM.tails : helpM.tails_m} />
+              <ACRegulator icon="valve_tails" label={t('process_manual_valve_tails')} help={t('help_tails')} />
               <Controller
                 name="handK4"
                 control={control}
@@ -400,7 +397,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_break_water')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.water_break : helpM.water_break_m}
+                    help={t('help_water_break')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
@@ -424,14 +421,14 @@ const ManualProcessPage = () => {
                     label={t('process_manual_break_cube')}
                     value={value}
                     units="°C"
-                    help={l === 'en' ? helpM.cube_break : helpM.cube_break_m}
+                    help={t('help_cube_break')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-start  justify-content-start  w-full gap-2">
-              <ACRegulator icon="breakdown" color="orange" label={t('process_manual_break_level')} help={l === 'en' ? helpM.level_break : helpM.level_break_m} />
+              <ACRegulator icon="breakdown" color="orange" label={t('process_manual_break_level')} help={t('help_level_break')} />
               <Controller
                 name="handLevelError"
                 control={control}

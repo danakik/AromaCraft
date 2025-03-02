@@ -18,7 +18,6 @@ import UnderTextIcon from '../assets/icons/under_text_icon';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useGetDataQuery } from '../api/samogonApi';
-import * as helpM from '../components/help_messages';
 import { Dialog } from 'primereact/dialog';
 import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
@@ -59,10 +58,10 @@ const DevicePage = () => {
         <UnderTextIcon style={{ position: 'absolute', top: 309, left: 818, transform: 'scale(-1, -1)' }} />
         <UnderTextIcon style={{ position: 'absolute', top: 567, left: 844, transform: 'scale(-1, -1)' }} />
 
-        {createExplainingDiv('#2942e1', String(data.tempWater), t('water'), { top: 70, left: 84 }, helpM.temp_water_m)}
-        {createExplainingDiv('#e74a4a', String(data.tempDef), t('defl'), { top: 58, left: 816.5 }, helpM.temp_defl_m,)}
-        {createExplainingDiv('#e7764a', String(data.tempCargi), t('carga'), { top: 271, left: 827 }, helpM.temp_cargi_m)}
-        {createExplainingDiv('#9e4ae7', String(data.tempCube), t('cube'), { top: 529, left: 860 }, helpM.temp_cube_m)}
+        {createExplainingDiv('#2942e1', String(data.tempWater), t('water'), { top: 70, left: 84 }, t('help_temp_water'))}
+        {createExplainingDiv('#e74a4a', String(data.tempDef), t('defl'), { top: 58, left: 816.5 }, t('help_temp_defl'),)}
+        {createExplainingDiv('#e7764a', String(data.tempCargi), t('carga'), { top: 271, left: 827 }, t('help_temp_cargi'))}
+        {createExplainingDiv('#9e4ae7', String(data.tempCube), t('cube'), { top: 529, left: 860 }, t('help_temp_cube'))}
         <p
           className="textBlockTemp"
           style={{
