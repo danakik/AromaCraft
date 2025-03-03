@@ -199,6 +199,9 @@ const SettingPage = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
+        <div style={{ float: 'left' }}>
+{/*           <ACStatusComp status_text={'Очікування...'} /> */}
+        </div>
       </header>
 
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">

@@ -37,6 +37,7 @@ const DataTemperaturesPage: React.FC = () => {
     {
       label: string;
       data: { primary: Date; secondary: number }[];
+      color: string;
     }[]
   >([]);
 
@@ -99,11 +100,11 @@ const DataTemperaturesPage: React.FC = () => {
     });
 
     return [
-      { label: t('cube'), data: sortedData.temp0 },
-      { label: t('carga'), data: sortedData.temp1 },
-      { label: t('defl'), data: sortedData.temp2 },
-      { label: t('water'), data: sortedData.temp3 },
-      { label: t('settings_barometer'), data: sortedData.baro },
+      { label: t('cube'), data: sortedData.temp0, color: '#9e4ae7' },
+      { label: t('carga'), data: sortedData.temp1, color: '#e7764a' },
+      { label: t('defl'), data: sortedData.temp2, color: '#e74a4a' },
+      { label: t('water'), data: sortedData.temp3, color: '#2942e1' },
+      { label: t('settings_barometer'), data: sortedData.baro, color: '#70d4cf' },
     ];
   }
 
@@ -121,36 +122,50 @@ const DataTemperaturesPage: React.FC = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
         <div style={{ float: 'left' }}>
-{/*           <ACStatusComp status_text={'Очікування...'} /> */}
+          {/*           <ACStatusComp status_text={'Очікування...'} /> */}
         </div>
       </header>
       <div
-  className="flex flex-column gap-2 w-full align-items-start justify-content-start"
-  style={{ height: '100vh' }} 
->
-  <div style={{height: '100px'}} className="flex flex-row w-full align-items-center justify-content-center"> 
-    <ul className="temp-list">
-      <li className="temp-cube">{t('settings_temp_cube')}</li>
-      <li className="temp-cargi">{t('settings_temp_carga')}</li>
-    </ul>
-    <ul className="temp-list">
-      <li className="temp-defl">{t('settings_temp_defl')}</li>
-      <li className="temp-water">{t('settings_temp_water')}</li>
-    </ul>
-  </div>
-  <div style={{ height: '400px' }} className="flex flex-column w-full align-items-center justify-content-center">
-    {data.length > 0 && (
-      <Chart
-        options={{
-          data,
-          primaryAxis,
-          secondaryAxes,
-          dark: true,
-        }}
-      />
-    )}
-  </div>
-</div>
+        className="flex flex-column gap-2 w-full align-items-start justify-content-start"
+        style={{ height: '100vh' }}
+      >
+        <div style={{ height: '100px' }} className="flex flex-row w-full align-items-center justify-content-center block">
+          <ul className="temp-list">
+            <li className="temp-cube">{t('settings_temp_cube')}</li>
+            <li className="temp-cargi">{t('settings_temp_carga')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-defl">{t('settings_temp_defl')}</li>
+            <li className="temp-water">{t('settings_temp_water')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-baro">{t('settings_barometer')}</li>
+          </ul>
+        </div>
+        <div style={{ height: '75%' }} className="flex flex-column w-full align-items-center justify-content-center">
+          <div className="flex flex-column gap-2 w-full align-items-start justify-content-start" style={{ height: '100vh' }}>
+            {data.length > 0 &&
+              data.map((series, index) => (
+                <div key={index} style={{ height: '20%', width: '100%' }} className="flex flex-column">
+                  <Chart
+                    options={{
+                      data: [series],
+                      primaryAxis,
+                      secondaryAxes,
+                      dark: true,
+                      getSeriesStyle: () => ({
+                        stroke: series.color,
+                        r: 4, 
+                        fill: series.color,
+                      }),
+                    }}
+                  />
+                </div>
+              ))}
+          </div>
+
+        </div>
+      </div>
     </>
   );
 };
