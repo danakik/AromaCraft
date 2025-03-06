@@ -7,6 +7,7 @@ export const initialSortedData: SortedData = {
   tempCargi: 0,
   tempDef: 0,
   tempWater: 0,
+  power: 0,
   errorHand: 0,
   handPower: 0,
   handPercent: 0.06,

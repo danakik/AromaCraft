@@ -23,6 +23,7 @@ import { ACUserComp } from '../components/usercomp';
 import { ACStatusComp } from '../components/statuscomp';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
+import ArrowUpIcon from '../assets/icons/arrow_up_icon';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -38,9 +39,49 @@ const DevicePage = () => {
     error,
   } = useGetDataQuery(dataSamagon, { pollingInterval: SYNC_INTERVAL });
 
-  useDisableLiProcess(data)
+  useDisableLiProcess(data);
 
   const { t } = useTranslation();
+
+  const [n, setN] = useState<number>(0);
+  const [arrows, setArrows] = useState<React.ReactNode>(null);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setN((prev) => (prev < 3 ? prev + 1 : 0));
+
+      const displayArrows = [false, false];
+
+      if (data.power !== 0) {
+        if (n === 1) displayArrows[0] = true;
+        else if (n === 2) displayArrows[0] = displayArrows[1] = true;
+        else displayArrows[1] = true;
+      }
+
+      setArrows(
+        <>
+          <ArrowUpIcon
+            style={{
+              position: 'absolute',
+              top: 185,
+              left: 530,
+              display: displayArrows[0] ? 'block' : 'none',
+            }}
+          />
+          <ArrowUpIcon
+            style={{
+              position: 'absolute',
+              top: 246,
+              left: 530,
+              display: displayArrows[1] ? 'block' : 'none',
+            }}
+          />
+        </>,
+      );
+    }, 750);
+
+    return () => clearInterval(intervalId);
+  }, [data, n]);
 
   return (
     <>
@@ -140,7 +181,11 @@ const DevicePage = () => {
           <SeparatorIcon style={{ position: 'absolute', top: 272.83, left: 51.65 }} />
           <SeparatorIcon style={{ position: 'absolute', top: 235.73, left: 488.41 }} width={95.44} />
           <SeparatorIcon style={{ position: 'absolute', top: 280.69, left: 488.41 }} width={95.44} />
-          <SeparatorIcon style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }} width={95.44} />
+          <SeparatorIcon
+            style={{ position: 'absolute', top: 84, left: 273.39, transform: 'rotate(90deg)' }}
+            width={95.44}
+          />
+          {arrows}
         </div>
       </div>
     </>

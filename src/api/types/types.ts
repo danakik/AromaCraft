@@ -3,6 +3,7 @@ export type SortedData = {
   tempCargi: number;
   tempDef: number;
   tempWater: number;
+  power: number;
   errorHand: number;
   handPower: number;
   handPercent: number;

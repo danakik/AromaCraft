@@ -6,6 +6,7 @@ interface SortedData {
   tempCargi: number;
   tempDef: number;
   tempWoter: number;
+  power: number;
   errorHand: number;
   handPower: number;
   handPercent: number;
@@ -137,6 +138,7 @@ const initialSortedData: SortedData = {
   tempCargi: 0,
   tempDef: 0,
   tempWoter: 0,
+  power: 0,
   errorHand: 0,
   handPower: 0,
   handPercent: 0,
@@ -264,9 +266,12 @@ const initialSortedData: SortedData = {
 };
 
 const useSortedData = (key: string | null) => {
-  const { data, error, isLoading, refetch } = useGetDataQuery({ key }, {
-    skip: !key,
-  });
+  const { data, error, isLoading, refetch } = useGetDataQuery(
+    { key },
+    {
+      skip: !key,
+    },
+  );
   const [sortedData, setSortedData] = useState<SortedData>(initialSortedData);
 
   useEffect(() => {
@@ -286,6 +291,7 @@ const useSortedData = (key: string | null) => {
       tempCargi: parseNumber(newData[1]),
       tempDef: parseNumber(newData[2]),
       tempWoter: parseNumber(newData[3]),
+      power: parseNumber(newData[8]),
       errorHand: parseNumber(newData[15]),
       handPower: parseNumber(newData[36]),
       handPercent: parseNumber(newData[37]),

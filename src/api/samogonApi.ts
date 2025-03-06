@@ -30,6 +30,7 @@ const samogonApi = createApi({
           tempCargi: parseNumber(data[1]),
           tempDef: parseNumber(data[2]),
           tempWater: parseNumber(data[3]),
+          power: parseNumber(data[8]),
           errorHand: parseNumber(data[15]),
           handPower: parseNumber(data[36]),
           handPercent: parseNumber(data[37]),
