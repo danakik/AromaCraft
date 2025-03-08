@@ -155,6 +155,12 @@ const samogonApi = createApi({
           settingTen: parseNumber(data[120]),
           settingBrometr: parseNumber(data[108]),
           settingValueBrometr: parseNumber(data[112]),
+
+          klapan1: parseNumber(data[4]),
+          klapan2: parseNumber(data[5]),
+          readyKlapan: parseNumber(data[133]),
+          accumulation: parseNumber(data[106]),
+          klapan4: parseNumber(data[119])
         };
       },
     }),

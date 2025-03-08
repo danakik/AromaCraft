@@ -132,4 +132,10 @@ export const initialSortedData: SortedData = {
   settingBrometr: 0,
   settingValueBrometr: 0,
 
+  klapan1: 0,
+  klapan2: 0,
+  readyKlapan: 0,
+  accumulation: 0,
+  klapan4: 0,
+
 };

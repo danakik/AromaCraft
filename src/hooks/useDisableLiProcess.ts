@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 export function useDisableLiProcess(data: any) {
   const disableLi = (id: string) => {
-    const liElement = document.getElementById(id);
+    const liElement = document.querySelector(`[id$="${id}"]`) as HTMLElement;
     if (liElement) {
       liElement.style.pointerEvents = 'none';
       liElement.style.opacity = '0.5';
@@ -10,7 +10,7 @@ export function useDisableLiProcess(data: any) {
   };
 
   const enableLi = (id: string) => {
-    const liElement = document.getElementById(id);
+    const liElement = document.querySelector(`[id$="${id}"]`) as HTMLElement;
     if (liElement) {
       liElement.style.pointerEvents = 'auto';
       liElement.style.opacity = '1';
@@ -19,11 +19,11 @@ export function useDisableLiProcess(data: any) {
 
   /* distController */
   useEffect(() => {
-    const idsHand = ['pr_id_4_1_1', 'pr_id_4_1_2', 'pr_id_4_1_3'];
-    const idsDist = ['pr_id_4_1_0', 'pr_id_4_1_2', 'pr_id_4_1_3'];
-    const idsRect = ['pr_id_4_1_0', 'pr_id_4_1_1', 'pr_id_4_1_3'];
-    const idsMash = ['pr_id_4_1_0', 'pr_id_4_1_1', 'pr_id_4_1_2'];
-    const enableAll = ['pr_id_4_1_0', 'pr_id_4_1_1', 'pr_id_4_1_2', 'pr_id_4_1_3'];
+    const idsHand = ['distillation', 'rectification', 'mashing'];
+    const idsDist = ['manual', 'rectification', 'mashing'];
+    const idsRect = ['manual', 'distillation', 'mashing'];
+    const idsMash = ['manual', 'distillation', 'rectification'];
+    const enableAll = ['manual', 'distillation', 'rectification', 'mashing'];
 
     /*     const updateLiState = () => {
       enableAll.forEach(enableLi);

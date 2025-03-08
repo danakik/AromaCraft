@@ -127,4 +127,10 @@ export type SortedData = {
   settingTen: number;
   settingBrometr: number;
   settingValueBrometr: number;
+
+  klapan1: number;
+  klapan2: number;
+  readyKlapan: number;
+  accumulation: number;
+  klapan4: number;
 };

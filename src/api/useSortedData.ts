@@ -131,6 +131,12 @@ interface SortedData {
   settingTen: number;
   settingBrometr: number;
   settingValueBrometr: number;
+
+  klapan1: number;
+  klapan2: number;
+  readyKlapan: number;
+  accumulation: number;
+  klapan4: number;
 }
 
 const initialSortedData: SortedData = {
@@ -263,6 +269,12 @@ const initialSortedData: SortedData = {
   settingTen: 0,
   settingBrometr: 0,
   settingValueBrometr: 0,
+
+  klapan1: 0,
+  klapan2: 0,
+  readyKlapan: 0,
+  accumulation: 0,
+  klapan4: 0,
 };
 
 const useSortedData = (key: string | null) => {
@@ -416,6 +428,12 @@ const useSortedData = (key: string | null) => {
       settingTen: parseNumber(newData[120]),
       settingBrometr: parseNumber(newData[108]),
       settingValueBrometr: parseNumber(newData[112]),
+
+      klapan1: parseNumber(newData[4]),
+      klapan2: parseNumber(newData[5]),
+      readyKlapan: parseNumber(newData[133]),
+      accumulation: parseNumber(newData[106]),
+      klapan4: parseNumber(newData[119]),
     };
 
     setSortedData(newSortedData);

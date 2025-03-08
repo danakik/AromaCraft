@@ -46,6 +46,11 @@
   "device_water_supply": "ПОДАЧА ВОДИ",
   "device_selection": "ВІДБІР",
   "device_valve_head": "КЛАПАН ГОЛІВ",
+  "device_reset_button": "Скинути аварію",
+  "device_cycle": "ЦИКЛ",
+  "device_barometer": "БАРОМЕТР",
+  "device_tails": "ХВОСТИ",
+  "device_pid": "ПІД",
 
   "usercomp": "Серійний номер:",
   "statuscomp": "Статус:",
@@ -71,8 +76,8 @@
   "unit_w": "Вт",
   "unit_mm": "мм",
   "unit_kg": "кг",
-  "units_pieces": "шт",
-  "units_liter": "л",
+  "unit_pieces": "шт",
+  "unit_liter": "л",
 
   "scenario_rename_error1": "Введіть назву рецепта",
   "scenario_rename_error2": "Помилка при зміні назви рецепта",

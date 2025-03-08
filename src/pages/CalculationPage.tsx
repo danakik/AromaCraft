@@ -530,13 +530,13 @@ const CalculationPage = () => {
             {t('calculate_flegm_number')} <b className="text-xl">{phlegmNumber}</b>
           </div>
           <div className="reg-label">
-            {t('calculate_spn_volume')} (3.5х3.5 0.25{t('unit_mm')})<b className="text-xl">{result.volume} {t('units_liter')}</b>
+            {t('calculate_spn_volume')} (3.5х3.5 0.25{t('unit_mm')})<b className="text-xl">{result.volume} {t('unit_liter')}</b>
           </div>
           <div className="reg-label">
             {t('calculate_spn_weight')} <b className="text-xl">{result.weight} {t('unit_kg')}</b>
           </div>
           <div className="reg-label">
-            {t('calculate_plates')} <b className="text-xl">{result.countTheoretical} {t('units_pieces')}</b>
+            {t('calculate_plates')} <b className="text-xl">{result.countTheoretical} {t('unit_pieces')}</b>
           </div>
           <div className="reg-label">
             {t('calculate_efficiency_process')} <b className="text-xl">{(result.efficiency * 100).toFixed(2)}%</b>

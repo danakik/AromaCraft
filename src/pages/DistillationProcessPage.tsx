@@ -225,7 +225,7 @@ const DistillationProcessPage = () => {
         setDisabledButtonSkip(true);
       }
     }
-  }, [distCommand, data.distController, timeBody, data.k3, data.f, countRecipe, data.version]);
+  }, [distCommand, data.distController, timeBody, data.k3, data.f, countRecipe, data.version, i18n.language]);
 
   useEffect(() => {
     updateCommandControls();
@@ -428,8 +428,8 @@ const DistillationProcessPage = () => {
       }
     }
   };
-  if (isLoading || data.version === 0) return <p>t('loading')</p>;
-  if (error) return <p>t('loading_error_t')</p>;
+  if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
+  if (error) return <p>{t('loading_error_t')}</p>;
 
 
   return (

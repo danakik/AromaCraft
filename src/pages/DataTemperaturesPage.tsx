@@ -129,20 +129,24 @@ const DataTemperaturesPage: React.FC = () => {
         className="flex flex-column gap-2 w-full align-items-start justify-content-start"
         style={{ height: '100vh' }}
       >
-        <div style={{ height: '100px' }} className="flex flex-row w-full align-items-center justify-content-center block">
+        <div style={{ height: '60px' }} className="flex flex-row w-full align-items-evenly justify-content-evenly block">
           <ul className="temp-list">
             <li className="temp-cube">{t('settings_temp_cube')}</li>
+          </ul>
+          <ul className="temp-list">
             <li className="temp-cargi">{t('settings_temp_carga')}</li>
           </ul>
           <ul className="temp-list">
             <li className="temp-defl">{t('settings_temp_defl')}</li>
+          </ul>
+          <ul className="temp-list">
             <li className="temp-water">{t('settings_temp_water')}</li>
           </ul>
           <ul className="temp-list">
             <li className="temp-baro">{t('settings_barometer')}</li>
           </ul>
         </div>
-        <div style={{ height: '75%' }} className="flex flex-column w-full align-items-center justify-content-center">
+        <div style={{ height: '80%' }} className="flex flex-column w-full align-items-center justify-content-center">
           <div className="flex flex-column gap-2 w-full align-items-start justify-content-start" style={{ height: '100vh' }}>
             {data.length > 0 &&
               data.map((series, index) => (
@@ -155,7 +159,7 @@ const DataTemperaturesPage: React.FC = () => {
                       dark: true,
                       getSeriesStyle: () => ({
                         stroke: series.color,
-                        r: 4, 
+                        r: 4,
                         fill: series.color,
                       }),
                     }}

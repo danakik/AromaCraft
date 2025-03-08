@@ -218,6 +218,9 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
     case 'time':
       IconComponent = TimeIcon;
       break;
+    case 'ten':
+      IconComponent = TenIcon;
+      break;
     default:
       IconComponent = null;
   }

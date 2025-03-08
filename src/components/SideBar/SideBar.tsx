@@ -123,28 +123,25 @@ export const SideBar = (props: PanelMenuProps) => {
             label: t('menu_process_manual'),
             command: () => navigate('/manualprocess'),
             className: location.pathname === '/manualprocess' ? 'active' : '',
+            key: 'manual',
           },
           {
             label: t('menu_process_distillation'),
             command: () => navigate('/distillationprocess'),
             className: location.pathname === '/distillationprocess' ? 'active' : '',
+            key: 'distillation',
           },
           {
             label: t('menu_process_rectification'),
             command: () => navigate('/rectificationprocess'),
             className: location.pathname === '/rectificationprocess' ? 'active' : '',
+            key: 'rectification',
           },
           {
             label: t('menu_process_mashing'),
             command: () => navigate('/mashingprocess'),
             className: location.pathname === '/mashingprocess' ? 'active' : '',
-            /*           command: (event) => {
-                         if (!event.item.disabled) {
-                           navigate('/mashingprocess');
-                         }
-                       },
-                       className: location.pathname === '/mashingprocess' ? 'active' : '',
-                       disabled: true, */
+            key: 'mashing',
           },
         ],
       },

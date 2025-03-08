@@ -85,7 +85,7 @@ const MashingProcessPage = () => {
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const pageRecipe = () => {
     return {
@@ -290,7 +290,7 @@ const MashingProcessPage = () => {
         setDisabledButtonSkip(true);
       }
     }
-  }, [data.mashingController, data.version]);
+  }, [data.mashingController, data.version, i18n.language]);
 
   useEffect(() => {
     updateCommandControls();

@@ -87,7 +87,7 @@ const RectificationProcessPage = () => {
   const [renameRecipe] = useRenameRecipeMutation();
   const [deleteRecipe] = useDeleteRecipeMutation();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const pageRecipe = () => {
     return {
@@ -330,7 +330,7 @@ const RectificationProcessPage = () => {
         setTempTail(false);
       }
     }
-  }, [data.f, data.rectController, cycles, rectCommand, recipeNumber, data.version]);
+  }, [data.f, data.rectController, cycles, rectCommand, recipeNumber, data.version, i18n.language]);
 
   useEffect(() => {
     updateCommandControls();
@@ -351,7 +351,7 @@ const RectificationProcessPage = () => {
         setSymbol(t('unit_liter_per_gram'));
       }
     }
-  }, [data.version, data.selection]);
+  }, [data.version, data.selection, i18n.language]);
 
   useEffect(() => {
     updateCycleState();
