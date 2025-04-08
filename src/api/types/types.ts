@@ -18,8 +18,8 @@ export type SortedData = {
   handK1: number;
   handK2: number;
   handK3: number;
-  handPin1: number;
-  handPin2: number;
+  handPid1: number;
+  handPid2: number;
   selection: number;
   selectionSpeed: number;
   handSpeedTail: number;
@@ -40,6 +40,8 @@ export type SortedData = {
   k3: number;
   f: number;
   distError: number;
+  t: number;
+  isProcessSuccess: boolean;
 
   rectAcceleration: number;
   rectPower: number;
@@ -74,6 +76,7 @@ export type SortedData = {
   rectPause: number;
   cycles: number;
   rectError: number;
+  rectTempCarge: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -86,6 +89,8 @@ export type SortedData = {
   mashingController: number;
   errorMashing: number;
   mashingVarkaMinute: number;
+  jobHours: number;
+  flagPause: number;
 
   mashingTemp0: number;
   mashingTemp1: number;
@@ -133,4 +138,7 @@ export type SortedData = {
   readyKlapan: number;
   accumulation: number;
   klapan4: number;
+  level: number;
+  errorWork: number;
+  errorData: string;
 };

@@ -541,7 +541,7 @@ const RectificationProcessPage = () => {
     statusUpdate();
   }, [statusUpdate]);
 
-  if (isLoading || data.version == 0) return <p>{t('loading')}</p>; // из-за списка рецепта дольше загрузка страницы
+  if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
   return (

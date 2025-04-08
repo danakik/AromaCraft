@@ -22,8 +22,8 @@ export const initialSortedData: SortedData = {
   handK1: 0,
   handK2: 0,
   handK3: 0,
-  handPin1: 0,
-  handPin2: 0,
+  handPid1: 0,
+  handPid2: 0,
   selection: 0,
   selectionSpeed: 0.06,
   handSpeedTail: 0.06,
@@ -44,6 +44,8 @@ export const initialSortedData: SortedData = {
   k3: 0,
   f: 0,
   distError: 0,
+  t: 0,
+  isProcessSuccess: false,
 
   rectAcceleration: 0,
   rectPower: 0,
@@ -78,6 +80,7 @@ export const initialSortedData: SortedData = {
   rectPause: 0,
   cycles: 0,
   rectError: 0,
+  rectTempCarge: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -90,6 +93,8 @@ export const initialSortedData: SortedData = {
   mashingController: 0,
   errorMashing: 0,
   mashingVarkaMinute: 0,
+  jobHours: 0,
+  flagPause: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,
@@ -137,5 +142,7 @@ export const initialSortedData: SortedData = {
   readyKlapan: 0,
   accumulation: 0,
   klapan4: 0,
-
+  level: 0,
+  errorWork: 0,
+  errorData: '',
 };

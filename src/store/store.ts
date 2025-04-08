@@ -16,6 +16,7 @@ import distillationSaveApi from '../api/distillationSave';
 import rectificationSaveApi from '../api/rectificationSaveApi';
 import mashingSaveApi from '../api/mashingSaveApi';
 import statisticsDataApi from '../api/statisticsDataApi';
+import clearErrorApi from '../api/clearErrorApi';
 
 const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ const store = configureStore({
     [rectificationSaveApi.reducerPath]: rectificationSaveApi.reducer,
     [mashingSaveApi.reducerPath]: mashingSaveApi.reducer,
     [statisticsDataApi.reducerPath]: statisticsDataApi.reducer,
+    [clearErrorApi.reducerPath]: clearErrorApi.reducer,
     key: keyReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -53,6 +55,7 @@ const store = configureStore({
       rectificationSaveApi.middleware,
       mashingSaveApi.middleware,
       statisticsDataApi.middleware,
+      clearErrorApi.middleware,
     ),
 });
 

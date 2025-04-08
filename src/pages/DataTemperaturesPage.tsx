@@ -1,49 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Chart, AxisOptions } from 'react-charts';
 import { ACUserComp } from '../components/usercomp';
-import { ACStatusComp } from '../components/statuscomp';
 import '../styles/process_page.css';
 import '../styles/temperatures_page.css';
 import { useStatisticsDataQuery } from '../api/statisticsDataApi';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
+import { useGetDataQuery } from '../api/samogonApi';
+import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 
-type TemperatureData = {
-  time: number;
-  cube: number;
-  column: number;
-  defleg: number;
-  water: number;
+type TemperatureEntry = [number, number, number, number, number, number];
+
+type ChartData = {
+  label: string;
+  data: { primary: Date; secondary: number }[];
+  color: string;
 };
-
-/* const generateTemperatureData = (): TemperatureData[] => {
-  const temperatureData = Array.from({ length: 240 }, (_, index) => ({
-    time: index,
-    cube: 75 + Math.random() * 6 - 3,
-    column: 70 + Math.random() * 6 - 3,
-    defleg: 60 + Math.random() * 4 - 2,
-    water: 20 + Math.random() * 3 - 1,
-  }));
-
-  return temperatureData;
-}; */
 
 const DataTemperaturesPage: React.FC = () => {
   const key = localStorage.getItem('samogonKey');
+  const dataSamagon = useMemo(() => ({ key }), [key]);
+
+  const {
+    data = initialSortedData,
+    isLoading,
+    error,
+  } = useGetDataQuery(dataSamagon, { pollingInterval: SYNC_INTERVAL });
+
+  useDisableLiProcess(data);
+
   const { data: statisticsData } = useStatisticsDataQuery(key || '');
   const { t } = useTranslation();
 
-  const [data, setData] = useState<
-    {
-      label: string;
-      data: { primary: Date; secondary: number }[];
-      color: string;
-    }[]
-  >([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [originalData, setOriginalData] = useState<ChartData[]>([]);
+  const [availableHours, setAvailableHours] = useState(0);
 
-
-
-  const primaryAxis = React.useMemo<AxisOptions<{ primary: Date }>>(
+  const primaryAxis = useMemo<AxisOptions<{ primary: Date }>>(
     () => ({
       getValue: (datum) => datum.primary,
       scaleType: 'time',
@@ -54,7 +48,7 @@ const DataTemperaturesPage: React.FC = () => {
     [],
   );
 
-  const secondaryAxes = React.useMemo<AxisOptions<{ secondary: number }>[]>(
+  const secondaryAxes = useMemo<AxisOptions<{ secondary: number }>[]>(
     () => [
       {
         getValue: (datum) => datum.secondary,
@@ -64,56 +58,84 @@ const DataTemperaturesPage: React.FC = () => {
     [],
   );
 
-  function sortData(rawData: any[]) {
+  function sortData(rawData: TemperatureEntry[]): ChartData[] {
     if (!Array.isArray(rawData) || rawData.length === 0) {
-      toast.error('москалі спиздили УСЕ');
       return [];
     }
 
-    const sortedData: {
-      temp0: { primary: Date; secondary: number }[];
-      temp1: { primary: Date; secondary: number }[];
-      temp2: { primary: Date; secondary: number }[];
-      temp3: { primary: Date; secondary: number }[];
-      baro: { primary: Date; secondary: number }[];
-    } = {
-      temp0: [],
-      temp1: [],
-      temp2: [],
-      temp3: [],
-      baro: [],
+    const sortedData = {
+      temp0: [] as { primary: Date; secondary: number }[],
+      temp1: [] as { primary: Date; secondary: number }[],
+      temp2: [] as { primary: Date; secondary: number }[],
+      temp3: [] as { primary: Date; secondary: number }[],
+      baro: [] as { primary: Date; secondary: number }[],
     };
 
-    rawData.slice(0, 100).forEach((entry, index) => {
+    rawData.forEach((entry, index) => {
       if (!Array.isArray(entry) || entry.length < 6) {
         console.error(`Ошибка в элементе ${index}:`, entry);
         return;
       }
 
       const timestamp = new Date(entry[0] * 1000);
-      const newTime = new Date(timestamp).getTime();
-      sortedData.temp0.push({ primary: timestamp, secondary: entry[1].toFixed(2) });
-      sortedData.temp1.push({ primary: timestamp, secondary: entry[2].toFixed(2) });
-      sortedData.temp2.push({ primary: timestamp, secondary: entry[3].toFixed(2) });
-      sortedData.temp3.push({ primary: timestamp, secondary: entry[4].toFixed(2) });
-      sortedData.baro.push({ primary: timestamp, secondary: entry[5].toFixed(2) });
+      sortedData.temp0.push({ primary: timestamp, secondary: Number(entry[1].toFixed(2)) });
+      sortedData.temp1.push({ primary: timestamp, secondary: Number(entry[2].toFixed(2)) });
+      sortedData.temp2.push({ primary: timestamp, secondary: Number(entry[3].toFixed(2)) });
+      sortedData.temp3.push({ primary: timestamp, secondary: Number(entry[4].toFixed(2)) });
+
+      if (data.version >= 4) {
+        sortedData.baro.push({ primary: timestamp, secondary: Number(entry[5].toFixed(2)) });
+      }
     });
 
-    return [
+    const chartData: ChartData[] = [
       { label: t('cube'), data: sortedData.temp0, color: '#9e4ae7' },
       { label: t('carga'), data: sortedData.temp1, color: '#e7764a' },
       { label: t('defl'), data: sortedData.temp2, color: '#e74a4a' },
       { label: t('water'), data: sortedData.temp3, color: '#2942e1' },
-      { label: t('settings_barometer'), data: sortedData.baro, color: '#70d4cf' },
     ];
+
+    if (data.version >= 4) {
+      chartData.push({ label: t('settings_barometer'), data: sortedData.baro, color: '#70d4cf' });
+    }
+
+    return chartData;
   }
 
-  useEffect(() => {
-    const formattedData = sortData(statisticsData);
-    setData(formattedData);
-  }, [statisticsData]);
+  const filterByHours = (hours: number) => {
+    if (!originalData.length) return;
 
-  console.log('Финальные данные:', data);
+    const lastTimestamp = originalData[0].data.at(-1)?.primary.getTime() || 0;
+    const timeLimit = lastTimestamp - hours * 60 * 60 * 1000;
+
+    const filteredData = originalData.map((series) => ({
+      ...series,
+      data: series.data.filter((point) => point.primary.getTime() >= timeLimit),
+    }));
+
+    setChartData(filteredData);
+  };
+
+  const handleShowAll = () => {
+    setChartData(originalData);
+  };
+
+  useEffect(() => {
+    if (statisticsData) {
+      const formattedData = sortData(statisticsData);
+      setOriginalData(formattedData);
+      setChartData(formattedData);
+
+      const allTimestamps = statisticsData.map((entry: number[]) => entry[0] * 1000);
+      const minTime = Math.min(...allTimestamps);
+      const maxTime = Math.max(...allTimestamps);
+      const totalHours = Math.floor((maxTime - minTime) / (60 * 60 * 1000));
+
+      setAvailableHours(totalHours);
+    }
+  }, [statisticsData, data.version]);
+
+  if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
 
   return (
     <>
@@ -122,50 +144,46 @@ const DataTemperaturesPage: React.FC = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
       </header>
-      <div
-        className="flex flex-column gap-2 w-full align-items-start justify-content-start"
-        style={{ height: '100vh' }}
-      >
-        <div style={{ height: '60px' }} className="flex flex-row w-full align-items-evenly justify-content-evenly block">
-          <ul className="temp-list">
-            <li className="temp-cube">{t('settings_temp_cube')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-cargi">{t('settings_temp_carga')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-defl">{t('settings_temp_defl')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-water">{t('settings_temp_water')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-baro">{t('settings_barometer')}</li>
-          </ul>
-        </div>
-        <div style={{ height: '80%' }} className="flex flex-column w-full align-items-center justify-content-center">
-          <div className="flex flex-column gap-2 w-full align-items-start justify-content-start" style={{ height: '100vh' }}>
-            {data.length > 0 &&
-              data.map((series, index) => (
-                <div key={index} style={{ height: '20%', width: '100%' }} className="flex flex-column">
-                  <Chart
-                    options={{
-                      data: [series],
-                      primaryAxis,
-                      secondaryAxes,
-                      dark: true,
-                      getSeriesStyle: () => ({
-                        stroke: series.color,
-                        r: 4,
-                        fill: series.color,
-                      }),
-                    }}
-                  />
-                </div>
-              ))}
-          </div>
-
-        </div>
+      <div className="time-filter-buttons">
+        <button onClick={() => filterByHours(1)} disabled={availableHours < 1}>
+          1 година
+        </button>
+        <button onClick={() => filterByHours(2)} disabled={availableHours < 2}>
+          2 години
+        </button>
+        <button onClick={() => filterByHours(6)} disabled={availableHours < 6}>
+          6 год
+        </button>
+        <button onClick={() => filterByHours(12)} disabled={availableHours < 12}>
+          12 год
+        </button>
+        <button onClick={() => filterByHours(24)} disabled={availableHours < 24}>
+          24 год
+        </button>
+        <button onClick={() => filterByHours(48)} disabled={availableHours < 48}>
+          48 год
+        </button>
+        <button onClick={handleShowAll}>Все</button>
+      </div>
+      <div className="chart-container">
+        {chartData.length > 0 &&
+          chartData.map((series, index) => (
+            <div key={index} className="chart-wrapper">
+              <Chart
+                options={{
+                  data: [series],
+                  primaryAxis,
+                  secondaryAxes,
+                  dark: true,
+                  getSeriesStyle: () => ({
+                    stroke: series.color,
+                    r: 4,
+                    fill: series.color,
+                  }),
+                }}
+              />
+            </div>
+          ))}
       </div>
     </>
   );
