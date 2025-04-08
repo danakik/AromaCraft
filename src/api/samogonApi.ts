@@ -45,8 +45,8 @@ const samogonApi = createApi({
           handK1: parseNumber(data[96]),
           handK2: parseNumber(data[97]),
           handK3: parseNumber(data[98]),
-          handPin1: parseNumber(data[101]),
-          handPin2: parseNumber(data[102]),
+          handPid1: parseNumber(data[101]),
+          handPid2: parseNumber(data[102]),
           selection: parseNumber(data[109]),
           selectionSpeed: parseNumber(data[110]),
           handSpeedTail: parseNumber(data[113]),
@@ -67,6 +67,8 @@ const samogonApi = createApi({
           k3: parseNumber(data[6]),
           f: parseNumber(data[99]),
           distError: parseNumber(data[13]),
+          t: parseNumber(data[94]),
+          isProcessSuccess: parseNumber(data[94])<= 5,
 
           rectAcceleration: parseNumber(data[22]),
           rectPower: parseNumber(data[23]),
@@ -101,6 +103,7 @@ const samogonApi = createApi({
           rectPause: parseNumber(data[86]),
           cycles: parseNumber(data[35]),
           rectError: parseNumber(data[14]),
+          rectTempCarge: parseNumber(data[132]),
 
           mashingPauses: parseNumber(data[47]),
           mashingHeat: parseNumber(data[48]),
@@ -113,6 +116,8 @@ const samogonApi = createApi({
           mashingController: parseNumber(data[12]),
           errorMashing: parseNumber(data[16]),
           mashingVarkaMinute: parseNumber(data[88]),
+          jobHours: parseNumber(data[87]),
+          flagPause: parseNumber(data[85]),
 
           mashingTemp0: parseNumber(data[55]),
           mashingTemp1: parseNumber(data[56]),
@@ -160,7 +165,10 @@ const samogonApi = createApi({
           klapan2: parseNumber(data[5]),
           readyKlapan: parseNumber(data[133]),
           accumulation: parseNumber(data[106]),
-          klapan4: parseNumber(data[119])
+          klapan4: parseNumber(data[119]),
+          level: parseNumber(data[7]),
+          errorWork: parseNumber(data[137]),
+          errorData: data[138],
         };
       },
     }),

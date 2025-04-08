@@ -25,6 +25,9 @@ import { Button } from 'primereact/button';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
 import ArrowUpIcon from '../assets/icons/arrow_up_icon';
+import styles from '../styles/device_page';
+import { set } from 'lodash';
+import { useClearErrorMutation } from '../api/clearErrorApi';
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -41,6 +44,7 @@ const DevicePage = () => {
   } = useGetDataQuery(dataSamagon, { pollingInterval: SYNC_INTERVAL });
 
   useDisableLiProcess(data);
+  const [errorClear] = useClearErrorMutation();
 
   const { t } = useTranslation();
   const [n, setN] = useState<number>(0);
@@ -56,7 +60,7 @@ const DevicePage = () => {
     const handleClick = () => {
       setDialogVisible(true);
     };
-  
+
     const hideDialog = () => {
       setDialogVisible(false);
     };
@@ -136,9 +140,9 @@ const DevicePage = () => {
         </Dialog>
       </div>
     );
-  };  
-//arrows
-const [arrows, setArrows] = useState<React.ReactNode>(null);
+  };
+  //arrows
+  const [arrows, setArrows] = useState<React.ReactNode>(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -190,33 +194,373 @@ const [arrows, setArrows] = useState<React.ReactNode>(null);
     if (data.klapan1 === 0) {
       rotation1 = 'rotate(0deg)';
     }
-    console.log('loh');
     setRotation1(rotation1);
   }, [data.klapan1]);
 
   const rotateKalpan2 = useCallback(() => {
     let rotation2 = 'rotate(90deg)';
-    if (data.klapan2 === 1 || (data.handK2 === 1 && data.handPercent > 0 && (data.readyKlapan === 2 || data.version < 3.2 || data.version === 4.0 || data.version === 4.1)) || (data.rectController === 3 && (data.readyKlapan === 2 || data.version < 3.2 || data.version === 4.0 || data.version === 4.1)) || (data.rectController === 4 && data.accumulation > 0 && (data.readyKlapan === 2 || (data.rectSwitchTail === 0 && data.readyKlapan === 0)))) {
+    if (
+      data.klapan2 === 1 ||
+      (data.handK2 === 1 &&
+        data.handPercent > 0 &&
+        (data.readyKlapan === 2 || data.version < 3.2 || data.version === 4.0 || data.version === 4.1)) ||
+      (data.rectController === 3 &&
+        (data.readyKlapan === 2 || data.version < 3.2 || data.version === 4.0 || data.version === 4.1)) ||
+      (data.rectController === 4 &&
+        data.accumulation > 0 &&
+        (data.readyKlapan === 2 || (data.rectSwitchTail === 0 && data.readyKlapan === 0)))
+    ) {
       rotation2 = 'rotate(0deg)';
     }
     setRotation2(rotation2);
-  }, [data.klapan2]);
+  }, [
+    data.klapan2,
+    data.handK2,
+    data.handPercent,
+    data.readyKlapan,
+    data.rectController,
+    data.accumulation,
+    data.rectSwitchTail,
+    data.version,
+  ]);
 
   const rotateKalpan3 = useCallback(() => {
-    let rotation3 = 'rotate(0deg)';
+    let rotation3 = 'rotate(90deg)';
     if (data.k3 === 0) {
-      rotation3 = 'rotate(90deg)';
+      rotation3 = 'rotate(0deg)';
     }
     setRotation3(rotation3);
   }, [data.k3]);
 
   const rotateKalpan4 = useCallback(() => {
-    let rotation4 = 'rotate(0deg)';
-    if (data.klapan4 === 1 || (data.rectController === 4 && data.tempCube >= data.rectCubeTail)) {
-      rotation4 = 'rotate(90deg)';
+    if (data.version >= 4) {
+      let rotation4 = 'rotate(0deg)';
+      if (data.klapan4 === 1 || (data.rectController === 4 && data.tempCube >= data.rectCubeTail)) {
+        rotation4 = 'rotate(90deg)';
+      }
+      setRotation4(rotation4);
     }
-    setRotation4(rotation4);
-  }, [data.klapan4]);
+  }, [data.klapan4, data.rectController, data.tempCube, data.rectCubeTail, data.version]);
+
+  useEffect(() => {
+    rotateKalpan1();
+    rotateKalpan2();
+    rotateKalpan3();
+    rotateKalpan4();
+  }, [rotateKalpan1, rotateKalpan2, rotateKalpan3, rotateKalpan4]);
+
+  const [t1cDisplay, setT1cDisplay] = useState('none');
+  const [t1bDisplay, setT1bDisplay] = useState('none');
+  const [t2bDisplay, setT2bDisplay] = useState('none');
+  const [t4bDisplay, setT4bDisplay] = useState('none');
+  const [t3bDisplay, setT3bDisplay] = useState('none');
+  const [speedDisplay, setSpeedDisplay] = useState('none');
+  const [cycleDisplay, setCycleDisplay] = useState('none');
+  const [tailDisplay, setTailDisplay] = useState('none');
+  const [timerDisplay, setTimerDisplay] = useState('none');
+  const [buttonErrorDisplay, setButtonErrorDisplay] = useState('none');
+  const [PIDDisplay, setPIDDisplay] = useState('none');
+
+  const [t1cValue, setT1cValue] = useState('');
+  const [t1bValue, setT1bValue] = useState('');
+  const [t2bValue, setT2bValue] = useState('');
+  const [t4bValue, setT4bValue] = useState('');
+  const [t3bValue, setT3bValue] = useState('');
+  const [speedValue, setSpeedValue] = useState('');
+  const [tailValue, setTailValue] = useState('');
+  const [timerValue, setTimerValue] = useState('');
+  const [errorText, setErrorText] = useState('');
+  const [PIDValues, setPIDValues] = useState('');
+
+  const [speedSymbol, setSpeedSymbol] = useState('');
+  const [tailSymbol, setTailSymbol] = useState('');
+
+  const [updateStatus, setUpdateStatus] = useState('');
+
+  const statusUpdate = useCallback(() => {
+    setT1cDisplay('none');
+    setT1bDisplay('none');
+    setT4bDisplay('none');
+
+    let status = '';
+    let name = '';
+
+    if (data.distController >= 1) {
+      if (data.isProcessSuccess) {
+        name = 'Дистиляція';
+      } else {
+        name = 'Аварія - немає звязку';
+      }
+
+      if (data.distController === 1) {
+        status = 'Розгін';
+      } else if (data.distController === 2) {
+        if (data.distTimeBody > 0 || data.distCubeSwitch === 1) {
+          if (data.distCubeSwitch === 1) {
+            setT1bValue(data.distCubeHead.toFixed(1));
+          } else {
+            setT1bValue(data.distTempPower.toFixed(1));
+          }
+
+          if (data.k3 === 1) {
+            status = 'Відбір голов';
+          } else {
+            status = 'Відбір тіла';
+          }
+        } else {
+          status = 'Відбір';
+        }
+      } else if (data.distController === 3) {
+        status = 'Зупинка';
+      } else {
+        status = 'Завершено';
+      }
+
+      setT1cValue(data.distTempStop.toFixed(1));
+      setT4bValue(data.distTempError.toFixed(1));
+
+      setT1cDisplay('block');
+      setT1bDisplay('block');
+      setT4bDisplay('block');
+    }
+    if (data.rectController >= 1) {
+      if (data.isProcessSuccess) {
+        name = 'Ректифікація';
+      } else {
+        name = 'Аварія - немає звязку';
+      }
+
+      if (data.rectController === 1) {
+        status = 'Розгін';
+      } else if (data.rectController === 2) {
+        status = 'Пауза 00:' + (data.rectPause < 10 ? '0' : '') + data.rectPause;
+      } else if (data.rectController === 3) {
+        status = 'Відбір голів';
+
+        setT3bDisplay('block');
+        if (data.transitBody === 1) {
+          setT3bValue(data.rectTempTransit.toFixed(1));
+        } else {
+          setT3bValue(data.rectTempHead.toFixed(1));
+        }
+
+        if (data.version >= 2.3) {
+          if (data.selection === 0 || data.version < 2.5) {
+            setSpeedValue(`${data.rectPercentHead < 10 ? '0' : ''}${data.rectPercentHead}`);
+            setSpeedSymbol('%');
+          } else if (data.selection === 1 || data.version >= 2.5) {
+            setSpeedValue((data.selectionSpeed * data.rectPercentHead * 0.05).toFixed(2));
+            setSpeedSymbol('l/h');
+          }
+          setSpeedDisplay('block');
+        } else {
+          setSpeedValue(data.rectPercentHead.toString());
+          setSpeedSymbol('%');
+          setSpeedDisplay('block');
+        }
+      } else if (data.rectController === 4) {
+        status = 'Відбір тіла';
+
+        setT3bDisplay('block');
+        setSpeedDisplay('block');
+        setT3bValue((data.rectTempHead + data.rectTempBody).toFixed(1));
+        setCycleDisplay('block');
+
+        if (data.version > 2.3) {
+          if (data.selection === 0 || data.version < 2.5) {
+            if (data.rectSwitchTail === 0 || (data.klapan4 === 0 && data.rectSwitchTail === 1)) {
+              setSpeedValue(`${data.accumulation < 10 ? '0' : ''}${data.accumulation}`);
+              setSpeedSymbol('%');
+            } else {
+              setSpeedValue('');
+              setSpeedSymbol('');
+            }
+            if (data.rectSwitchTail === 0) {
+              if (data.version > 4) {
+                setTailValue(`${data.rectSpeedTail < 10 ? '0' : ''}${data.rectSpeedTail}`);
+                setTailSymbol('%');
+              } else {
+                setTailValue('колона');
+              }
+            }
+          } else if (data.selection === 1 && data.version >= 2.5) {
+            if (data.rectSwitchTail === 0 || (data.klapan4 === 0 && data.rectSwitchTail === 1)) {
+              setSpeedValue((data.selectionSpeed * data.accumulation * 0.05).toFixed(2));
+              setSpeedSymbol('l/h');
+            } else {
+              setSpeedValue('');
+              setSpeedSymbol('');
+            }
+            if (data.version > 4) {
+              if (data.rectSwitchTail === 0) {
+                setTailValue((data.selectionSpeed * data.rectSpeedTail * 0.05).toFixed(2));
+                setTailSymbol('l/h');
+              } else {
+                setTailValue('колона');
+              }
+            }
+          }
+          setSpeedDisplay('block');
+          setTailDisplay('block');
+        } else {
+          setSpeedValue(data.rectPercentBody.toString());
+          setSpeedSymbol('%');
+          setSpeedDisplay('block');
+        }
+      } else if (data.rectController === 5) {
+        status = 'Зупинка';
+      } else {
+        status = 'Завершено';
+      }
+      if (data.rectController < 4 || data.rectTempCarge === 0) {
+        setT2bValue(data.rectTempPower.toFixed(1));
+      } else {
+        if (data.rectSwitchCarge === 0) {
+          setT2bValue(data.rectTempCarge.toFixed(1));
+        } else {
+          setT2bValue(data.rectSelectCarge.toFixed(1));
+        }
+      }
+
+      setT2bDisplay('block');
+      setT1cDisplay('block');
+      setT4bDisplay('block');
+      if (data.rectController < 3 && data.rectController > 4) {
+        setT3bDisplay('none');
+      }
+    }
+    if (data.handController >= 1) {
+      if (data.isProcessSuccess) {
+        name = 'Ручний режим';
+      } else {
+        name = 'Аварія - немає звязку';
+      }
+    }
+    if (data.mashingController >= 1) {
+      if (data.isProcessSuccess) {
+        name = 'Затирання';
+      } else {
+        name = 'Аварія - немає звязку';
+      }
+      if (data.mashingController <= 10) {
+        const mashingTemps = [
+          data.mashingTemp0,
+          data.mashingTemp1,
+          data.mashingTemp2,
+          data.mashingTemp3,
+          data.mashingTemp4,
+          data.mashingTemp5,
+          data.mashingTemp6,
+          data.mashingTemp7,
+          data.mashingTemp8,
+          data.mashingTemp9,
+        ];
+        const temp = mashingTemps[data.mashingController - 1];
+
+        status = `${t('status_pause_number')} ${data.mashingController} - ${temp}°`;
+      } else if (data.mashingController === 11) {
+        status = t('status_waiting_boiling');
+      } else if (data.mashingController === 12) {
+        status = `${t('status_boiling')} ${data.mashingHeatPower}% на ${data.mashingHeatTemp.toFixed(1)}°`;
+      } else if (data.mashingController === 13) {
+        status = t('status_waiting_cooling');
+      } else if (data.mashingController === 14) {
+        status = `${t('status_cooling')} ${data.mashingCoolTemp.toFixed(1)}°`;
+      } else {
+        status = t('status_completed');
+      }
+    }
+    if (
+      data.distController === 0 &&
+      data.rectController === 0 &&
+      data.handController === 0 &&
+      data.mashingController === 0
+    ) {
+      if (data.isProcessSuccess) {
+        name = 'Готовий до роботи';
+      } else {
+        name = 'Аварія - немає звязку';
+      }
+      setTimerDisplay('none');
+    } else if (data.handController === 0 && data.mashingController === 0) {
+      setTimerValue(
+        `${data.jobHours < 10 ? `0${data.jobHours}` : data.jobHours}:${data.mashingVarkaMinute < 10 ? `0${data.mashingVarkaMinute}` : data.mashingVarkaMinute}`,
+      );
+      setTimerDisplay('block');
+    } else if (data.mashingController > 0) {
+      if (data.flagPause === 0) {
+        setTimerDisplay('none');
+      } else {
+        setTimerValue(
+          `${data.jobHours < 10 ? `0${data.jobHours}` : data.jobHours}:${data.mashingVarkaMinute < 10 ? `0${data.mashingVarkaMinute}` : data.mashingVarkaMinute}`,
+        );
+        setTimerDisplay('block');
+      }
+    } else if (data.handController > 0) {
+      setTimerDisplay('none');
+    }
+    if (data.errorWork >= 3) {
+      setButtonErrorDisplay('block');
+    } else {
+      setButtonErrorDisplay('none');
+    }
+    if (data.errorWork >= 3) {
+      if (data.errorWork === 3) {
+        status = `Тривога в ${data.errorData}`;
+      } else {
+        status = `Тривога, пожежа в ${data.errorData}`;
+      }
+    } else if (data.distError === 1 || data.rectError === 1 || data.errorMashing === 1) {
+      status = t('status_error_cube');
+    } else if (data.distError === 2 || data.rectError === 4) {
+      status = t('status_error_water');
+    } else if (data.distError === 3 || data.errorMashing === 7) {
+      status = t('status_error_level');
+    } else if (data.distError === 4 || data.rectError === 5) {
+      status = t('status_error_heat');
+    } else if (data.rectError === 2) {
+      status = t('status_error_column');
+    } else if (data.rectError === 3) {
+      status = t('status_error_defl');
+    } else if (data.errorHand === 5) {
+      status = 'ПОМИЛКА ПЕРЕГРІВ КУБА';
+    } else if (data.errorHand === 6) {
+      status = 'ПОМИЛКА ПЕРЕГРІВ ВОДА';
+    } else if (data.handController >= 1 && data.errorHand === 0) {
+      status = 'В ПРОЦЕСІ';
+    } else if (
+      data.distError === 0 &&
+      data.rectError === 0 &&
+      data.errorMashing === 0 &&
+      data.errorHand === 0 &&
+      data.distController === 0 &&
+      data.rectController === 0 &&
+      data.handController === 0 &&
+      data.mashingController === 0
+    ) {
+      status = 'СТАТУС ОЧІКУВАННЯ';
+    }
+    if (data.version > 2.3 && data.handController > 0) {
+      setPIDDisplay('block');
+      if (data.handPid2 === 1) {
+        setPIDValues(`${data.handPid2.toFixed(1)}°`);
+      } else {
+        setPIDValues(t('off'));
+      }
+    } else {
+      setPIDDisplay('none');
+    }
+
+    setUpdateStatus(name + '. ' + status);
+  }, [data]);
+
+  useEffect(() => {
+    statusUpdate();
+  }, [statusUpdate]);
+
+  const clickError = async () => {
+    await errorClear({ key: key || '' });
+  }
 
   return (
     <>
@@ -224,9 +568,7 @@ const [arrows, setArrows] = useState<React.ReactNode>(null);
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
-        </div>
+        <div style={{ float: 'left' }}>{updateStatus}</div>
       </header>
       <div className="relative w-full h-full">
         <UnderTextIcon style={{ position: 'absolute', top: 140.5, left: 89 }} />
@@ -347,33 +689,96 @@ const [arrows, setArrows] = useState<React.ReactNode>(null);
             height={14.6}
             color="black"
             id="k4_tails"
-            style={{ position: 'absolute', top: 340, left: 496, transform: rotation4 }}
+            style={{
+              position: 'absolute',
+              top: 340,
+              left: 496,
+              transform: rotation4,
+              display: data.version >= 4 ? 'block' : 'none',
+            }}
           />
-          <EllipseIcon color="black" fill="white" style={{ position: 'absolute', top: 333, left: 524 }} />
+          <EllipseIcon
+            color="black"
+            fill="white"
+            style={{ position: 'absolute', top: 333, left: 524, display: data.version >= 4 ? 'block' : 'none' }}
+          />
 
           {arrows}
 
-          <Button label={t('device_reset_button')} style={{ width: '200px',   background: 'linear-gradient(45deg, #b31827, #950a42)', position: 'absolute', top: -30, left: -160 }}/>
-          <span id="cycle" style={{ position: 'absolute', top: -30, left: 515 }}>{t('device_cycle')}</span>
-          <span id="timer" style={{ position: 'absolute', top: -30, left: 700 }}>00:00</span>
+          <Button
+            label={t('device_reset_button')}
+            style={{
+              width: '200px',
+              background: 'linear-gradient(45deg, #b31827, #950a42)',
+              position: 'absolute',
+              top: -30,
+              left: -160,
+              display: buttonErrorDisplay,
+            }}
+            onClick={clickError}
+          />
+          <span id="cycle" style={{ position: 'absolute', top: -30, left: 515, display: cycleDisplay }}>
+            {t('device_cycle') + ' ' + data.cycles}
+          </span>
+          <span id="timer" style={{ position: 'absolute', top: -30, left: 700, display: timerDisplay }}>
+            {timerValue}
+          </span>
+          <span id="select_percent" style={{ position: 'absolute', top: 140, left: 400, display: speedDisplay }}>
+            {speedValue + speedSymbol} {/* speed */}
+          </span>
+          <span id="temp" style={{ position: 'absolute', top: 110, left: -100, display: t4bDisplay }}>
+            {t4bValue}° {/* t4b */}
+          </span>
 
-          <span id="temp" style={{ position: 'absolute', top: 20, left: -160 }}>0.0°C</span>
-          <span id="select_percent" style={{ position: 'absolute', top: 140, left: 400 }}>0%</span>
+          <span id="temp" style={{ position: 'absolute', top: 25, left: 500, display: t3bDisplay }}>
+            {t3bValue}° {/* t3b */}
+          </span>
+          <span id="temp" style={{ position: 'absolute', top: 200, left: 500, display: t2bDisplay }}>
+            {t2bValue}° {/* t2b */}
+          </span>
 
-          <span id="temp" style={{ position: 'absolute', top: 25, left: 500 }}>0.0°C</span>
-          <span id="temp" style={{ position: 'absolute', top: 140, left: 500 }}>00.0°C</span>
+          <span
+            id="baro_text"
+            style={{ position: 'absolute', top: 200, left: 360, display: data.version >= 4 ? 'block' : 'none' }}
+          >
+            {t('device_barometer')}
+          </span>
+          <span
+            id="baro"
+            style={{ position: 'absolute', top: 220, left: 360, display: data.version >= 4 ? 'block' : 'none' }}
+          >
+            {data.settingBrometr >= 1 ? data.settingValueBrometr : ''}
+            {data.settingBrometr >= 1 ? t('unit_mm') : t('off')}
+          </span>
+          <span
+            id="tails_text"
+            style={{ position: 'absolute', top: 300, left: 600, display: data.version >= 4 ? 'block' : 'none' }}
+          >
+            {t('device_tails')}
+          </span>
+          <span id="tails_percent" style={{ position: 'absolute', top: 320, left: 610, display: tailDisplay }}>
+            {tailValue + tailSymbol} {/* tails */}
+          </span>
 
-          <span id="baro_text" style={{ position: 'absolute', top: 200, left: 360 }}>{t('device_barometer')}</span>
-          <span id="baro" style={{ position: 'absolute', top: 220, left: 360 }}>0{t('unit_mm')}</span>
-          <span id="tails_text" style={{ position: 'absolute', top: 300, left: 600 }}>{t('device_tails')}</span>
-          <span id="tails_percent" style={{ position: 'absolute', top: 320, left: 610 }}>0%</span>
+          <span id="temp" style={{ position: 'absolute', top: 420, left: 440, display: t1cDisplay }}>
+            {t1cValue}° {/* t1c */}
+          </span>
+          <span id="temp" style={{ position: 'absolute', top: 420, left: 600, display: t1bDisplay }}>
+            {t1bValue}° {/* t1b */}
+          </span>
 
-          <span id="temp" style={{ position: 'absolute', top: 420, left: 440 }}>0°</span>
-          <span id="temp" style={{ position: 'absolute', top: 420, left: 600 }}>0.0°</span>
-
-          <span id="pid" style={{ position: 'absolute', top: 500, left: 350 }}>{t('device_pid')}</span>
-          <span id="pid_temp" style={{ position: 'absolute', top: 520, left: 355 }}>0.0°C</span>
-          <span id="pid_percent" style={{ position: 'absolute', top: 535, left: 355 }}>0%</span>
+          <span id="pid" style={{ position: 'absolute', top: 500, left: 350, display: PIDDisplay }}>
+            {t('device_pid')}
+          </span>
+          <span id="pid_temp" style={{ position: 'absolute', top: 520, left: 355, display: PIDDisplay }}>
+            {PIDValues}
+          </span>
+          <span
+            id="pid_percent"
+            style={{ position: 'absolute', top: 535, left: 355, display: data.power === 0 ? 'none' : 'block' }}
+          >
+            {data.power < 100 ? data.power + ' %' : 'MAX'}
+          </span>
         </div>
       </div>
     </>

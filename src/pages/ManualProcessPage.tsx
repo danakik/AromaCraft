@@ -30,8 +30,8 @@ type FormData = {
   };
   handTen: boolean;
   handPower: number;
-  handPin1: number;
-  handPin2: boolean;
+  handPid1: number;
+  handPid2: boolean;
   handK1: boolean;
   handK2: boolean;
   handK3: boolean;
@@ -85,8 +85,8 @@ const ManualProcessPage = () => {
       },
       handTen: !!data.handTen,
       handPower: data.handPower,
-      handPin1: data.handPin1,
-      handPin2: !!data.handPin2,
+      handPid1: data.handPid1,
+      handPid2: !!data.handPid2,
       handK1: !!data.handK1,
       handK2: !!data.handK2,
       handK3: !!data.handK3,
@@ -118,8 +118,8 @@ const ManualProcessPage = () => {
       to: formValues.tempSelect,
       go: formValues.handTempGyst,
       so: formValues.handPercent.true_value,
-      pi: formValues.handPin1,
-      po: formValues.handPin2 ? 1 : 0,
+      pi: formValues.handPid1,
+      po: formValues.handPid2 ? 1 : 0,
       k4: formValues.handK4 ? 1 : 0,
       sT: formValues.handSpeedTail.true_value,
     };
@@ -318,7 +318,7 @@ const ManualProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Controller
-                name="handPin1"
+                name="handPid1"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACRegulator
@@ -333,7 +333,7 @@ const ManualProcessPage = () => {
               />
 
               <Controller
-                name="handPin2"
+                name="handPid2"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACSwitch checked={value} onChange={(checked) => onChangeForm(checked)} disabled={disabledPID} />

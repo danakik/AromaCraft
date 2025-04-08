@@ -42,6 +42,7 @@
   "cube": "Cube",
   "carga": "Column",
   "defl": "Dephlegmator",
+  "off": "off",
 
   "device_water_supply": "WATER SUPPLY",
   "device_selection": "SELECTION",
@@ -109,7 +110,7 @@
   "status_pause": "Pause 00: ",
   "status_selection_body_cycle": "Body selection. CYCLE: ",
   "status_completed": "Completed",
-  "status_error_column": "Error t° column",
+  "status_error_column": "Error t° carge",
   "status_error_defl": "Error t° defl.",
   "status_start_boiling": "START BOILING",
   "status_start_cooling": "START COOLING",

@@ -21,8 +21,8 @@ interface SortedData {
   handK1: number;
   handK2: number;
   handK3: number;
-  handPin1: number;
-  handPin2: number;
+  handPid1: number;
+  handPid2: number;
   selection: number;
   selectionSpeed: number;
   handSpeedTail: number;
@@ -43,6 +43,8 @@ interface SortedData {
   k3: number;
   f: number;
   distError: number;
+  t: number;
+  isProcessSuccess: boolean;
 
   rectAcceleration: number;
   rectPower: number;
@@ -77,6 +79,7 @@ interface SortedData {
   rectPause: number;
   cycles: number;
   rectError: number;
+  rectTempCarge: number;
 
   mashingPauses: number;
   mashingHeat: number;
@@ -89,6 +92,8 @@ interface SortedData {
   mashingController: number;
   errorMashing: number;
   mashingVarkaMinute: number;
+  jobHours: number;
+  flagPause: number;
 
   mashingTemp0: number;
   mashingTemp1: number;
@@ -137,6 +142,9 @@ interface SortedData {
   readyKlapan: number;
   accumulation: number;
   klapan4: number;
+  level: number;
+  errorWork: number;
+  errorData: string;
 }
 
 const initialSortedData: SortedData = {
@@ -159,8 +167,8 @@ const initialSortedData: SortedData = {
   handK1: 0,
   handK2: 0,
   handK3: 0,
-  handPin1: 0,
-  handPin2: 0,
+  handPid1: 0,
+  handPid2: 0,
   selection: 0,
   selectionSpeed: 0,
   handSpeedTail: 0,
@@ -181,6 +189,8 @@ const initialSortedData: SortedData = {
   k3: 0,
   f: 0,
   distError: 0,
+  t: 0,
+  isProcessSuccess: false,
 
   rectAcceleration: 0,
   rectPower: 0,
@@ -215,6 +225,7 @@ const initialSortedData: SortedData = {
   rectPause: 0,
   cycles: 0,
   rectError: 0,
+  rectTempCarge: 0,
 
   mashingPauses: 0,
   mashingHeat: 0,
@@ -227,6 +238,8 @@ const initialSortedData: SortedData = {
   mashingController: 0,
   errorMashing: 0,
   mashingVarkaMinute: 0,
+  jobHours: 0,
+  flagPause: 0,
 
   mashingTemp0: 0,
   mashingTemp1: 0,
@@ -275,6 +288,9 @@ const initialSortedData: SortedData = {
   readyKlapan: 0,
   accumulation: 0,
   klapan4: 0,
+  level: 0,
+  errorWork: 0,
+  errorData: '',
 };
 
 const useSortedData = (key: string | null) => {
@@ -318,8 +334,8 @@ const useSortedData = (key: string | null) => {
       handK1: parseNumber(newData[96]),
       handK2: parseNumber(newData[97]),
       handK3: parseNumber(newData[98]),
-      handPin1: parseNumber(newData[101]),
-      handPin2: parseNumber(newData[102]),
+      handPid1: parseNumber(newData[101]),
+      handPid2: parseNumber(newData[102]),
       selection: parseNumber(newData[109]),
       selectionSpeed: parseNumber(newData[110]),
       handSpeedTail: parseNumber(newData[113]),
@@ -340,7 +356,9 @@ const useSortedData = (key: string | null) => {
       k3: parseNumber(newData[6]),
       f: parseNumber(newData[99]),
       distError: parseNumber(newData[13]),
-
+      t: parseNumber(newData[94]),
+      isProcessSuccess: parseNumber(newData[94])<= 5,
+     
       rectAcceleration: parseNumber(newData[22]),
       rectPower: parseNumber(newData[23]),
       rectPowerBody: parseNumber(newData[115]),
@@ -374,6 +392,7 @@ const useSortedData = (key: string | null) => {
       rectTempTransit: parseNumber(newData[136]),
       rectPause: parseNumber(newData[86]),
       cycles: parseNumber(newData[35]),
+      rectTempCarge: parseNumber(newData[132]),
 
       mashingPauses: parseNumber(newData[47]),
       mashingHeat: parseNumber(newData[48]),
@@ -386,6 +405,8 @@ const useSortedData = (key: string | null) => {
       mashingController: parseNumber(newData[12]),
       errorMashing: parseNumber(newData[16]),
       mashingVarkaMinute: parseNumber(newData[88]),
+      jobHours: parseNumber(newData[87]),
+      flagPause: parseNumber(newData[85]),
 
       mashingTemp0: parseNumber(newData[55]),
       mashingTemp1: parseNumber(newData[56]),
@@ -434,6 +455,9 @@ const useSortedData = (key: string | null) => {
       readyKlapan: parseNumber(newData[133]),
       accumulation: parseNumber(newData[106]),
       klapan4: parseNumber(newData[119]),
+      level: parseNumber(newData[7]),
+      errorWork: parseNumber(newData[137]),
+      errorData: newData[138],
     };
 
     setSortedData(newSortedData);
