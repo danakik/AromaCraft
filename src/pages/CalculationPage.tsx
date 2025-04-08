@@ -552,9 +552,6 @@ const CalculationPage = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>
-{/*           <ACStatusComp status_text={'Очікування...'} /> */}
-        </div>
       </header>
 
       <div

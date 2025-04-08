@@ -11,8 +11,6 @@ import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import '../styles/process_page.css';
-import 'primereact/resources/themes/lara-light-purple/theme.css';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
@@ -26,6 +24,9 @@ import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useRectificationSaveMutation } from '../api/rectificationSaveApi';
 import { useTranslation } from 'react-i18next';
+import '../styles/process_page.css';
+import '../styles/styles.css';
+import 'primereact/resources/themes/lara-light-purple/theme.css';
 
 type FormData = {
   rectTempHead: number;
@@ -336,13 +337,11 @@ const RectificationProcessPage = () => {
     updateCommandControls();
   }, [updateCommandControls]);
 
-
   const updateCycleState = useCallback(() => {
     if (data.version != 0) {
       if ((data.version >= 4 && data.version <= 4.1) || data.version < 3.2) {
         setEndCycle(true);
         setSelectCarge(true);
-
       }
 
       if (data.selection === 0 && (data.version >= 4.42 || (data.version >= 3.42 && data.version < 4))) {
@@ -384,12 +383,10 @@ const RectificationProcessPage = () => {
   const [newRecipeName, setNewRecipeName] = useState('');
 
   const recipeRename = async () => {
-
     if (!newRecipeName.trim()) {
       toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(newRecipeName)) {
       toast.warning(t('scenario_name_error'));
-
     } else {
       const recipeData = {
         key: key,
@@ -403,7 +400,6 @@ const RectificationProcessPage = () => {
       setDialogRenameVisible(false);
       setNewRecipeName('');
       toast.success(t('scenario_rename_success') + newRecipeName);
-
     }
   };
 
@@ -562,16 +558,31 @@ const RectificationProcessPage = () => {
         <div className="flex flex-column w-1/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
+              <ACBlockTempSmall
+                name={t('cube')}
+                color="purple"
+                temp={String(data.tempCube)}
+                help={t('help_temp_cube')}
+              />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
+              <ACBlockTempSmall
+                name={t('carga')}
+                color="orange"
+                temp={String(data.tempCargi)}
+                help={t('help_temp_cargi')}
+              />
             </div>
             <div className="col-6">
               <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
+              <ACBlockTempSmall
+                name={t('water')}
+                color="blue"
+                temp={String(data.tempWater)}
+                help={t('help_temp_water')}
+              />
             </div>
           </div>
           <div className="flex flex-column align-items-center justify-content-center w-full">
@@ -597,7 +608,8 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
-                        units=" °C"
+                        units="°C"
+                        hint="hysteresis"
                         value={value}
                         label={t('process_rect_gist_selection_heads')}
                         help={t('help_gist_selection_heads')}
@@ -628,7 +640,8 @@ const RectificationProcessPage = () => {
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
-                        units=" °C"
+                        units="°C"
+                        hint="hysteresis"
                         value={value}
                         label={t('process_rect_gist_selection_body')}
                         help={t('help_gist_selection_body')}
@@ -937,6 +950,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_cycles_number')}
                     value={value}
                     units=" "
+                    hint="cycles"
                     help={t('help_cycles')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -1061,7 +1075,11 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               <div className="flex flex-row align-items-center justify-content-center w-full">
-                <ACRegulator icon="arrow_curve" label={t('process_rect_selection_tails')} help={t('help_selection_tails')} />
+                <ACRegulator
+                  icon="arrow_curve"
+                  label={t('process_rect_selection_tails')}
+                  help={t('help_selection_tails')}
+                />
                 <Controller
                   name="rectSwitchTail"
                   control={control}
@@ -1079,7 +1097,6 @@ const RectificationProcessPage = () => {
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-
               {data.transitBody === 1 && (
                 <Controller
                   name="rectTimeBody"
@@ -1113,7 +1130,6 @@ const RectificationProcessPage = () => {
                   )}
                 />
               )}
-
             </div>
 
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -1154,7 +1170,6 @@ const RectificationProcessPage = () => {
                       onLabel={t('toggle_many')}
                       offLabel={t('toggle_one')}
                       disabled={disabledSwitchCube}
-
                     />
                   )}
                 />
@@ -1168,28 +1183,26 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeCreate}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText
             id="create-scenario"
             style={{ width: '80%' }}
@@ -1202,28 +1215,26 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field">
           <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
@@ -1232,50 +1243,48 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <p>{t('scenario_dialog_name')} {recipeName}</p>
+        <p>
+          {t('scenario_dialog_name')} {recipeName}
+        </p>
       </Dialog>
 
       <Dialog
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDownloadVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDownload}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>

@@ -10,10 +10,11 @@ import { toast } from 'react-toastify';
 import { useSaveRoomMutation } from '../api/saveRoomApi';
 import { useCreateRoomMutation } from '../api/createRoomApi';
 import { useDeleteRoomMutation } from '../api/deleteRoomApi';
-import '../styles/main_page.css';
-import 'primeflex/primeflex.css';
 import { useChangeNameMutation } from '../api/changeNameApi';
 import { useTranslation } from 'react-i18next';
+import '../styles/styles.css';
+import '../styles/main_page.css';
+import 'primeflex/primeflex.css';
 
 const MainPage = () => {
   const key = useSelector((state: RootState) => state.key.key) as string;
@@ -140,33 +141,30 @@ const MainPage = () => {
       <Dialog
         header={t('main_dialog_add_device')}
         visible={visible}
-        style={{ width: '350px' }}
-        className="custom-dialog"
+        className="dialog"
         onHide={() => {
           if (!visible) return;
           setVisible(false);
         }}
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={DialogCreateRoom}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText
             id="inputField"
             value={machineNumber}
@@ -178,26 +176,24 @@ const MainPage = () => {
       <Dialog
         header={t('main_dialog_delete_device')}
         visible={visible_delete}
-        style={{ width: '350px' }}
+        className='dialog'
         onHide={() => {
           if (!visible_delete) return;
           setvisible_delete(false);
         }}
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setvisible_delete(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={() => handleDeleteClick()}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>

@@ -14,3 +14,7 @@ body {
 h1 {
   color: #ffffff;
 }
+
+.dialog{
+  width: 500px;
+}

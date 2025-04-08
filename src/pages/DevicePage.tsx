@@ -15,6 +15,8 @@ import DashedIcon from '../assets/icons/dashed_icon';
 import SeparatorIcon from '../assets/icons/separator_icon';
 import OutsideSeparatorIcon from '../assets/icons/separator_outside';
 import UnderTextIcon from '../assets/icons/under_text_icon';
+import ArrowUpIcon from '../assets/icons/arrow_up_icon';
+import OutputIcon from '../assets/icons/output_icon';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useGetDataQuery } from '../api/samogonApi';
@@ -24,10 +26,12 @@ import { ACStatusComp } from '../components/statuscomp';
 import { Button } from 'primereact/button';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
+import '../styles/styles.css';
 import ArrowUpIcon from '../assets/icons/arrow_up_icon';
 import styles from '../styles/device_page';
 import { set } from 'lodash';
 import { useClearErrorMutation } from '../api/clearErrorApi';
+
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -135,7 +139,7 @@ const DevicePage = () => {
             {name}
           </p>
         </div>
-        <Dialog header={name} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+        <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className='dialog'>
           <p>{help}</p>
         </Dialog>
       </div>
@@ -653,6 +657,7 @@ const DevicePage = () => {
           <VidbirIcon style={{ position: 'absolute', top: 42.67, left: 326.73 }} />
           <WaterBarIcon style={{ position: 'absolute', top: 42.67, left: 52.3 }} />
           <FridgeIcon style={{ position: 'absolute', top: 273.936, left: 51.65 }} />
+          <OutputIcon style={{ position: 'absolute', top: 540, left: -4}}/>
           <KlapanIcon style={{ position: 'absolute', top: 426.66, left: 56.14, transform: rotation3 }} id="k3_heads" />
           <KlapanIcon
             color="black"
@@ -704,6 +709,7 @@ const DevicePage = () => {
           />
 
           {arrows}
+
 
           <Button
             label={t('device_reset_button')}

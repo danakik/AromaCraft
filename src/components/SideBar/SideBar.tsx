@@ -160,6 +160,11 @@ export const SideBar = (props: PanelMenuProps) => {
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',
           },
+          {
+            label: 'Розрахунки для процесу затирання',
+            command: () => navigate('/calcmashing'),
+            className: location.pathname === '/calcmashing' ? 'active' : '',
+          },
         ],
       },
       {
@@ -192,7 +197,11 @@ export const SideBar = (props: PanelMenuProps) => {
       newExpandedKeys['process'] = true;
     }
 
-    if (location.pathname.startsWith('/datatemperatures') || location.pathname.startsWith('/calculation')) {
+    if (
+      location.pathname.startsWith('/datatemperatures') || 
+      location.pathname.startsWith('/calculation') || 
+      location.pathname.startsWith('/calcmashing') 
+    ) {
       newExpandedKeys['data'] = true;
     }
 
@@ -213,8 +222,7 @@ export const SideBar = (props: PanelMenuProps) => {
             />
           </div>
         </div>
-        <div className="flex flex-row align-items-center justify-content-center w-full select-lang" style={{ marginTop: 'auto', marginBottom: '40px' }}>
-          {/* <i className="pi pi-globe" style={{ fontSize: '1.2rem' }}></i> */}
+        <div className="flex flex-row align-items-center justify-content-center w-full select-lang mt-auto" style={{ marginBottom: '40px' }}>
           <SelectButton
             value={selectedOption}
             options={selectButtonOptions}

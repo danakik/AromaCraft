@@ -1,10 +1,11 @@
-import '../styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useState, useEffect } from 'react';
 import { Knob } from 'primereact/knob';
 import { Dialog } from 'primereact/dialog';
 import { Slider, SliderChangeEvent } from 'primereact/slider';
 import { InputNumber, InputNumberValueChangeEvent } from 'primereact/inputnumber';
+import Gradients from '../assets/knob_slider_gradients';
+import '../styles/styles.css';
 import '../styles/knob.css';
 
 type KnobProps = {
@@ -12,7 +13,7 @@ type KnobProps = {
   initialValue: number;
   color: 'orange' | 'blue' | 'purple' | 'red';
   readonly?: boolean;
-  help?: string;
+  help?: string; // hint text in the dialog
   onChange?: (e: { value: number | [number, number] }) => void;
 };
 
@@ -76,26 +77,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
 
   return (
     <div className="card flex flex-column align-items-center justify-content-center pb-2">
-      <svg width="0" height="0">
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#E7724A', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#E84D4B', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#2A41E0', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#6749AE', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#9e4ae7', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#5514bc', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#e74a4a', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#a9124f', stopOpacity: 1 }} />
-          </linearGradient>
-        </defs>
-      </svg>
+      <Gradients />
 
       <div className="knob-container">
         <Knob
@@ -131,14 +113,21 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
         {label}
       </span>
 
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>
   );
 };
 
-export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange }) => {
+export const ACSlider: React.FC<KnobProps> = ({
+  label,
+  initialValue,
+  color,
+  readonly = false,
+  help = '',
+  onChange,
+}) => {
   const [value, setValue] = useState<number>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -165,26 +154,7 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
 
   return (
     <div className="card flex flex-column align-items-center justify-content-center">
-      <svg width="0" height="0">
-        <defs>
-          <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#E7724A', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#E84D4B', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#2A41E0', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#6749AE', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#9e4ae7', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#5514bc', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#e74a4a', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#a9124f', stopOpacity: 1 }} />
-          </linearGradient>
-        </defs>
-      </svg>
+      <Gradients />
 
       <div className="ac-slider-container pb-2">
         <Slider
@@ -209,14 +179,14 @@ export const ACSlider: React.FC<KnobProps> = ({ label, initialValue, color, read
             max={120}
             step={0.1}
           />
-          </div>
+        </div>
       </div>
 
       <span className="knob-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
         {label}
       </span>
 
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>

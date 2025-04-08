@@ -14,7 +14,6 @@ import { ACSwitch } from '../components/switch';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import '../styles/process_page.css';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
@@ -28,6 +27,8 @@ import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useMashingSaveMutation } from '../api/mashingSaveApi';
 import { useTranslation } from 'react-i18next';
+import '../styles/process_page.css';
+import '../styles/styles.css';
 
 type FormData = {
   mashingPauses: number;
@@ -796,28 +797,26 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeCreate}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText
             id="create-scenario"
             style={{ width: '80%' }}
@@ -830,28 +829,26 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
@@ -860,22 +857,20 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
@@ -888,22 +883,20 @@ const MashingProcessPage = () => {
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDownloadVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDownload}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>

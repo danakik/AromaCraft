@@ -27,19 +27,73 @@ import { InputNumber } from 'primereact/inputnumber';
 
 type RegulatorProps1 = {
   icon: string;
-  color?: string;
+  color?: string; // icon color
   label: string;
-  value?: number;
-  units?: string;
-  help?: string;
+  value?: number; //if value not mentioned counter won`t be added
+  units?: string; //if units not mentioned counter won`t be added
+  help?: string;  // hint text in the dialog
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
-  hint?: string;
+  hint?: string;  // additional hint for units
+};
+
+const getIcon = (icon: string) => {
+  switch (icon) {
+    case 'ten':
+      return TenIcon;
+    case 'pid':
+      return PidIcon;
+    case 'water':
+      return WaterIcon;
+    case 'select_valve':
+      return SelectValveIcon;
+    case 'valve_heads':
+      return ValveHeadsIcon;
+    case 'valve_tails':
+      return ValveTailsIcon;
+    case 'temp':
+      return TempIcon;
+    case 'time':
+      return TimeIcon;
+    case 'speed':
+      return SpeedIcon;
+    case 'list':
+      return ListIcon;
+    case 'timer':
+      return TimerIcon;
+    case 'temp_minus':
+      return TempMIcon;
+    case 'temp_plus':
+      return TempPIcon;
+    case 'sort':
+      return SortIcon;
+    case 'arrow_curve':
+      return ArrowCurveIcon;
+    case 'arrow_fork':
+      return ArrowForkIcon;
+    case 'antena_bars':
+      return ABarsIcon;
+    case 'breakdown':
+      return BreakdownIcon;
+    default:
+      return null;
+  }
+};
+
+const getColor = (color: string) => {
+  switch (color) {
+    case 'orange':
+      return '#E7764A';
+    case 'purple':
+      return '#6749AE';
+    default:
+      return 'white';
+  }
 };
 
 export const ACRegulator: React.FC<RegulatorProps1> = ({
   icon,
-  color,
+  color = 'white',
   label,
   value = null,
   units,
@@ -58,84 +112,14 @@ export const ACRegulator: React.FC<RegulatorProps1> = ({
     setDialogVisible(false);
   };
 
-  let IconComponent;
-  switch (icon) {
-    case 'ten':
-      IconComponent = TenIcon;
-      break;
-    case 'pid':
-      IconComponent = PidIcon;
-      break;
-    case 'water':
-      IconComponent = WaterIcon;
-      break;
-    case 'select_valve':
-      IconComponent = SelectValveIcon;
-      break;
-    case 'valve_heads':
-      IconComponent = ValveHeadsIcon;
-      break;
-    case 'valve_tails':
-      IconComponent = ValveTailsIcon;
-      break;
-    case 'temp':
-      IconComponent = TempIcon;
-      break;
-    case 'time':
-      IconComponent = TimeIcon;
-      break;
-    case 'speed':
-      IconComponent = SpeedIcon;
-      break;
-    case 'list':
-      IconComponent = ListIcon;
-      break;
-    case 'timer':
-      IconComponent = TimerIcon;
-      break;
-    case 'temp_minus':
-      IconComponent = TempMIcon;
-      break;
-    case 'temp_plus':
-      IconComponent = TempPIcon;
-      break;
-    case 'sort':
-      IconComponent = SortIcon;
-      break;
-    case 'arrow_curve':
-      IconComponent = ArrowCurveIcon;
-      break;
-    case 'arrow_fork':
-      IconComponent = ArrowForkIcon;
-      break;
-    case 'antena_bars':
-      IconComponent = ABarsIcon;
-      break;
-    case 'breakdown':
-      IconComponent = BreakdownIcon;
-      break;
-    default:
-      IconComponent = null;
-  }
-
-  let iconColor;
-  switch (color) {
-    case 'orange':
-      iconColor = '#E7764A';
-      break;
-    case 'purple':
-      iconColor = '#6749AE';
-      break;
-    default:
-      iconColor = 'white';
-      break;
-  }
+  let IconComponent = getIcon(icon);
+  let iconColor = getColor(color);
 
   return (
     <div className="ac-regulator">
       <div className="ac-left-content">
         {IconComponent && (
-          <IconComponent className="icon" color={iconColor} onClick={handleClick} style={{ cursor: 'pointer' }} />
+          <IconComponent className="icon" color={iconColor} style={{ cursor: 'pointer' }} onClick={handleClick} />
         )}
         <span className="reg-label" onClick={handleClick} style={{ cursor: 'pointer' }}>
           {label}
@@ -146,7 +130,7 @@ export const ACRegulator: React.FC<RegulatorProps1> = ({
           <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint} />
         )}
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>
@@ -171,7 +155,7 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
   units,
   label,
   help,
-  icon,
+  icon = '',
   color = 'white',
   onChange,
   disabled = false,
@@ -207,28 +191,15 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
   useEffect(() => setCount(value), [value]);
   useEffect(() => setT_count(true_value), [true_value]);
 
-  let IconComponent;
-  switch (icon) {
-    case 'speed':
-      IconComponent = SpeedIcon;
-      break;
-    case 'temp':
-      IconComponent = TempIcon;
-      break;
-    case 'time':
-      IconComponent = TimeIcon;
-      break;
-    case 'ten':
-      IconComponent = TenIcon;
-      break;
-    default:
-      IconComponent = null;
-  }
+  let IconComponent = getIcon(icon);
+  let iconColor = getColor(color);
 
   return (
     <div className="ac-regulator">
       <div className="ac-left-content">
-        {IconComponent && <IconComponent style={{ color, cursor: 'pointer' }} onClick={handleLabelClick} />}
+        {IconComponent && (
+          <IconComponent className="icon" color={iconColor} style={{ cursor: 'pointer' }} onClick={handleLabelClick} />
+        )}
         <p className="reg-label" onClick={handleLabelClick} style={{ cursor: 'pointer' }}>
           {label}
         </p>
@@ -253,7 +224,7 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
           <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
         </div>
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>
