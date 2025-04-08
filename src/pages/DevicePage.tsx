@@ -27,11 +27,8 @@ import { Button } from 'primereact/button';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
 import '../styles/styles.css';
-import ArrowUpIcon from '../assets/icons/arrow_up_icon';
-import styles from '../styles/device_page';
 import { set } from 'lodash';
 import { useClearErrorMutation } from '../api/clearErrorApi';
-
 
 const DevicePage = () => {
   const key = localStorage.getItem('samogonKey');
@@ -139,7 +136,7 @@ const DevicePage = () => {
             {name}
           </p>
         </div>
-        <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+        <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className="dialog">
           <p>{help}</p>
         </Dialog>
       </div>
@@ -291,13 +288,13 @@ const DevicePage = () => {
 
     if (data.distController >= 1) {
       if (data.isProcessSuccess) {
-        name = 'Дистиляція';
+        name = t('menu_process_distillation');
       } else {
-        name = 'Аварія - немає звязку';
+        name = t('device_no_connection');
       }
 
       if (data.distController === 1) {
-        status = 'Розгін';
+        status = t('status_acceleration');
       } else if (data.distController === 2) {
         if (data.distTimeBody > 0 || data.distCubeSwitch === 1) {
           if (data.distCubeSwitch === 1) {
@@ -307,17 +304,17 @@ const DevicePage = () => {
           }
 
           if (data.k3 === 1) {
-            status = 'Відбір голов';
+            status = t('status_selection_heads');
           } else {
-            status = 'Відбір тіла';
+            status = t('status_selection_body');
           }
         } else {
-          status = 'Відбір';
+          status = t('status_selection');
         }
       } else if (data.distController === 3) {
-        status = 'Зупинка';
+        status = t('status_stop');
       } else {
-        status = 'Завершено';
+        status = t('status_completed');
       }
 
       setT1cValue(data.distTempStop.toFixed(1));
@@ -329,17 +326,17 @@ const DevicePage = () => {
     }
     if (data.rectController >= 1) {
       if (data.isProcessSuccess) {
-        name = 'Ректифікація';
+        name = t('menu_process_rectification');
       } else {
-        name = 'Аварія - немає звязку';
+        name = t('device_no_connection');
       }
 
       if (data.rectController === 1) {
-        status = 'Розгін';
+        status = t('status_acceleration');
       } else if (data.rectController === 2) {
-        status = 'Пауза 00:' + (data.rectPause < 10 ? '0' : '') + data.rectPause;
+        status = t('status_pause') + (data.rectPause < 10 ? '0' : '') + data.rectPause;
       } else if (data.rectController === 3) {
-        status = 'Відбір голів';
+        status = t('status_selection_heads');
 
         setT3bDisplay('block');
         if (data.transitBody === 1) {
@@ -354,7 +351,7 @@ const DevicePage = () => {
             setSpeedSymbol('%');
           } else if (data.selection === 1 || data.version >= 2.5) {
             setSpeedValue((data.selectionSpeed * data.rectPercentHead * 0.05).toFixed(2));
-            setSpeedSymbol('l/h');
+            setSpeedSymbol(t('unit_liter_per_gram'));
           }
           setSpeedDisplay('block');
         } else {
@@ -363,7 +360,7 @@ const DevicePage = () => {
           setSpeedDisplay('block');
         }
       } else if (data.rectController === 4) {
-        status = 'Відбір тіла';
+        status = t('status_selection_body');
 
         setT3bDisplay('block');
         setSpeedDisplay('block');
@@ -384,13 +381,13 @@ const DevicePage = () => {
                 setTailValue(`${data.rectSpeedTail < 10 ? '0' : ''}${data.rectSpeedTail}`);
                 setTailSymbol('%');
               } else {
-                setTailValue('колона');
+                setTailValue(t('device_column'));
               }
             }
           } else if (data.selection === 1 && data.version >= 2.5) {
             if (data.rectSwitchTail === 0 || (data.klapan4 === 0 && data.rectSwitchTail === 1)) {
               setSpeedValue((data.selectionSpeed * data.accumulation * 0.05).toFixed(2));
-              setSpeedSymbol('l/h');
+              setSpeedSymbol(t('unit_liter_per_gram'));
             } else {
               setSpeedValue('');
               setSpeedSymbol('');
@@ -398,9 +395,9 @@ const DevicePage = () => {
             if (data.version > 4) {
               if (data.rectSwitchTail === 0) {
                 setTailValue((data.selectionSpeed * data.rectSpeedTail * 0.05).toFixed(2));
-                setTailSymbol('l/h');
+                setTailSymbol(t('unit_liter_per_gram'));
               } else {
-                setTailValue('колона');
+                setTailValue(t('device_column'));
               }
             }
           }
@@ -412,9 +409,9 @@ const DevicePage = () => {
           setSpeedDisplay('block');
         }
       } else if (data.rectController === 5) {
-        status = 'Зупинка';
+        status = t('status_stop');
       } else {
-        status = 'Завершено';
+        status = t('status_completed');
       }
       if (data.rectController < 4 || data.rectTempCarge === 0) {
         setT2bValue(data.rectTempPower.toFixed(1));
@@ -435,16 +432,16 @@ const DevicePage = () => {
     }
     if (data.handController >= 1) {
       if (data.isProcessSuccess) {
-        name = 'Ручний режим';
+        name = t('device_manual');
       } else {
-        name = 'Аварія - немає звязку';
+        name = t('device_no_connection');
       }
     }
     if (data.mashingController >= 1) {
       if (data.isProcessSuccess) {
-        name = 'Затирання';
+        name = t('menu_process_mashing');
       } else {
-        name = 'Аварія - немає звязку';
+        name = t('device_no_connection');
       }
       if (data.mashingController <= 10) {
         const mashingTemps = [
@@ -465,7 +462,7 @@ const DevicePage = () => {
       } else if (data.mashingController === 11) {
         status = t('status_waiting_boiling');
       } else if (data.mashingController === 12) {
-        status = `${t('status_boiling')} ${data.mashingHeatPower}% на ${data.mashingHeatTemp.toFixed(1)}°`;
+        status = `${t('status_boiling')} ${data.mashingHeatPower}% ${t('device_boiling_power')} ${data.mashingHeatTemp.toFixed(1)}°`;
       } else if (data.mashingController === 13) {
         status = t('status_waiting_cooling');
       } else if (data.mashingController === 14) {
@@ -481,9 +478,9 @@ const DevicePage = () => {
       data.mashingController === 0
     ) {
       if (data.isProcessSuccess) {
-        name = 'Готовий до роботи';
+        name = t('device_ready');
       } else {
-        name = 'Аварія - немає звязку';
+        name = t('device_no_connection');
       }
       setTimerDisplay('none');
     } else if (data.handController === 0 && data.mashingController === 0) {
@@ -510,9 +507,9 @@ const DevicePage = () => {
     }
     if (data.errorWork >= 3) {
       if (data.errorWork === 3) {
-        status = `Тривога в ${data.errorData}`;
+        status = `${t('device_alarm')} ${data.errorData}`;
       } else {
-        status = `Тривога, пожежа в ${data.errorData}`;
+        status = `${t('device_alarm_fire')} ${data.errorData}`;
       }
     } else if (data.distError === 1 || data.rectError === 1 || data.errorMashing === 1) {
       status = t('status_error_cube');
@@ -527,11 +524,11 @@ const DevicePage = () => {
     } else if (data.rectError === 3) {
       status = t('status_error_defl');
     } else if (data.errorHand === 5) {
-      status = 'ПОМИЛКА ПЕРЕГРІВ КУБА';
+      status = t('status_cube_overheat');
     } else if (data.errorHand === 6) {
-      status = 'ПОМИЛКА ПЕРЕГРІВ ВОДА';
+      status = t('status_water_overheat');
     } else if (data.handController >= 1 && data.errorHand === 0) {
-      status = 'В ПРОЦЕСІ';
+      status = t('device_in_process');
     } else if (
       data.distError === 0 &&
       data.rectError === 0 &&
@@ -542,7 +539,7 @@ const DevicePage = () => {
       data.handController === 0 &&
       data.mashingController === 0
     ) {
-      status = 'СТАТУС ОЧІКУВАННЯ';
+      status = t('status_waiting');
     }
     if (data.version > 2.3 && data.handController > 0) {
       setPIDDisplay('block');
@@ -564,7 +561,7 @@ const DevicePage = () => {
 
   const clickError = async () => {
     await errorClear({ key: key || '' });
-  }
+  };
 
   return (
     <>
@@ -572,7 +569,9 @@ const DevicePage = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>{updateStatus}</div>
+        <div style={{ float: 'left' }}>
+          <ACStatusComp status_text={updateStatus} />
+        </div>
       </header>
       <div className="relative w-full h-full">
         <UnderTextIcon style={{ position: 'absolute', top: 140.5, left: 89 }} />
@@ -657,7 +656,7 @@ const DevicePage = () => {
           <VidbirIcon style={{ position: 'absolute', top: 42.67, left: 326.73 }} />
           <WaterBarIcon style={{ position: 'absolute', top: 42.67, left: 52.3 }} />
           <FridgeIcon style={{ position: 'absolute', top: 273.936, left: 51.65 }} />
-          <OutputIcon style={{ position: 'absolute', top: 540, left: -4}}/>
+          <OutputIcon style={{ position: 'absolute', top: 540, left: -4 }} />
           <KlapanIcon style={{ position: 'absolute', top: 426.66, left: 56.14, transform: rotation3 }} id="k3_heads" />
           <KlapanIcon
             color="black"
@@ -709,7 +708,6 @@ const DevicePage = () => {
           />
 
           {arrows}
-
 
           <Button
             label={t('device_reset_button')}

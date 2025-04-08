@@ -47,3 +47,25 @@
     border: none;
     color:white;
 }
+
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 80vh; /* Ограничиваем высоту */
+    overflow-y: auto; /* Включаем вертикальный скролл */
+    padding-right: 10px; /* Чтобы скролл не накладывался на контент */
+  }
+  
+  .chart-wrapper {
+    min-height: 200px;
+    width: 100%;
+  }
+
+  .time-filter-buttons{
+    margin: 2px;
+    padding: 2px 8px;
+    font-size: 15px;
+    font-weight: 500;
+  }

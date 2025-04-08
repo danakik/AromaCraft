@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useGetDataQuery } from '../api/samogonApi';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
+import { Button } from 'primereact/button';
 
 type TemperatureEntry = [number, number, number, number, number, number];
 
@@ -144,28 +145,28 @@ const DataTemperaturesPage: React.FC = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
       </header>
-      <div className="time-filter-buttons">
-        <button onClick={() => filterByHours(1)} disabled={availableHours < 1}>
-          1 година
-        </button>
-        <button onClick={() => filterByHours(2)} disabled={availableHours < 2}>
-          2 години
-        </button>
-        <button onClick={() => filterByHours(6)} disabled={availableHours < 6}>
-          6 год
-        </button>
-        <button onClick={() => filterByHours(12)} disabled={availableHours < 12}>
-          12 год
-        </button>
-        <button onClick={() => filterByHours(24)} disabled={availableHours < 24}>
-          24 год
-        </button>
-        <button onClick={() => filterByHours(48)} disabled={availableHours < 48}>
-          48 год
-        </button>
-        <button onClick={handleShowAll}>Все</button>
+      <div>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(1)} disabled={availableHours < 1}>
+          1 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(2)} disabled={availableHours < 2}>
+          2 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(6)} disabled={availableHours < 6}>
+          6 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(12)} disabled={availableHours < 12}>
+          12 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(24)} disabled={availableHours < 24}>
+          24 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={() => filterByHours(48)} disabled={availableHours < 48}>
+          48 {t('unit_time')}
+        </Button>
+        <Button className="time-filter-buttons" onClick={handleShowAll}>{t('all')}</Button>
       </div>
-      <div className="chart-container">
+      <div className="chart-container custom-scrollbar">
         {chartData.length > 0 &&
           chartData.map((series, index) => (
             <div key={index} className="chart-wrapper">
@@ -185,6 +186,23 @@ const DataTemperaturesPage: React.FC = () => {
             </div>
           ))}
       </div>
+      <div style={{ height: '60px' }} className="flex flex-row w-full align-items-evenly justify-content-evenly block">
+          <ul className="temp-list">
+            <li className="temp-cube">{t('settings_temp_cube')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-cargi">{t('settings_temp_carga')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-defl">{t('settings_temp_defl')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-water">{t('settings_temp_water')}</li>
+          </ul>
+          <ul className="temp-list">
+            <li className="temp-baro">{t('settings_barometer')}</li>
+          </ul>
+        </div>
     </>
   );
 };
