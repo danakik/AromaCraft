@@ -33,3 +33,17 @@
 .temp-baro::marker {
     color: #70d4cf;
 }
+
+.temp-button{
+    border-radius: 4px;
+    background-color: white;
+    border: none;
+    color:#9e4ae7;
+    margin: 1px;
+}
+
+.temp-button:focus{
+    background-color: #9e4ae7;
+    border: none;
+    color:white;
+}

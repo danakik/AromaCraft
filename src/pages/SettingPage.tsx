@@ -199,9 +199,6 @@ const SettingPage = () => {
         <div style={{ float: 'right' }}>
           <ACUserComp serial_number={key || ''} />
         </div>
-        <div style={{ float: 'left' }}>
-{/*           <ACStatusComp status_text={'Очікування...'} /> */}
-        </div>
       </header>
 
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
@@ -220,7 +217,8 @@ const SettingPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACCounterLabel
-                    units="°C "
+                    units="°C"
+                    hint="calibration"
                     value={value}
                     label={t('settings_temp_cube_change')}
                     help={t('help_set_temp_cube')}
@@ -242,7 +240,8 @@ const SettingPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACCounterLabel
-                    units="°C "
+                    units="°C"
+                    hint="calibration"
                     value={value}
                     label={t('settings_temp_carga_change')}
                     help={t('help_set_temp_cargi')}
@@ -264,7 +263,8 @@ const SettingPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACCounterLabel
-                    units="°C "
+                    units="°C"
+                    hint="calibration"
                     value={value}
                     label={t('settings_temp_defl_change')}
                     help={t('help_set_temp_defl')}
@@ -286,7 +286,8 @@ const SettingPage = () => {
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
                   <ACCounterLabel
-                    units="°C "
+                    units="°C"
+                    hint="calibration"
                     value={value}
                     label={t('settings_temp_water_change')}
                     help={t('help_set_temp_water')}

@@ -10,7 +10,6 @@ import { ToggleButton } from 'primereact/togglebutton';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import '../styles/process_page.css';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useGetDataQuery } from '../api/samogonApi';
 import { skipToken } from '@reduxjs/toolkit/query';
@@ -23,6 +22,8 @@ import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
 import { useDistillationSaveMutation } from '../api/distillationSave';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
+import '../styles/process_page.css';
+import '../styles/styles.css';
 
 type FormData = {
   distTempPower: number;
@@ -195,7 +196,6 @@ const DistillationProcessPage = () => {
   const [disabledButtonSkip, setDisabledButtonSkip] = useState(false);
 
   const updateCommandControls = useCallback(() => {
-
     if (data.version != 0) {
       // Updates the state of the start button
       setStartLabel(distCommand > 0 ? t('process_start2') : t('process_start1'));
@@ -209,10 +209,9 @@ const DistillationProcessPage = () => {
           setDistCommand(data.distController);
           if (distCommand === 4) setDistCommand(0);
         }
-
       }
 
-      // Enables the "Skip" button if the conditions are met
+      // Enables the "Skip"if the conditions are met
       if (
         countRecipe === 0 && //or the number of recipes or what recipe
         data.distController >= 1 &&
@@ -258,7 +257,6 @@ const DistillationProcessPage = () => {
   const [newRecipeName, setNewRecipeName] = useState('');
 
   const recipeRename = async () => {
-
     if (!newRecipeName.trim()) {
       toast.error(t('scenario_rename_error1')); // Error if field is empty
       return;
@@ -279,7 +277,6 @@ const DistillationProcessPage = () => {
       setDialogRenameVisible(false);
       setNewRecipeName('');
       toast.success(t('scenario_rename_success') + newRecipeName);
-
     }
   };
 
@@ -319,7 +316,6 @@ const DistillationProcessPage = () => {
       setDialogCreateVisible(false);
       setNameCreateRecipe('');
       toast.success(t('scenario_create_success'));
-
     }
   };
 
@@ -353,9 +349,7 @@ const DistillationProcessPage = () => {
       case 2:
       case 4:
         if (timeBody > 0 || cubeSwith) {
-
           updateStatus = data.k3 === 1 ? t('status_selection_heads') : t('status_selection_body');
-
         } else {
           updateStatus = t('status_selection');
         }
@@ -419,7 +413,6 @@ const DistillationProcessPage = () => {
     }
   };
 
-
   const dontSendPass = () => {
     // I don't know if it's needed
     if (data.distController === 2) {
@@ -430,7 +423,6 @@ const DistillationProcessPage = () => {
   };
   if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
-
 
   return (
     <>
@@ -516,7 +508,6 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-
               {!hideButtonSkip && (
                 <Button
                   label={t('process_skip')}
@@ -525,7 +516,6 @@ const DistillationProcessPage = () => {
                 />
               )}
               {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
-
             </div>
           </div>
 
@@ -584,7 +574,11 @@ const DistillationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>{t('process_other')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
-              <ACRegulator icon="arrow_fork" label={t('process_dist_transition_body')} help={t('help_temp_transition_body')} />
+              <ACRegulator
+                icon="arrow_fork"
+                label={t('process_dist_transition_body')}
+                help={t('help_temp_transition_body')}
+              />
               <Controller
                 name="distCubeSwitch"
                 control={control}
@@ -657,28 +651,26 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogCreateVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeCreate}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText
             id="create-scenario"
             style={{ width: '80%' }}
@@ -691,28 +683,26 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogRenameVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeRename}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <div className="field" style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="field flex justify-content-center">
           <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
@@ -721,50 +711,48 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
               label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDeleteVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
               label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDelete}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>
         }
       >
-        <p>{t('scenario_dialog_name')} {recipeName}</p>
+        <p>
+          {t('scenario_dialog_name')} {recipeName}
+        </p>
       </Dialog>
 
       <Dialog
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        style={{ width: '500px' }}
+        className='dialog'
         footer={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className="flex justify-content-evenly">
             <Button
-              label="Скасувати"
+              label={t('button_cancel')}
               icon="pi pi-times"
               onClick={() => setDialogDownloadVisible(false)}
-              className="p-button-text button button-cancel"
-              style={{ width: '150px' }}
+              className="button-cancel"
             />
             <Button
-              label="Підтвердити"
+              label={t('button_confirm')}
               icon="pi pi-check"
               onClick={recipeDownload}
-              className="p-button-text button button-confirm"
-              style={{ width: '150px' }}
+              className="button-confirm"
               autoFocus
             />
           </div>

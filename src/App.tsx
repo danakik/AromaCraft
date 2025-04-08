@@ -13,6 +13,7 @@ import MashingProcessPage from './pages/MashingProcessPage';
 import SettingPage from './pages/SettingPage';
 import DataTemperaturesPage from './pages/DataTemperaturesPage';
 import CalculationPage from './pages/CalculationPage';
+import CalcMashingPage from './pages/CalcMashingPage';
 import './styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Route path="mashingprocess" element={<MashingProcessPage />} />
           <Route path="calculation" element={<CalculationPage />} />
           <Route path="datatemperatures" element={<DataTemperaturesPage />} />
+          <Route path="calcmashing" element={<CalcMashingPage />} />
           <Route path="setting" element={<SettingPage />} />
           <Route path="login" element={<LoginPage />} />
         </Route>

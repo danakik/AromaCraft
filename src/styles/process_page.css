@@ -31,14 +31,21 @@ header {
   border-radius: 12px;
 }
 
-.custom-toggle-button .p-button {
-  width: 48px !important;
+.custom-three-button .p-button, .custom-toggle-button .p-button{
+  width: 40px !important;
   height: 28px !important;
   margin: 0 !important;
   padding: 0 !important;
   font-size: 8px !important;
   font-weight: 50 !important;
+}
+.custom-toggle-button .p-button {
   color: #111828 !important;
+}
+.custom-three-button .p-button {
+  border: none !important;
+  border-radius: 6px !important;
+  transition: background-color 0.3s ease !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -87,5 +94,6 @@ header {
 }
 
 .button-confirm, .button-cancel {
-  width: 150px;
+  width: 150px !important;
+  border: none !important;
 }

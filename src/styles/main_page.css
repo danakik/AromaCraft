@@ -72,8 +72,9 @@
 .button-enter, .button-delete, .button-rename{
     height: 36px;
 }
-.button-confirm, .button-cancel {
-    width: 150px;
+.button-confirm, .button-cancel{
+    width: 150px !important;
+    border: none !important;
 }
 
 .button-delete, .button-cancel {

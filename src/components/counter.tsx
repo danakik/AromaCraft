@@ -11,62 +11,78 @@ type CounterProps = {
   units: string;
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
-  hint?: string;
+  hint?: string; // additional hint for units
 };
 
-export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false, hint }) => {
-  let min = 0,
-    max = 100,
-    step = 1;
+const getUnit = (units: string, hint?: string) => {
+  let min, max, step;
+
   switch (units) {
     case '%':
-      step = 1;
       min = 0;
       max = 100;
-      break;
-    case 'л/г':
-      step = 0.01;
-      min = 0.0;
-      max = 6;
+      step = 1;
       break;
     case '°C':
-      step = 2;
       min = 0;
       max = 120;
+      step = 2;
       break;
-    case ' °C': //гістерезис
-      step = 0.1;
-      min = 0.1;
-      max = 2;
-      break;
-    case '°C ': //зміна температури в налаштуваннях
-      step = 0.1;
-      min = -20;
-      max = 100;
+    case 'л/г':
+    case 'L/g':
+      min = 0.0;
+      max = 6;
+      step = 0.01;
       break;
     case 'хв':
-      step = 1;
+    case 'm':
       min = 0;
       max = Number.MAX_VALUE;
+      step = 1;
       break;
     case 'Вт':
-      step = 100;
+    case 'W':
       min = 0;
       max = 12000;
+      step = 100;
       break;
     default:
-      step = 1;
       min = 0;
       max = 100;
+      step = 1;
       break;
   }
 
   switch (hint) {
     case 'pauses':
-      step = 1;
       min = 1;
       max = 10;
+      step = 1;
+      break;
+    case 'hysteresis':
+      min = 0.1;
+      max = 2;
+      step = 0.1;
+      break;
+    case 'calibration':
+      min = -20;
+      max = 100;
+      step = 0.1;
+      break;
+    case 'cycles':
+      min = 0;
+      max = Number.MAX_VALUE;
+      step = 1;
+      break;
   }
+
+  return { min, max, step };
+};
+
+export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disabled = false, hint }) => {
+  let min = getUnit(units, hint).min;
+  let max = getUnit(units, hint).max;
+  let step = getUnit(units, hint).step;
 
   const [count, setCount] = useState(value);
 
@@ -95,7 +111,7 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disa
 
   return (
     <div className="flex flex-wrap gap-3 justify-content-center align-items-center flex flex-vertical-center">
-      <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled} />
+      <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled || count <= min} />
       <div className="custom-input">
         <InputNumber
           suffix={units}
@@ -110,7 +126,7 @@ export const ACCounter: React.FC<CounterProps> = ({ value, units, onChange, disa
           disabled={disabled}
         />
       </div>
-      <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
+      <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled || count >= max} />
     </div>
   );
 };
@@ -119,12 +135,13 @@ type CounterProps2 = {
   value: number;
   units: string;
   label: string;
-  help: string;
+  help: string;  // hint text in the dialog
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
+  hint?: string; // additional hint for units
 };
 
-export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help, onChange, disabled = false }) => {
+export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, help, onChange, disabled = false, hint }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleLabelClick = () => {
@@ -135,51 +152,9 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
     setDialogVisible(false);
   };
 
-  let min = 0,
-    max = 100,
-    step = 1;
-  switch (units) {
-    case '%':
-      step = 1;
-      min = 0;
-      max = 100;
-      break;
-    case 'л/г':
-      step = 0.01;
-      min = 0.0;
-      max = 50;
-      break;
-    case '°C':
-      step = 2;
-      min = 0;
-      max = 120;
-      break;
-    case ' °C': //гістерезис
-      step = 0.1;
-      min = 0.1;
-      max = 2;
-      break;
-    case '°C ': //зміна температури в налаштуваннях
-      step = 0.1;
-      min = -20;
-      max = 100;
-      break;
-    case 'хв':
-      step = 1;
-      min = 1;
-      max = Number.MAX_VALUE;
-      break;
-    case 'Вт':
-      step = 100;
-      min = 0;
-      max = 12000;
-      break;
-    default:
-      step = 1;
-      min = 0;
-      max = 100;
-      break;
-  }
+  let min = getUnit(units, hint).min;
+  let max = getUnit(units, hint).max;
+  let step = getUnit(units, hint).step;
 
   const [count, setCount] = useState(value);
 
@@ -212,7 +187,7 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
         {label}
       </p>
       <div className="flex flex-wrap gap-3 justify-content-center align-items-center">
-        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled} />
+        <Button icon="pi pi-minus" className="custom-button" onClick={handleDecrement} disabled={disabled || count <= min} />
         <div className="custom-input flex justify-content-center align-items-center">
           <InputNumber
             suffix={units}
@@ -227,9 +202,9 @@ export const ACCounterLabel: React.FC<CounterProps2> = ({ value, units, label, h
             disabled={disabled}
           />
         </div>
-        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
+        <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled || count >= max} />
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>
@@ -241,7 +216,7 @@ type CounterProps3 = {
   true_value: number;
   units: string;
   label: string;
-  help: string;
+  help: string; // hint text in the dialog
   disabled?: boolean;
   onChange?: (e: { value: number }) => void;
 };
@@ -324,7 +299,7 @@ export const ACCounterSpeed: React.FC<CounterProps3> = ({
         </div>
         <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} style={{ width: '500px' }}>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
         <p>{help}</p>
       </Dialog>
     </div>

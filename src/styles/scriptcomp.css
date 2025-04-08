@@ -22,3 +22,8 @@
     background-color: #4980E5;
     border: 1px solid #4980E5;
 }
+
+.p-button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}

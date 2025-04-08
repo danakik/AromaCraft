@@ -31,20 +31,10 @@ export const ACThreeStateButton: React.FC<ToggleButtonProps> = ({ onChange, init
         <Button
             label={labels[state]}
             onClick={handleClick}
-            className="custom-toggle-button"
+            className="custom-toggle-button custom-three-button"
             style={{
                 backgroundColor: colors[state],
                 color: state === 0 ? "#42099e" : "white",
-
-                border: "none",
-                width: "48px",
-                height: "28px",
-                margin: "0",
-                padding: "0",
-                fontSize: "8px",
-                fontWeight: "50",
-                borderRadius: "6px",
-                transition: "background-color 0.3s ease",
             }}
         />
     );
