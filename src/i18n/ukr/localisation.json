@@ -45,6 +45,7 @@
 
   "off": "вимик",
   "all": "Все",
+  "login_error" : "Немає такого пристрою",
 
   "device_water_supply": "ПОДАЧА ВОДИ",
   "device_selection": "ВІДБІР",
@@ -132,6 +133,7 @@
   "status_pause_number": "Пауза",
   "status_cube_overheat": "Помилка: перегрів куба",
   "status_water_overheat": "Помилка: перегрів води",
+  "status_progress": "У процесі",
   
   "process_scenario_header": "Автоматика/Сценарії",
   "process_skip": "ПРОПУСК",

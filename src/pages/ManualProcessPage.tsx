@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import * as yup from 'yup';
 import { ACBlockTemp } from '../components/blocktemp';
 import { ACUserComp } from '../components/usercomp';
@@ -16,6 +16,7 @@ import { calculateHandPercent } from '../utils/calculate';
 import { useSaveHandMutation } from '../api/manualSave';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 type FormData = {
   tempSelect: number;
@@ -57,7 +58,7 @@ const ManualProcessPage = () => {
     isLoading,
     error,
   } = useGetDataQuery(dataSamagon, { pollingInterval: isFormChanging ? 0 : SYNC_INTERVAL });
-  
+
   const schema = yup.object().shape({
     tempSelect: yup.number().max(120, 'Максимальне значення 120').min(0, 'Мінімальне значення 0'),
     handPercent: yup.number().max(6, 'Максимальне значення 6').min(0.06, 'Мінімальне значення 0.06'),
@@ -69,7 +70,7 @@ const ManualProcessPage = () => {
     handTempCubeError: yup.number().max(120, 'Максимальне значення 120').min(1, 'Мінімальне значення 1'),
   });
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { control, watch } = useForm<FormData>({
     values: {
@@ -136,9 +137,9 @@ const ManualProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      /* console.log(formattedData);
-      save(formattedData); 
-      protection against children */
+      //console.log(formattedData);
+      save(formattedData);
+      //protection against children
 
       setIsFormChanging(false);
     }, 5000);
@@ -172,6 +173,46 @@ const ManualProcessPage = () => {
     }
   }, [data]);
 
+  const [status, setStatus] = useState('');
+
+  const statusUpdate = useCallback(() => {
+    let updateStatus = '';
+    switch (data.handController) {
+      case 0:
+        updateStatus = t('status_waiting');
+        break;
+      case 1:
+        updateStatus = t('status_process');
+        break;
+      default:
+        updateStatus = t('status_error_unknown');
+        break;
+    }
+
+    switch (data.errorHand) {
+      case 0:
+        updateStatus += t('status_success');
+        break;
+      case 7:
+        updateStatus = t('status_error_level');
+        break;
+      case 5:
+        updateStatus = t('status_cube_overheat');
+        break;
+      case 6:
+        updateStatus = t('status_water_overheat');
+        break;
+      default:
+        updateStatus = t('status_error_unknown');
+        break;
+    }
+    setStatus(updateStatus);
+  }, [data.errorHand, data.handController]);
+
+  useEffect(() => {
+    statusUpdate();
+  }, [statusUpdate, i18n.language]);
+
   if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
@@ -182,7 +223,7 @@ const ManualProcessPage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
         <div style={{ float: 'left' }}>
-          <ACStatusComp status_text={'Очікування...'} />
+          <ACStatusComp status_text={status} />
         </div>
       </header>
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
@@ -218,7 +259,7 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                 <Controller
+                <Controller
                   name="handPercent"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
@@ -226,6 +267,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
+                      //hint="temp_step0.5_max100"
                       label={t('process_manual_speed_selection')}
                       help={t('help_speed_selection')}
                       onChange={(e) => {
@@ -260,7 +302,7 @@ const ManualProcessPage = () => {
                     />
                   )}
                 />
-                 <Controller
+                <Controller
                   name="handSpeedTail"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
@@ -268,6 +310,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
+                      //hint="temp_step0.5_max100"
                       label={t('process_speed_selection_tails')}
                       help={t('help_speed_selection_tails')}
                       disabled={disabledK4}
@@ -303,6 +346,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_heater')}
                     value={value}
                     units="%"
+                    hint="temp_step1_max100"
                     help={t('help_ten')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -326,6 +370,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_pid')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max120"
                     help={t('help_pid')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -397,6 +442,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_break_water')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max99.9"
                     help={t('help_water_break')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -421,6 +467,7 @@ const ManualProcessPage = () => {
                     label={t('process_manual_break_cube')}
                     value={value}
                     units="°C"
+                    hint="temp_step1_max120"
                     help={t('help_cube_break')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -428,7 +475,12 @@ const ManualProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start  justify-content-start  w-full gap-2">
-              <ACRegulator icon="breakdown" color="orange" label={t('process_manual_break_level')} help={t('help_level_break')} />
+              <ACRegulator
+                icon="breakdown"
+                color="orange"
+                label={t('process_manual_break_level')}
+                help={t('help_level_break')}
+              />
               <Controller
                 name="handLevelError"
                 control={control}

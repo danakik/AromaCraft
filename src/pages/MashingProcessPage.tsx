@@ -233,7 +233,7 @@ const MashingProcessPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      console.log(formattedData);
+      //console.log(formattedData);
       save(formattedData);
       //protection against children
 
@@ -450,7 +450,6 @@ const MashingProcessPage = () => {
       toast.error(t('scenario_rename_error1'));
     } else if (listRecipe.includes(newRecipeName)) {
       toast.warning(t('scenario_name_error'));
-
     } else {
       const recipeData = {
         key: key,
@@ -463,7 +462,6 @@ const MashingProcessPage = () => {
       setDialogRenameVisible(false);
       setNewRecipeName('');
       toast.success(t('scenario_rename_success' + newRecipeName));
-
     }
   };
 
@@ -519,7 +517,6 @@ const MashingProcessPage = () => {
     toast.success(t('scenario_download_success'));
   };
 
-
   if (isLoading || data.version == 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error')}</p>;
 
@@ -573,6 +570,7 @@ const MashingProcessPage = () => {
                   label={`${t('process_mashing_time_pause')} ${i + 1}`}
                   value={value}
                   units={t('unit_minutes')}
+                  hint="time_step1_max240"
                   help={t('help_time_pause')}
                   onChange={(e) => onChangeForm(e.value)}
                 />
@@ -599,16 +597,31 @@ const MashingProcessPage = () => {
         <div className="flex flex-column w-3/4">
           <div className="grid grid-cols-2 w-full">
             <div className="col-6">
-              <ACBlockTempSmall name={t('cube')} color="purple" temp={String(data.tempCube)} help={t('help_temp_cube')} />
+              <ACBlockTempSmall
+                name={t('cube')}
+                color="purple"
+                temp={String(data.tempCube)}
+                help={t('help_temp_cube')}
+              />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('carga')} color="orange" temp={String(data.tempCargi)} help={t('help_temp_cargi')} />
+              <ACBlockTempSmall
+                name={t('carga')}
+                color="orange"
+                temp={String(data.tempCargi)}
+                help={t('help_temp_cargi')}
+              />
             </div>
             <div className="col-6">
               <ACBlockTempSmall name={t('defl')} color="red" temp={String(data.tempDef)} help={t('help_temp_defl')} />
             </div>
             <div className="col-6">
-              <ACBlockTempSmall name={t('water')} color="blue" temp={String(data.tempWater)} help={t('help_temp_water')} />
+              <ACBlockTempSmall
+                name={t('water')}
+                color="blue"
+                temp={String(data.tempWater)}
+                help={t('help_temp_water')}
+              />
             </div>
           </div>
           <div
@@ -647,16 +660,10 @@ const MashingProcessPage = () => {
               />
             </div>
             <div className="flex align-items-center justify-content-center">
-
               {!hideButtonSkip && (
-                <Button
-                  label={passLabel}
-                  className="button-skip"
-                  disabled={disabledButtonSkip} /* onClick={clickPass} */
-                />
+                <Button label={passLabel} className="button-skip" disabled={disabledButtonSkip} onClick={clickPass} />
               )}
-              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
-
+              {!hideButtonStart && <Button label={startLabel} className="button-start" onClick={clickStart} />}
             </div>
           </div>
           <div className="block p-3  w-full">
@@ -700,6 +707,7 @@ const MashingProcessPage = () => {
                     icon="temp"
                     label={t('process_mashing_temp_boiling')}
                     units="°C"
+                    hint="temp_step0.1_max120"
                     value={value}
                     help={t('help_temp_brew')}
                     onChange={(e) => onChangeForm(e.value)}
@@ -734,6 +742,7 @@ const MashingProcessPage = () => {
                     icon="timer"
                     label={t('process_mashing_time_boiling')}
                     units={t('unit_minutes')}
+                    hint="time_step1_max240"
                     value={value}
                     help={t('help_time_brew')}
                     onChange={(e) => onChangeForm(e.value)}
@@ -764,6 +773,7 @@ const MashingProcessPage = () => {
                     icon="temp"
                     label={t('process_mashing_temp_cooling')}
                     units="°C"
+                    hint="temp_step0.1_max120"
                     value={value}
                     help={t('help_temp_freeze')}
                     onChange={(e) => onChangeForm(e.value)}
@@ -781,6 +791,7 @@ const MashingProcessPage = () => {
                     icon="temp_minus"
                     label={t('process_mashing_gist_cooling')}
                     units="°C"
+                    hint="temp_step0.1_max10"
                     value={value}
                     help={t('help_gist_freeze')}
                     onChange={(e) => onChangeForm(e.value)}
@@ -797,7 +808,7 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -829,7 +840,7 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -849,7 +860,12 @@ const MashingProcessPage = () => {
         }
       >
         <div className="field flex justify-content-center">
-          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+            value={recipeName}
+            onChange={(e) => setNewRecipeName(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -857,7 +873,7 @@ const MashingProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -876,14 +892,16 @@ const MashingProcessPage = () => {
           </div>
         }
       >
-        <p>Сценарій: {recipeName}</p>
+        <p>
+          {t('scenario_dialog_name')} {recipeName}
+        </p>
       </Dialog>
 
       <Dialog
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -902,7 +920,7 @@ const MashingProcessPage = () => {
           </div>
         }
       >
-        <p>Завантажити на автоматику?</p>
+        <p>{t('scenarion_question')}</p>
       </Dialog>
     </>
   );

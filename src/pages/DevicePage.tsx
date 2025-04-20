@@ -47,7 +47,7 @@ const DevicePage = () => {
   useDisableLiProcess(data);
   const [errorClear] = useClearErrorMutation();
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [n, setN] = useState<number>(0);
 
   const createExplainingDiv = (
@@ -270,7 +270,6 @@ const DevicePage = () => {
   const [speedValue, setSpeedValue] = useState('');
   const [tailValue, setTailValue] = useState('');
   const [timerValue, setTimerValue] = useState('');
-  const [errorText, setErrorText] = useState('');
   const [PIDValues, setPIDValues] = useState('');
 
   const [speedSymbol, setSpeedSymbol] = useState('');
@@ -278,11 +277,35 @@ const DevicePage = () => {
 
   const [updateStatus, setUpdateStatus] = useState('');
 
-  const statusUpdate = useCallback(() => {
-    setT1cDisplay('none');
+  const resetAllDisplays = () => {
     setT1bDisplay('none');
+    setT1cDisplay('none');
+    setT2bDisplay('none');
+    setT3bDisplay('none');
     setT4bDisplay('none');
+    setSpeedDisplay('none');
+    setTailDisplay('none');
+    setCycleDisplay('none');
+    setPIDDisplay('none');
+    setButtonErrorDisplay('none');
+    setTimerDisplay('none');
+  };
 
+  const resetAllValues = () => {
+    setT1bValue('');
+    setT1cValue('');
+    setT2bValue('');
+    setT3bValue('');
+    setT4bValue('');
+    setSpeedValue('');
+    setTailValue('');
+    setPIDValues('');
+    setTimerValue('');
+  };
+
+  const statusUpdate = useCallback(() => {
+    resetAllDisplays();
+    resetAllValues();
     let status = '';
     let name = '';
 
@@ -557,7 +580,21 @@ const DevicePage = () => {
 
   useEffect(() => {
     statusUpdate();
-  }, [statusUpdate]);
+  }, [statusUpdate, i18n.language]);
+
+  const [powerDisplay, setPowerDisplay] = useState('none');
+  const [symbolPower, setSymbolPower] = useState('%');
+  const [levelDisplay, setLevelDisplay] = useState('none');
+
+  const imgUpdate = useCallback(() => {
+    setPowerDisplay(data.power === 0 ? 'none' : 'block');
+    setSymbolPower(data.power < 100 ? '%' : 'MAX');
+    setLevelDisplay(data.level === 0 ? 'none' : 'block');
+  }, [data.power, data.level]);
+
+  useEffect(() => {
+    imgUpdate();
+  }, [imgUpdate]);
 
   const clickError = async () => {
     await errorClear({ key: key || '' });
@@ -650,13 +687,13 @@ const DevicePage = () => {
           <KotelIcon style={{ position: 'absolute', top: 489.53 }} />
           <NagrevIcon style={{ position: 'absolute', top: 409.81, left: 408.69 }} />
           <IngredientIcon style={{ position: 'absolute', top: 473.81, left: 446.3 }} />
-          <HeatIcon style={{ position: 'absolute', top: 606.3, left: 422.72 }} />
+          <HeatIcon style={{ position: 'absolute', top: 606.3, left: 422.72, display: powerDisplay }} />
           <BorderIcon style={{ position: 'absolute', top: 465.95, left: 422.72 }} />
           <BarIcon style={{ position: 'absolute', top: 0, left: 490 }} />
           <VidbirIcon style={{ position: 'absolute', top: 42.67, left: 326.73 }} />
           <WaterBarIcon style={{ position: 'absolute', top: 42.67, left: 52.3 }} />
           <FridgeIcon style={{ position: 'absolute', top: 273.936, left: 51.65 }} />
-          <OutputIcon style={{ position: 'absolute', top: 540, left: -4 }} />
+          <OutputIcon style={{ position: 'absolute', top: 540, left: -4, display: levelDisplay }} />
           <KlapanIcon style={{ position: 'absolute', top: 426.66, left: 56.14, transform: rotation3 }} id="k3_heads" />
           <KlapanIcon
             color="black"
@@ -777,11 +814,8 @@ const DevicePage = () => {
           <span id="pid_temp" style={{ position: 'absolute', top: 520, left: 355, display: PIDDisplay }}>
             {PIDValues}
           </span>
-          <span
-            id="pid_percent"
-            style={{ position: 'absolute', top: 535, left: 355, display: data.power === 0 ? 'none' : 'block' }}
-          >
-            {data.power < 100 ? data.power + ' %' : 'MAX'}
+          <span id="pid_percent" style={{ position: 'absolute', top: 535, left: 355, display: powerDisplay }}>
+            {data.power + symbolPower} {/* power */}
           </span>
         </div>
       </div>

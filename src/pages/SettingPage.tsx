@@ -92,9 +92,9 @@ const SettingPage = () => {
 
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
-      /* console.log(formattedData);
-      save(formattedData); 
-      protection against children */
+      //console.log(formattedData);
+      save(formattedData);
+      //protection against children
 
       setIsFormChanging(false);
     }, 5000);
@@ -111,7 +111,6 @@ const SettingPage = () => {
   const [isBarometr, setIsBarometr] = useState(false);
   const [lableBarometr, setLableBarometr] = useState(`${data.settingValueBrometr}${t('unim_mm')}`);
   const br = useCallback(() => {
-
     if (data.version !== 0) {
       if (data.version >= 4) {
         setIsBarometr(true);
@@ -147,9 +146,9 @@ const SettingPage = () => {
   const [disabledSelection, setDisabledSelection] = useState(true);
   const [disabledTransitBody, setDisabledTransitBody] = useState(true);
   const [disabledBarometr, setDisabledBarometr] = useState(true);
-  const[disavledSwitchTail, setDisavledSwitchTail] = useState(true);
+  const [disavledSwitchTail, setDisavledSwitchTail] = useState(true);
   const processStarted = useCallback(() => {
-    console.log('isBarometr:', isBarometr);
+    //console.log('isBarometr:', isBarometr);
     if (data.version !== 0) {
       if (
         data.distController === 0 &&
@@ -184,12 +183,6 @@ const SettingPage = () => {
     processStarted();
   }, [processStarted, isBarometr]);
 
-  useEffect(() => {
-    console.log(disabledBarometr);
-  }, [disabledBarometr]);
-
-  
-
   if (isLoading || data.version === 0) return <p>{t('loading')}</p>;
   if (error) return <p>{t('loading_error_t')}</p>;
 
@@ -203,7 +196,10 @@ const SettingPage = () => {
 
       <div className="flex flex-row gap-2 w-full align-items-start justify-content-start">
         <div className="flex flex-column w-1/4 p-2">
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-3 w-full" style={{ minWidth: '420px', maxWidth: '600px' }}>
+          <div
+            className="grid grid-cols-2 md:grid-cols-2 gap-3 w-full"
+            style={{ minWidth: '420px', maxWidth: '600px' }}
+          >
             <div className="block flex-1 p-2" style={{ minWidth: '200px' }}>
               <ACKnob
                 label={t('settings_temp_cube')}
@@ -300,7 +296,7 @@ const SettingPage = () => {
         </div>
 
         <div className="flex flex-column gap-3 flex-grow align-items-start justify-content-start w-3/4">
-          <div className="block p-3 w-full">
+          {/* <div className="block p-3 w-full">
             <h3>{t('settings_message')}</h3>
             <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
               <Button
@@ -310,7 +306,7 @@ const SettingPage = () => {
               <h3>{t('settings_device')}</h3>
               <h3>DESKTOP-5253</h3>
             </div>
-          </div>
+          </div> */}
           <div className="block p-3 w-full">
             <h3>{t('menu_settings')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -350,7 +346,11 @@ const SettingPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <ACRegulator icon="antena_bars" label={`${t('settings_barometer')}, ${lableBarometr}`} help={t('help_barometer')} />
+              <ACRegulator
+                icon="antena_bars"
+                label={`${t('settings_barometer')}, ${lableBarometr}`}
+                help={t('help_barometer')}
+              />
               <Controller
                 name="settingBrometr"
                 control={control}
@@ -361,7 +361,6 @@ const SettingPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
               <div className="flex flex-row align-items-center justify-content-center w-full gap-2">
-
                 <ACRegulator icon="valve_heads" label="Відбір голів" help={t('help_set_selection_heads')} />
                 {!whichTransitBody && (
                   <Controller
@@ -395,7 +394,6 @@ const SettingPage = () => {
                     )}
                   />
                 )}
-
               </div>
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full">
@@ -414,7 +412,6 @@ const SettingPage = () => {
                       disabled={disavledSwitchTail}
                     />
                   )}
-
                 />
               </div>
             </div>

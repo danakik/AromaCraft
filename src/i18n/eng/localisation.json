@@ -45,6 +45,8 @@
 
   "off": "off",
   "all": "All",
+  "login_error" : "There is no such device",
+  "Upload_to_automatic" : "Upload to automatic mode?",
 
   "device_water_supply": "WATER SUPPLY",
   "device_selection": "SELECTION",
@@ -132,6 +134,7 @@
   "status_pause_number": "Pause",
   "status_cube_overheat": "Error: cube overheating",
   "status_water_overheat": "Error: water overheating",
+  "status_progress": "In progress",
 
   "process_scenario_header": "Automation/Scenarios",
   "process_skip": "PASS",

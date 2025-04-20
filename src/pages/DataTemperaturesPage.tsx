@@ -164,7 +164,9 @@ const DataTemperaturesPage: React.FC = () => {
         <Button className="time-filter-buttons" onClick={() => filterByHours(48)} disabled={availableHours < 48}>
           48 {t('unit_time')}
         </Button>
-        <Button className="time-filter-buttons" onClick={handleShowAll}>{t('all')}</Button>
+        <Button className="time-filter-buttons" onClick={handleShowAll} disabled={availableHours < 1}>
+          {t('all')}
+        </Button>
       </div>
       <div className="chart-container custom-scrollbar">
         {chartData.length > 0 &&
@@ -187,22 +189,22 @@ const DataTemperaturesPage: React.FC = () => {
           ))}
       </div>
       <div style={{ height: '60px' }} className="flex flex-row w-full align-items-evenly justify-content-evenly block">
-          <ul className="temp-list">
-            <li className="temp-cube">{t('settings_temp_cube')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-cargi">{t('settings_temp_carga')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-defl">{t('settings_temp_defl')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-water">{t('settings_temp_water')}</li>
-          </ul>
-          <ul className="temp-list">
-            <li className="temp-baro">{t('settings_barometer')}</li>
-          </ul>
-        </div>
+        <ul className="temp-list">
+          <li className="temp-cube">{t('settings_temp_cube')}</li>
+        </ul>
+        <ul className="temp-list">
+          <li className="temp-cargi">{t('settings_temp_carga')}</li>
+        </ul>
+        <ul className="temp-list">
+          <li className="temp-defl">{t('settings_temp_defl')}</li>
+        </ul>
+        <ul className="temp-list">
+          <li className="temp-water">{t('settings_temp_water')}</li>
+        </ul>
+        <ul className="temp-list">
+          <li className="temp-baro">{t('settings_barometer')}</li>
+        </ul>
+      </div>
     </>
   );
 };

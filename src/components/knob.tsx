@@ -87,7 +87,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
           valueColor={gradID}
           rangeColor="#999CA2"
           valueTemplate={`${value.toFixed(1)}°C`}
-          min={0}
+          min={0.1}
           max={120}
           step={0.1}
           size={200}
@@ -102,7 +102,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
             minFractionDigits={1}
             maxFractionDigits={1}
             suffix="°C"
-            min={0}
+            min={0.1}
             max={120}
             step={0.1}
           />

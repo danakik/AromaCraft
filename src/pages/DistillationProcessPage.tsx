@@ -141,8 +141,8 @@ const DistillationProcessPage = () => {
     const debouncedLog = debounce(() => {
       const formattedData = formatFormData(formValues);
       //protection against children
-      /* console.log(formattedData);
-      save(formattedData);*/
+      //console.log(formattedData);
+      save(formattedData);
 
       setIsFormChanging(false);
     }, 5000);
@@ -637,6 +637,7 @@ const DistillationProcessPage = () => {
                     icon="temp"
                     label={t('process_temp_breakdown')}
                     value={value}
+                    hint="temp_step0.1_max99.9"
                     units="°C"
                     help={t('help_temp_breakdown')}
                     onChange={(e) => onChangeForm(e.value)}
@@ -651,7 +652,7 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -683,7 +684,7 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -703,7 +704,12 @@ const DistillationProcessPage = () => {
         }
       >
         <div className="field flex justify-content-center">
-          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+            value={recipeName}
+            onChange={(e) => setNewRecipeName(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -711,7 +717,7 @@ const DistillationProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -739,7 +745,7 @@ const DistillationProcessPage = () => {
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button

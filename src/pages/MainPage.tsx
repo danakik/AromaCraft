@@ -47,8 +47,12 @@ const MainPage = () => {
   }
 
   const handleButtonClick = (itemKey: string) => {
-    localStorage.setItem('samogonKey', itemKey);
-    navigate('/device');
+    if (itemKey.startsWith('20') && itemKey.length === 14) {
+      localStorage.setItem('samogonKey', itemKey);
+      navigate('/device');
+    }else{
+      toast.error(t('login_error'));
+    }
   };
 
   const handleEditClick = (itemKey: string, currentName: string) => {
@@ -70,8 +74,8 @@ const MainPage = () => {
 
   const handleCreateMachine = async () => {
     const createResponse = await createRoom({ machineNumber, key }).unwrap();
-    console.log(machineNumber, key);
-    console.log(createResponse);
+    //console.log(machineNumber, key);
+    //console.log(createResponse);
     if (createResponse.trim() === '3') {
       toast.error(t('main_rename_toast_error'));
     } else {
@@ -130,8 +134,16 @@ const MainPage = () => {
                 <p className="item-key">{item.key}</p>
               </div>
               <div className="flex item-action">
-                <Button className="button button-delete" label={t('main_delete')} onClick={() => OpenDialogKey(item.key)} />
-                <Button className="button button-enter" label={t('main_enter')} onClick={() => handleButtonClick(item.key)} />
+                <Button
+                  className="button button-delete"
+                  label={t('main_delete')}
+                  onClick={() => OpenDialogKey(item.key)}
+                />
+                <Button
+                  className="button button-enter"
+                  label={t('main_enter')}
+                  onClick={() => handleButtonClick(item.key)}
+                />
               </div>
             </div>
           </div>
@@ -176,7 +188,7 @@ const MainPage = () => {
       <Dialog
         header={t('main_dialog_delete_device')}
         visible={visible_delete}
-        className='dialog'
+        className="dialog"
         onHide={() => {
           if (!visible_delete) return;
           setvisible_delete(false);

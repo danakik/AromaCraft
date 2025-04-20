@@ -445,6 +445,7 @@ const RectificationProcessPage = () => {
       n: 'Automation',
       e: 0,
     };
+    //console.log(updatedData)
     await save(updatedData);
     await fetchRecipe();
     setDialogDownloadVisible(false);
@@ -1235,7 +1236,7 @@ const RectificationProcessPage = () => {
         }
       >
         <div className="field">
-          <InputText id="rename-scenario" style={{ width: '80%' }} onChange={(e) => setNewRecipeName(e.target.value)} />
+          <InputText id="rename-scenario" style={{ width: '80%' }} value={recipeName} onChange={(e) => setNewRecipeName(e.target.value)} />
         </div>
       </Dialog>
 
@@ -1290,7 +1291,7 @@ const RectificationProcessPage = () => {
           </div>
         }
       >
-        <p>Завантажити на автоматику?</p>
+        <p>{t('scenarion_question')}</p>
       </Dialog>
     </>
   );
