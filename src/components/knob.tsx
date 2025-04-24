@@ -180,9 +180,9 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
             minFractionDigits={1}
             maxFractionDigits={1}
             suffix="°C"
-            min={0.1}
-            max={120}
-            step={0.1}
+            min={min}
+            max={max}
+            step={step}
           />
         </div>
       </div>
@@ -258,9 +258,9 @@ export const ACSlider: React.FC<KnobProps> = ({
             minFractionDigits={1}
             maxFractionDigits={1}
             suffix="°C"
-            min={0}
-            max={120}
-            step={0.1}
+            min={min}
+            max={max}
+            step={step}
           />
         </div>
       </div>
