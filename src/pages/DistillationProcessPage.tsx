@@ -463,6 +463,7 @@ const DistillationProcessPage = () => {
                     initialValue={value}
                     help={t('help_temp_transition')}
                     onChange={(e) => onChangeForm(e.value)}
+                    hint="temp_step0.1_max120"
                   />
                 )}
               />
@@ -478,6 +479,7 @@ const DistillationProcessPage = () => {
                     initialValue={value}
                     help={t('help_temp_stop')}
                     onChange={(e) => onChangeForm(e.value)}
+                    hint="temp_step0.1_max120_min0.1"
                   />
                 )}
               />
@@ -607,12 +609,13 @@ const DistillationProcessPage = () => {
                     help={t('help_temp_transition_body')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledBody}
+                    hint="temp_step0.1_max120"
                   />
                 )}
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller
+              <Controller //add hint
                 name="distTimeBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (

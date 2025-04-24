@@ -14,6 +14,7 @@ type KnobProps = {
   color: 'orange' | 'blue' | 'purple' | 'red';
   readonly?: boolean;
   help?: string; // hint text in the dialog
+  hint?: string; // hint for min, max, step
   onChange?: (e: { value: number | [number, number] }) => void;
 };
 
@@ -45,8 +46,81 @@ const getGradientClassSlider = (color: 'orange' | 'blue' | 'purple' | 'red'): st
       return 'gradient1';
   }
 };
+const getHint = (hint?: string) => {
+  let min, max, step;
 
-export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', onChange }) => {
+  switch (hint) {
+    case 'pauses':
+      min = 1;
+      max = 10;
+      step = 1;
+      break;
+    case 'hysteresis':
+      min = 0.1;
+      max = 2;
+      step = 0.1;
+      break;
+    case 'calibration':
+      min = -20;
+      max = 100;
+      step = 0.1;
+      break;
+    case 'cycles':
+      min = 1;
+      max = 100;
+      step = 1;
+      break;
+    case 'temp_step1_max100':
+      min = 0;
+      max = 100;
+      step = 1;
+      break;
+    case 'temp_step0.1_max120': //rect 1, 3, 4 slider
+      min = 0;
+      max = 120;
+      step = 0.1;
+      break;
+    case 'temp_step0.1_max120_min0.1': //rect 2 slider, manual 2 knob
+      min = 0.1;
+      max = 120;
+      step = 0.1;
+      break;
+    case 'temp_step0.1_max99.9':
+      min = 0;
+      max = 99.9;
+      step = 0.1;
+      break;
+    case 'temp_step1_max120':
+      min = 0;
+      max = 120;
+      step = 1;
+      break;
+    case 'temp_step0.5_max100':
+      min = 0;
+      max = 100;
+      step = 0.5;
+      break;
+    case 'time_step1_max240':
+      min = 1;
+      max = 240;
+      step = 1;
+      break;
+    case 'temp_step0.1_max10': // mashing
+      min = 0.1;
+      max = 10;
+      step = 0.1;
+      break;
+    default:
+      min = 0.1;
+      max = 120;
+      step = 0.1;
+      break;
+  }
+
+  return { min, max, step };
+};
+
+export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', hint='', onChange }) => {
   const [value, setValue] = useState<number>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -75,6 +149,10 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
     setDialogVisible(false);
   };
 
+  let min = getHint(hint).min;
+  let max = getHint(hint).max;
+  let step = getHint(hint).step;
+
   return (
     <div className="card flex flex-column align-items-center justify-content-center pb-2">
       <Gradients />
@@ -87,9 +165,9 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
           valueColor={gradID}
           rangeColor="#999CA2"
           valueTemplate={`${value.toFixed(1)}°C`}
-          min={0.1}
-          max={120}
-          step={0.1}
+          min={min}
+          max={max}
+          step={step}
           size={200}
           readOnly={readonly}
         />
@@ -126,6 +204,7 @@ export const ACSlider: React.FC<KnobProps> = ({
   color,
   readonly = false,
   help = '',
+  hint='',
   onChange,
 }) => {
   const [value, setValue] = useState<number>(initialValue);
@@ -152,6 +231,10 @@ export const ACSlider: React.FC<KnobProps> = ({
   const handleLabelClick = () => setDialogVisible(true);
   const hideDialog = () => setDialogVisible(false);
 
+  let min = getHint(hint).min;
+  let max = getHint(hint).max;
+  let step = getHint(hint).step;
+
   return (
     <div className="card flex flex-column align-items-center justify-content-center">
       <Gradients />
@@ -161,9 +244,9 @@ export const ACSlider: React.FC<KnobProps> = ({
           value={value}
           onChange={handleSliderChange}
           className={`unfilled custom-slider ${gradientClass}`}
-          min={0}
-          max={120}
-          step={0.1}
+          min={min}
+          max={max}
+          step={step}
           disabled={readonly}
         />
         <div className="slider-temp flex flex-row align-items-center justify-content-center">

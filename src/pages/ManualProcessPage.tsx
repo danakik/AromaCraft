@@ -256,6 +256,7 @@ const ManualProcessPage = () => {
                       initialValue={value}
                       help={t('help_temp_selection')}
                       onChange={(e) => onChangeForm(e.value)}
+                      hint="temp_step0.1_max120_min0.1"
                     />
                   )}
                 />
@@ -267,7 +268,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
-                      //hint="temp_step0.5_max100"
+                      hint="temp_step0.5_max100"
                       label={t('process_manual_speed_selection')}
                       help={t('help_speed_selection')}
                       onChange={(e) => {
@@ -299,6 +300,7 @@ const ManualProcessPage = () => {
                       initialValue={value}
                       help={t('help_gist_selection')}
                       onChange={(e) => onChangeForm(e.value)}
+                      hint="temp_step0.1_max120_min0.1"
                     />
                   )}
                 />
@@ -310,7 +312,7 @@ const ManualProcessPage = () => {
                       value={value.value}
                       true_value={value.true_value}
                       units={symbol}
-                      //hint="temp_step0.5_max100"
+                      hint="temp_step0.5_max100"
                       label={t('process_speed_selection_tails')}
                       help={t('help_speed_selection_tails')}
                       disabled={disabledK4}

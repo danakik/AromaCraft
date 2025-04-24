@@ -212,7 +212,7 @@ const SettingPage = () => {
                 name="settingTempCupe"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel
+                  <ACCounterLabel //edit hint
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -235,7 +235,7 @@ const SettingPage = () => {
                 name="settingTempCarge"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel
+                  <ACCounterLabel //edit hint
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -258,7 +258,7 @@ const SettingPage = () => {
                 name="settingTempDef"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel
+                  <ACCounterLabel //edit hint
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -281,7 +281,7 @@ const SettingPage = () => {
                 name="settingTempWater"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel
+                  <ACCounterLabel //edit hint
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -439,7 +439,7 @@ const SettingPage = () => {
                 name="selectionSpeed"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
+                  <ACRegulator //add hint
                     icon="speed"
                     label={t('settings_speed')}
                     value={value}

@@ -70,8 +70,8 @@ const getUnit = (units: string, hint?: string) => {
       step = 0.1;
       break;
     case 'cycles':
-      min = 0;
-      max = Number.MAX_VALUE;
+      min = 1;
+      max = 100;
       step = 1;
       break;
     case 'temp_step1_max100':

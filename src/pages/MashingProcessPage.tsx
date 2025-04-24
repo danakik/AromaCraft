@@ -546,6 +546,7 @@ const MashingProcessPage = () => {
                   initialValue={value}
                   help={t('help_temp_pause')}
                   onChange={(e) => onChangeForm(e.value)}
+                  hint="temp_step0.1_max120"
                 />
               )}
             />
@@ -559,6 +560,7 @@ const MashingProcessPage = () => {
                   initialValue={value}
                   help={t('help_gist_pause')}
                   onChange={(e) => onChangeForm(e.value)}
+                  hint="temp_step0.1_max10"
                 />
               )}
             />
