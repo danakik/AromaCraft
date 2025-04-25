@@ -15,9 +15,9 @@ export const reedRecipeApi = createApi({
       }),
       transformResponse: (response: string) => {
         const recipeList = response.split('\n').map((line) => (line.trim() === '' ? '---' : line));
-        const recipeCount=recipeList[0];
+        const recipeCount = recipeList[0];
         recipeList[0] = 'Автоматика';
-        return {recipeList, recipeCount};
+        return { recipeList, recipeCount };
       },
     }),
   }),

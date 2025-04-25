@@ -15,15 +15,15 @@ type BlockTempProps = {
 const getColor = (color: string) => {
   switch (color) {
     case 'purple':
-      return  '#9e4ae7';
+      return '#9e4ae7';
     case 'orange':
-      return  '#e7764a';
+      return '#e7764a';
     case 'red':
-      return  '#e74a4a';
+      return '#e74a4a';
     case 'blue':
-      return  '#2942e1';
+      return '#2942e1';
     default:
-      return  '#9e4ae7';
+      return '#9e4ae7';
   }
 };
 
@@ -50,7 +50,7 @@ export const ACBlockTemp: React.FC<BlockTempProps> = ({ color, temp, name, help 
       <p className="textBlockTemp" onClick={handleClick} style={{ cursor: 'pointer' }}>
         {name}
       </p>
-      <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>
@@ -81,7 +81,7 @@ export const ACBlockTempSmall: React.FC<BlockTempProps> = ({ color, temp, name, 
           {name}
         </p>
       </div>
-      <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={name} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>

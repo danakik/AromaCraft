@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGetDataQuery } from './samogonApi';
+import { useGetDataQuery } from '../api/samogonApi';
 
 interface SortedData {
   tempCube: number;
@@ -357,8 +357,8 @@ const useSortedData = (key: string | null) => {
       f: parseNumber(newData[99]),
       distError: parseNumber(newData[13]),
       t: parseNumber(newData[94]),
-      isProcessSuccess: parseNumber(newData[94])<= 5,
-     
+      isProcessSuccess: parseNumber(newData[94]) <= 5,
+
       rectAcceleration: parseNumber(newData[22]),
       rectPower: parseNumber(newData[23]),
       rectPowerBody: parseNumber(newData[115]),

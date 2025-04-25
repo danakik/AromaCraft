@@ -4,7 +4,6 @@ import { ACUserComp } from '../components/usercomp';
 import '../styles/process_page.css';
 import '../styles/temperatures_page.css';
 import { useStatisticsDataQuery } from '../api/statisticsDataApi';
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useGetDataQuery } from '../api/samogonApi';

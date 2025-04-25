@@ -38,7 +38,6 @@ const LoginPage: React.FC = () => {
     { label: 'UKR', value: 'uk' },
   ];
 
-
   const handleLogin = async () => {
     try {
       const response = await login(inputValue).unwrap();
@@ -81,10 +80,10 @@ const LoginPage: React.FC = () => {
             className="custom-select-button"
           />
         </div>
-        <p>20111111111111</p>
+{/*         <p>20111111111111</p>
         <p>20222222222222</p>
         <p>20333333333333</p>
-        <p>20444444444444</p>
+        <p>20444444444444</p> */}
       </div>
     </div>
   );

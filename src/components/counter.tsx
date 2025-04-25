@@ -42,9 +42,9 @@ const getUnit = (units: string, hint?: string) => {
       break;
     case 'Вт':
     case 'W':
-      min = 0;
+      min = 50;
       max = 12000;
-      step = 100;
+      step = 50;
       break;
     default:
       min = 0;
@@ -74,6 +74,11 @@ const getUnit = (units: string, hint?: string) => {
       max = 100;
       step = 1;
       break;
+    case 'time':
+      min = 0;
+      max = 600;
+      step = 5;
+      break;
     case 'temp_step1_max100':
       min = 0;
       max = 100;
@@ -84,18 +89,23 @@ const getUnit = (units: string, hint?: string) => {
       max = 120;
       step = 0.1;
       break;
+    case 'temp_step0.1_max120_min0.1':
+      min = 0.1;
+      max = 120;
+      step = 0.1;
+      break;
     case 'temp_step0.1_max99.9':
       min = 0;
       max = 99.9;
       step = 0.1;
       break;
     case 'temp_step1_max120':
-      min = 0;
+      min = 1;
       max = 120;
       step = 1;
       break;
     case 'temp_step0.5_max100':
-      min = 1;
+      min = 0;
       max = 100;
       step = 0.5;
       break;
@@ -108,6 +118,36 @@ const getUnit = (units: string, hint?: string) => {
       min = 0.1;
       max = 10;
       step = 0.1;
+      break;
+    case 'speed_step0.1_max10':
+      min = 0;
+      max = 10;
+      step = 0.1;
+      break;
+    case 'poewr_step0.1max120':
+      min = 0.1;
+      max = 120;
+      step = 0.1;
+      break;
+    case 'power_step1_max100':
+      min = 1;
+      max = 100;
+      step = 1;
+      break;
+    case 'percent_step1_max100':
+      min = 1;
+      max = 100;
+      step = 1;
+      break;
+    case 'time_step5_max240':
+      min = 5;
+      max = 240;
+      step = 5;
+      break;
+    case 'time_step5_max995':
+      min = 5;
+      max = 995;
+      step = 5;
       break;
   }
 
@@ -283,6 +323,7 @@ type CounterProps3 = {
   disabled?: boolean;
   onChange?: (e: { value: number }) => void;
   hint?: string; // additional hint for units
+  readonly?: boolean;
 };
 
 export const ACCounterSpeed: React.FC<CounterProps3> = ({
@@ -294,6 +335,7 @@ export const ACCounterSpeed: React.FC<CounterProps3> = ({
   onChange,
   disabled = false,
   hint,
+  readonly = false,
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -360,6 +402,7 @@ export const ACCounterSpeed: React.FC<CounterProps3> = ({
             minFractionDigits={0}
             maxFractionDigits={2}
             disabled={disabled}
+            readOnly={readonly}
           />
         </div>
         <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />

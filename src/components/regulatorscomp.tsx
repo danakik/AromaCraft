@@ -31,10 +31,10 @@ type RegulatorProps1 = {
   label: string;
   value?: number; //if value not mentioned counter won`t be added
   units?: string; //if units not mentioned counter won`t be added
-  help?: string;  // hint text in the dialog
+  help?: string; // hint text in the dialog
   onChange?: (e: { value: number }) => void;
   disabled?: boolean;
-  hint?: string;  // additional hint for units
+  hint?: string; // additional hint for units
 };
 
 const getIcon = (icon: string) => {
@@ -130,11 +130,35 @@ export const ACRegulator: React.FC<RegulatorProps1> = ({
           <ACCounter value={value ?? 0} units={units} onChange={onChange} disabled={disabled} hint={hint} />
         )}
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>
   );
+};
+
+const getUnit = (units: string, hint?: string) => {
+  let min, max, step;
+
+  switch (hint) {
+    case 'speed_step1_max100':
+      min = 1;
+      max = 100;
+      step = 1;
+      break;
+    case 'speed_step0.5_max100':
+      min = 1;
+      max = 100;
+      step = 0.5;
+      break;
+    case 'speed_step0.5_max100_min0':
+      min = 0;
+      max = 100;
+      step = 0.5;
+      break;
+  }
+
+  return { min, max, step };
 };
 
 type RegulatorProps2 = {
@@ -147,6 +171,8 @@ type RegulatorProps2 = {
   color?: string;
   disabled?: boolean;
   onChange?: (e: { value: number }) => void;
+  readonly?: boolean;
+  hint?: string;
 };
 
 export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
@@ -159,6 +185,8 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
   color = 'white',
   onChange,
   disabled = false,
+  hint,
+  readonly = false,
 }) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [count, setCount] = useState(value);
@@ -166,6 +194,10 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
 
   const handleLabelClick = () => setDialogVisible(true);
   const hideDialog = () => setDialogVisible(false);
+
+  let min = getUnit(units, hint).min;
+  let max = getUnit(units, hint).max;
+  let step = getUnit(units, hint).step;
 
   const handleIncrement = () => {
     if (t_count < 100) {
@@ -212,19 +244,20 @@ export const ACRegulatorSpeed: React.FC<RegulatorProps2> = ({
               suffix={units}
               value={count}
               onChange={handleInputChange}
-              min={0}
-              max={100}
-              step={1}
+              min={min}
+              max={max}
+              step={step}
               mode="decimal"
               minFractionDigits={0}
               maxFractionDigits={2}
               disabled={disabled}
+              readOnly={readonly}
             />
           </div>
           <Button icon="pi pi-plus" className="custom-button right-b" onClick={handleIncrement} disabled={disabled} />
         </div>
       </div>
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>

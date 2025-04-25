@@ -13,7 +13,9 @@ export const ACUserComp: React.FC<UserCompProps> = ({ serial_number }) => {
 
   return (
     <div className="ac-user-comp flex flex-wrap gap-3">
-      <span className="serial-number">{t('usercomp')} {serial_number}</span>
+      <span className="serial-number">
+        {t('usercomp')} {serial_number}
+      </span>
     </div>
   );
 };

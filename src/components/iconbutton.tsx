@@ -28,5 +28,5 @@ const renderIcon = (iconName: string) => {
 };
 
 export const ACIconButton: React.FC<IconButtonProps> = ({ iconName, disabled, onClick }) => {
-  return <Button icon={renderIcon(iconName)} rounded text onClick={onClick} disabled={disabled}/>;
+  return <Button icon={renderIcon(iconName)} rounded text onClick={onClick} disabled={disabled} />;
 };

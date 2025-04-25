@@ -5,7 +5,7 @@ import { ACStatusComp } from '../components/statuscomp';
 import { ACScriptComp } from '../components/scriptcomp';
 import { ACIconButton } from '../components/iconbutton';
 import { ACSlider } from '../components/knob';
-import { ACCounterLabel } from '../components/counter';
+import { ACCounterLabel, ACCounterSpeed } from '../components/counter';
 import { ACRegulator, ACRegulatorSpeed } from '../components/regulatorscomp';
 import { Button } from 'primereact/button';
 import { ToggleButton } from 'primereact/togglebutton';
@@ -611,7 +611,7 @@ const RectificationProcessPage = () => {
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
                         units="°C"
-                        hint="hysteresis"
+                        hint="temp_step0.1_max120_min0.1"
                         value={value}
                         label={t('process_rect_gist_selection_heads')}
                         help={t('help_gist_selection_heads')}
@@ -644,7 +644,7 @@ const RectificationProcessPage = () => {
                     render={({ field: { onChange: onChangeForm, value } }) => (
                       <ACCounterLabel
                         units="°C"
-                        hint="hysteresis"
+                        hint="temp_step0.1_max10"
                         value={value}
                         label={t('process_rect_gist_selection_body')}
                         help={t('help_gist_selection_body')}
@@ -674,11 +674,14 @@ const RectificationProcessPage = () => {
                     name="rectSpeedTail"
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
-                      <ACCounterLabel
+                      <ACCounterSpeed
                         units={symbol}
                         value={value.value}
+                        true_value={value.true_value}
+                        hint="temp_step0.5_max100"
                         label={t('process_speed_selection_tails')}
                         help={t('help_speed_selection_tails')}
+                        readonly
                         onChange={(e) => {
                           const updatedValue = calculateHandPercent(
                             e.value,
@@ -714,7 +717,7 @@ const RectificationProcessPage = () => {
                       />
                     )}
                   />
-                  <Controller //add hint
+                  <Controller
                     name="rectTimeStab"
                     control={control}
                     render={({ field: { onChange: onChangeForm, value } }) => (
@@ -722,6 +725,7 @@ const RectificationProcessPage = () => {
                         label={t('process_rect_column_stabilization')}
                         value={value}
                         units={t('unit_minutes')}
+                        hint="time_step1_max240"
                         help={t('help_stabilisation_column')}
                         onChange={(e) => onChangeForm(e.value)}
                       />
@@ -763,10 +767,11 @@ const RectificationProcessPage = () => {
                 <Button
                   label={t('process_skip')}
                   className="button-skip"
-                  disabled={disabledButtonSkip} /* onClick={clickPass} */
+                  disabled={disabledButtonSkip}
+                  onClick={clickPass}
                 />
               )}
-              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" onClick={clickStart} />}
             </div>
           </div>
 
@@ -782,6 +787,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_acceleration')}
                     value={value}
                     units="%"
+                    hint="percent_step1_max100"
                     help={t('help_power_acceleration')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -798,6 +804,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_selection')}
                     value={value}
                     units="%"
+                    hint="percent_step1_max100"
                     help={t('help_power_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -814,6 +821,7 @@ const RectificationProcessPage = () => {
                     label={t('process_power_selection_body')}
                     value={value}
                     units="%"
+                    hint="percent_step1_max100"
                     help={t('help_power_selection_body')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -830,6 +838,7 @@ const RectificationProcessPage = () => {
                     label={t('process_rect_power_selection_tails')}
                     value={value}
                     units="%"
+                    hint="percent_step1_max100"
                     help={t('help_power_selection_tails')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={powerTail}
@@ -842,16 +851,19 @@ const RectificationProcessPage = () => {
           <div className="block p-3 w-full">
             <h3>{t('process_rect_speed_header')}</h3>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller //add hint
+              <Controller
                 name="rectPercentHead"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator
+                  <ACRegulatorSpeed
                     icon="ten"
                     label={t('process_rect_speed_selection_heads')}
                     value={value.value}
+                    true_value={value.true_value}
                     units={symbol}
+                    hint="speed_step1_max100"
                     help={t('help_speed_selection_heads')}
+                    readonly
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -869,7 +881,7 @@ const RectificationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller //add hint
+              <Controller
                 name="rectPercentBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -880,6 +892,8 @@ const RectificationProcessPage = () => {
                     true_value={value.true_value}
                     units={symbol}
                     help={t('help_speed_selection_body')}
+                    readonly
+                    hint="speed_step0.5_max100"
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -902,13 +916,16 @@ const RectificationProcessPage = () => {
                   name="rectSpeedCarge"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACRegulator //add hint
+                    <ACRegulatorSpeed
                       icon="speed"
                       color="red"
                       label={t('process_rect_speed_carga_decrease')}
                       value={value.value}
+                      true_value={value.true_value}
                       units={symbol}
                       help={t('help_decrease_speed_cargi')}
+                      readonly
+                      hint="speed_step0.5_max100_min0"
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -967,11 +984,12 @@ const RectificationProcessPage = () => {
                 name="rectEndCycle"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="timer"
                     label={t('process_rect_cycles_limit')}
                     value={value}
                     units={t('unit_minutes')}
+                    hint="time_step5_max240"
                     help={t('help_border_cycles')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={endCycle}
@@ -984,12 +1002,15 @@ const RectificationProcessPage = () => {
                 name="rectDecreaseCycle"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulatorSpeed
                     icon="sort"
                     label={t('process_rect_cycles_reduction')}
                     value={value.value}
+                    true_value={value.true_value}
                     units={symbol}
                     help={t('help_decrease_cycles')}
+                    readonly
+                    hint="speed_step0.5_max100_min0"
                     onChange={(e) => {
                       const updatedValue = calculateHandPercent(
                         e.value,
@@ -1015,12 +1036,13 @@ const RectificationProcessPage = () => {
                 name="rectTempPower"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="temp"
                     color="white"
                     label={t('process_temp_transition')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max120_min0"
                     help={t('help_temp_transition')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -1032,11 +1054,12 @@ const RectificationProcessPage = () => {
                 name="rectDecreaseTemp"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="temp"
                     label={t('process_rect_temp_cube_decrease')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max120_min0"
                     help={t('help_decrease_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -1048,12 +1071,13 @@ const RectificationProcessPage = () => {
                 name="rectTempError"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="temp"
                     color="red"
                     label={t('process_temp_breakdown')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max99.9"
                     help={t('help_temp_breakdown')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -1066,11 +1090,12 @@ const RectificationProcessPage = () => {
                 name="rectSelectCarge"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="temp_minus"
                     label={t('process_rect_temp_carga_decrease')}
                     value={value}
                     units="°C"
+                    hint="temp_step0.1_max120_min0.1"
                     help={t('help_temp_selection_cargi')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={tempSelectCarge}
@@ -1103,7 +1128,7 @@ const RectificationProcessPage = () => {
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
               {data.transitBody === 1 && (
-                <Controller //add disabled
+                <Controller
                   name="rectTimeBody"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
@@ -1112,6 +1137,7 @@ const RectificationProcessPage = () => {
                       label={t('process_rect_transition_selection_body')}
                       value={value}
                       units={t('unit_minutes')}
+                      hint="time_step5_max995"
                       help={t('help_transition_select_body')}
                       onChange={(e) => onChangeForm(e.value)}
                     />
@@ -1129,6 +1155,7 @@ const RectificationProcessPage = () => {
                       label={t('process_rect_transition_selection_body')}
                       value={value}
                       units={'°C'}
+                      hint="temp_step0.1_max120_min0.1"
                       help={t('help_transition_select_body2')}
                       onChange={(e) => onChangeForm(e.value)}
                     />
@@ -1143,12 +1170,15 @@ const RectificationProcessPage = () => {
                   name="rectDecreaseSpeed"
                   control={control}
                   render={({ field: { onChange: onChangeForm, value } }) => (
-                    <ACRegulator //add hint
+                    <ACRegulatorSpeed
                       icon="speed"
                       units={symbol}
                       value={value.value}
+                      true_value={value.true_value}
                       label={t('process_rect_speed_selection_decrease')}
                       help={t('help_decrease_speed_selection')}
+                      hint="speed_step0.5_max100_min0"
+                      readonly
                       onChange={(e) => {
                         const updatedValue = calculateHandPercent(
                           e.value,
@@ -1188,7 +1218,7 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_create')}
         visible={dialogCreateVisible}
         onHide={() => setDialogCreateVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -1220,7 +1250,7 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_rename')}
         visible={dialogRenameVisible}
         onHide={() => setDialogRenameVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -1240,7 +1270,12 @@ const RectificationProcessPage = () => {
         }
       >
         <div className="field">
-          <InputText id="rename-scenario" style={{ width: '80%' }} value={recipeName} onChange={(e) => setNewRecipeName(e.target.value)} />
+          <InputText
+            id="rename-scenario"
+            style={{ width: '80%' }}
+            value={recipeName}
+            onChange={(e) => setNewRecipeName(e.target.value)}
+          />
         </div>
       </Dialog>
 
@@ -1248,7 +1283,7 @@ const RectificationProcessPage = () => {
         header={t('scenario_dialog_delete')}
         visible={dialogDeleteVisible}
         onHide={() => setDialogDeleteVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button
@@ -1276,7 +1311,7 @@ const RectificationProcessPage = () => {
         header={recipeName}
         visible={dialogDownloadVisible}
         onHide={() => setDialogDownloadVisible(false)}
-        className='dialog'
+        className="dialog"
         footer={
           <div className="flex justify-content-evenly">
             <Button

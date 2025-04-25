@@ -50,7 +50,7 @@ const MainPage = () => {
     if (itemKey.startsWith('20') && itemKey.length === 14) {
       localStorage.setItem('samogonKey', itemKey);
       navigate('/device');
-    }else{
+    } else {
       toast.error(t('login_error'));
     }
   };

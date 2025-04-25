@@ -1,15 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const saveHandApi = createApi({
-  reducerPath: 'saveHandApi',
+export const distillationSaveApi = createApi({
+  reducerPath: 'distillationSaveApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://craftstore.com.ua/data/samogon/',
     responseHandler: 'text',
   }),
   endpoints: (builder) => ({
-    saveHand: builder.mutation<any, Record<string, any>>({
+    distillationSave: builder.mutation<any, Record<string, any>>({
       query: (data) => ({
-        url: 'save_hand.php',
+        url: 'save_dist.php',
         method: 'POST',
         body: new URLSearchParams(data),
       }),
@@ -17,5 +17,5 @@ export const saveHandApi = createApi({
   }),
 });
 
-export const { useSaveHandMutation } = saveHandApi;
-export default saveHandApi;
+export const { useDistillationSaveMutation } = distillationSaveApi;
+export default distillationSaveApi;

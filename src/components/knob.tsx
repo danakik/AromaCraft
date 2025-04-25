@@ -61,8 +61,8 @@ const getHint = (hint?: string) => {
       step = 0.1;
       break;
     case 'calibration':
-      min = -20;
-      max = 100;
+      min = -10;
+      max = 10;
       step = 0.1;
       break;
     case 'cycles':
@@ -120,7 +120,15 @@ const getHint = (hint?: string) => {
   return { min, max, step };
 };
 
-export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readonly = false, help = '', hint='', onChange }) => {
+export const ACKnob: React.FC<KnobProps> = ({
+  label,
+  initialValue,
+  color,
+  readonly = false,
+  help = '',
+  hint = '',
+  onChange,
+}) => {
   const [value, setValue] = useState<number>(initialValue);
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -191,7 +199,7 @@ export const ACKnob: React.FC<KnobProps> = ({ label, initialValue, color, readon
         {label}
       </span>
 
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>
@@ -204,7 +212,7 @@ export const ACSlider: React.FC<KnobProps> = ({
   color,
   readonly = false,
   help = '',
-  hint='',
+  hint = '',
   onChange,
 }) => {
   const [value, setValue] = useState<number>(initialValue);
@@ -269,7 +277,7 @@ export const ACSlider: React.FC<KnobProps> = ({
         {label}
       </span>
 
-      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className='dialog'>
+      <Dialog header={label} visible={dialogVisible} onHide={hideDialog} className="dialog">
         <p>{help}</p>
       </Dialog>
     </div>

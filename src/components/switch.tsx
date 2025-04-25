@@ -26,12 +26,7 @@ export const ACSwitch: React.FC<SwitchProps> = ({ checked = false, disabled = fa
 
   return (
     <div onClick={() => !disabled && setChecked(!isChecked)} className={disabled ? 'ac-switch-disabled' : ''}>
-      <InputSwitch
-        checked={isChecked}
-        onChange={handleSwitchChange}
-        readOnly={disabled}
-        disabled={disabled}
-      />
+      <InputSwitch checked={isChecked} onChange={handleSwitchChange} readOnly={disabled} disabled={disabled} />
     </div>
   );
 };

@@ -56,7 +56,7 @@ export const SideBar = (props: PanelMenuProps) => {
         width: 20,
         height: 20,
         viewBox: '0 0 20 20',
-        xmlns: 'http://www.w3.org/2000/svg'
+        xmlns: 'http://www.w3.org/2000/svg',
       }),
     [],
   );
@@ -198,9 +198,9 @@ export const SideBar = (props: PanelMenuProps) => {
     }
 
     if (
-      location.pathname.startsWith('/datatemperatures') || 
-      location.pathname.startsWith('/calculation') || 
-      location.pathname.startsWith('/calcmashing') 
+      location.pathname.startsWith('/datatemperatures') ||
+      location.pathname.startsWith('/calculation') ||
+      location.pathname.startsWith('/calcmashing')
     ) {
       newExpandedKeys['data'] = true;
     }
@@ -222,7 +222,10 @@ export const SideBar = (props: PanelMenuProps) => {
             />
           </div>
         </div>
-        <div className="flex flex-row align-items-center justify-content-center w-full select-lang mt-auto" style={{ marginBottom: '40px' }}>
+        <div
+          className="flex flex-row align-items-center justify-content-center w-full select-lang mt-auto"
+          style={{ marginBottom: '40px' }}
+        >
           <SelectButton
             value={selectedOption}
             options={selectButtonOptions}

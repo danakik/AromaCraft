@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import { ACUserComp } from '../components/usercomp';
-import { ACStatusComp } from '../components/statuscomp';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FloatLabel } from 'primereact/floatlabel';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { AxisOptions, Chart } from 'react-charts';
-import { toast } from 'react-toastify';
+import { Chart } from 'react-charts';
 import { useTranslation } from 'react-i18next';
 import { temperatureKValues } from '../constants/mashing_costants';
 import '../styles/process_page.css';

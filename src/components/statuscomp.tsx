@@ -12,7 +12,9 @@ export const ACStatusComp: React.FC<StatusCompProps> = ({ status_text }) => {
   const { t } = useTranslation();
   return (
     <div className="ac-user-comp flex flex-wrap gap-3">
-      <span className="serial-number">{t('statuscomp')} {status_text}</span>
+      <span className="serial-number">
+        {t('statuscomp')} {status_text}
+      </span>
     </div>
   );
 };

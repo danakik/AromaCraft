@@ -13,7 +13,7 @@ import { skipToken } from '@reduxjs/toolkit/query';
 import { initialSortedData, SYNC_INTERVAL } from '../constants/api';
 import { useForm, Controller } from 'react-hook-form';
 import { calculateHandPercent } from '../utils/calculate';
-import { useSaveHandMutation } from '../api/manualSave';
+import { useSaveHandMutation } from '../api/manualSaveApi';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';

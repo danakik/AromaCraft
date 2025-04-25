@@ -19,7 +19,7 @@ import { useReedRecipeMutation } from '../api/recipeApi';
 import { toast } from 'react-toastify';
 import { useRenameRecipeMutation } from '../api/renameRecipeApi';
 import { useDeleteRecipeMutation } from '../api/deleteRecipeApi';
-import { useDistillationSaveMutation } from '../api/distillationSave';
+import { useDistillationSaveMutation } from '../api/distillationSaveApi';
 import { useDisableLiProcess } from '../hooks/useDisableLiProcess';
 import { useTranslation } from 'react-i18next';
 import '../styles/process_page.css';
@@ -514,10 +514,11 @@ const DistillationProcessPage = () => {
                 <Button
                   label={t('process_skip')}
                   className="button-skip"
-                  disabled={disabledButtonSkip} /* onClick={clickPass} */
+                  disabled={disabledButtonSkip}
+                  onClick={clickPass}
                 />
               )}
-              {!hideButtonStart && <Button label={startLabel} className="button-start" /* onClick={clickStart} */ />}
+              {!hideButtonStart && <Button label={startLabel} className="button-start" onClick={clickStart} />}
             </div>
           </div>
 
@@ -533,6 +534,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_acceleration')}
                     value={value}
                     units="%"
+                    hint="poewr_step0.1max120"
                     help={t('help_power_acceleration')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -549,6 +551,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_selection_body')}
                     value={value}
                     units="%"
+                    hint="power_step1_max100"
                     help={t('help_power_selection_body')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledPowers}
@@ -566,6 +569,7 @@ const DistillationProcessPage = () => {
                     label={t('process_power_selection') + strHead}
                     value={value}
                     units="%"
+                    hint="power_step1_max100"
                     help={t('help_power_selection')}
                     onChange={(e) => onChangeForm(e.value)}
                   />
@@ -615,7 +619,7 @@ const DistillationProcessPage = () => {
               />
             </div>
             <div className="flex flex-row align-items-start justify-content-start w-full gap-2">
-              <Controller //add hint
+              <Controller
                 name="distTimeBody"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
@@ -624,6 +628,7 @@ const DistillationProcessPage = () => {
                     label={t('process_dist_time_transition_body')}
                     value={value}
                     units={t('unit_minutes')}
+                    hint="time"
                     help={t('help_time_body_transition')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledTime}

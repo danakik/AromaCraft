@@ -21,9 +21,7 @@ const HeatBalancePage = () => {
           <ACUserComp serial_number={key || ''} />
         </div>
       </header>
-      <div>
-        
-      </div>
+      <div></div>
     </>
   );
 };

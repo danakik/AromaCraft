@@ -14,7 +14,7 @@ import { ToggleButton } from 'primereact/togglebutton';
 import { useForm, Controller } from 'react-hook-form';
 import { ACThreeStateButton } from '../components/threestatebutton';
 import { debounce } from 'lodash';
-import { useSaveSettingMutation } from '../api/settingSave';
+import { useSaveSettingMutation } from '../api/settingSaveApi';
 import { useTranslation } from 'react-i18next';
 
 type FormData = {
@@ -148,7 +148,6 @@ const SettingPage = () => {
   const [disabledBarometr, setDisabledBarometr] = useState(true);
   const [disavledSwitchTail, setDisavledSwitchTail] = useState(true);
   const processStarted = useCallback(() => {
-    //console.log('isBarometr:', isBarometr);
     if (data.version !== 0) {
       if (
         data.distController === 0 &&
@@ -212,7 +211,7 @@ const SettingPage = () => {
                 name="settingTempCupe"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel //edit hint
+                  <ACCounterLabel
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -235,7 +234,7 @@ const SettingPage = () => {
                 name="settingTempCarge"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel //edit hint
+                  <ACCounterLabel
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -258,7 +257,7 @@ const SettingPage = () => {
                 name="settingTempDef"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel //edit hint
+                  <ACCounterLabel
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -281,7 +280,7 @@ const SettingPage = () => {
                 name="settingTempWater"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACCounterLabel //edit hint
+                  <ACCounterLabel
                     units="°C"
                     hint="calibration"
                     value={value}
@@ -439,11 +438,12 @@ const SettingPage = () => {
                 name="selectionSpeed"
                 control={control}
                 render={({ field: { onChange: onChangeForm, value } }) => (
-                  <ACRegulator //add hint
+                  <ACRegulator
                     icon="speed"
                     label={t('settings_speed')}
                     value={value}
                     units={t('unit_liter_per_gram')}
+                    hint="speed_step0.1_max10"
                     help={t('help_set_speed_20')}
                     onChange={(e) => onChangeForm(e.value)}
                     disabled={disabledSpeedSelection}

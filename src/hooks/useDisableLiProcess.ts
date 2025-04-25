@@ -17,26 +17,12 @@ export function useDisableLiProcess(data: any) {
     }
   };
 
-  /* distController */
   useEffect(() => {
     const idsHand = ['distillation', 'rectification', 'mashing'];
     const idsDist = ['manual', 'rectification', 'mashing'];
     const idsRect = ['manual', 'distillation', 'mashing'];
     const idsMash = ['manual', 'distillation', 'rectification'];
     const enableAll = ['manual', 'distillation', 'rectification', 'mashing'];
-
-    /*     const updateLiState = () => {
-      enableAll.forEach(enableLi);
-      if (data.distAcceleration === 100) {
-        idsHand.forEach(disableLi);
-      } else if (data.distAcceleration === 99) {
-        idsDist.forEach(disableLi);
-      } else if (data.distAcceleration === 98) {
-        idsRect.forEach(disableLi);
-      } else if (data.distAcceleration === 97) {
-        idsMash.forEach(disableLi);
-      }
-    }; */
 
     const updateLiState = () => {
       if (data.distController >= 1 && data.distController != 4) {

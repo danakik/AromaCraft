@@ -1,15 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const saveSettingApi = createApi({
-  reducerPath: 'saveSettingApi',
+export const saveHandApi = createApi({
+  reducerPath: 'saveHandApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://craftstore.com.ua/data/samogon/',
     responseHandler: 'text',
   }),
   endpoints: (builder) => ({
-    saveSetting: builder.mutation<any, Record<string, any>>({
+    saveHand: builder.mutation<any, Record<string, any>>({
       query: (data) => ({
-        url: 'save_settings.php',
+        url: 'save_hand.php',
         method: 'POST',
         body: new URLSearchParams(data),
       }),
@@ -17,5 +17,5 @@ export const saveSettingApi = createApi({
   }),
 });
 
-export const { useSaveSettingMutation } = saveSettingApi;
-export default saveSettingApi;
+export const { useSaveHandMutation } = saveHandApi;
+export default saveHandApi;
