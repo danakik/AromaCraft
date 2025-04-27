@@ -28,6 +28,9 @@ export const SideBar = (props: PanelMenuProps) => {
   }, []);
 
   const handleLanguageChange = (value: string) => {
+    if (value === null) {
+      return;
+    }
     setSelectedOption(value);
     i18n.changeLanguage(value);
     localStorage.setItem('language', value);
@@ -150,21 +153,21 @@ export const SideBar = (props: PanelMenuProps) => {
         label: t('menu_data'),
         icon: dataIcon,
         items: [
-          {
+          /* {
             label: t('menu_data_column_param'),
             command: () => navigate('/calculation'),
             className: location.pathname === '/calculation' ? 'active' : '',
-          },
+          }, */
           {
             label: t('menu_data_temperatures'),
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',
           },
-          {
+          /* {
             label: 'Розрахунки для процесу затирання',
             command: () => navigate('/calcmashing'),
             className: location.pathname === '/calcmashing' ? 'active' : '',
-          },
+          }, */
         ],
       },
       {

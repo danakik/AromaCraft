@@ -28,6 +28,9 @@ const LoginPage: React.FC = () => {
   }, []);
 
   const handleLanguageChange = (value: string) => {
+    if (value === null) {
+      return;
+    }
     setSelectedOption(value);
     i18n.changeLanguage(value);
     localStorage.setItem('language', value);
