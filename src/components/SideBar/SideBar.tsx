@@ -153,21 +153,21 @@ export const SideBar = (props: PanelMenuProps) => {
         label: t('menu_data'),
         icon: dataIcon,
         items: [
-          /* {
+          {
             label: t('menu_data_column_param'),
             command: () => navigate('/calculation'),
             className: location.pathname === '/calculation' ? 'active' : '',
-          }, */
+          },
           {
             label: t('menu_data_temperatures'),
             command: () => navigate('/datatemperatures'),
             className: location.pathname === '/datatemperatures' ? 'active' : '',
           },
-          /* {
+          {
             label: 'Розрахунки для процесу затирання',
             command: () => navigate('/calcmashing'),
             className: location.pathname === '/calcmashing' ? 'active' : '',
-          }, */
+          },
         ],
       },
       {
