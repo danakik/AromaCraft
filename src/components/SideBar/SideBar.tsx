@@ -168,6 +168,11 @@ export const SideBar = (props: PanelMenuProps) => {
             command: () => navigate('/calcmashing'),
             className: location.pathname === '/calcmashing' ? 'active' : '',
           },
+          {
+            label: 'Розрахунки для процесу ректифікації',
+            command: () => navigate('/heatbalance'),
+            className: location.pathname === '/heatbalance' ? 'active' : '',
+          },
         ],
       },
       {
