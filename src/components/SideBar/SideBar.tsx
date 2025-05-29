@@ -173,6 +173,11 @@ export const SideBar = (props: PanelMenuProps) => {
             command: () => navigate('/heatbalance'),
             className: location.pathname === '/heatbalance' ? 'active' : '',
           },
+          {
+            label: 'Оптимізація Аппарату',
+            command: () => navigate('/optimisation'),
+            className: location.pathname === '/optimisation' ? 'active' : '',
+          }
         ],
       },
       {

@@ -15,6 +15,7 @@ import DataTemperaturesPage from './pages/DataTemperaturesPage';
 import CalculationPage from './pages/CalculationPage';
 import CalcMashingPage from './pages/CalcMashingPage';
 import HeatBalancePage from './pages/HeatBalancePage';
+import OptimisationHeatMachine from './pages/OptimizationHeatMachine'
 import './styles/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -38,6 +39,7 @@ const App: React.FC = () => {
           <Route path="datatemperatures" element={<DataTemperaturesPage />} />
           <Route path="calcmashing" element={<CalcMashingPage />} />
           <Route path="heatbalance" element={<HeatBalancePage/>} />
+          <Route path="optimisation" element={<OptimisationHeatMachine/>} />
           <Route path="setting" element={<SettingPage />} />
           <Route path="login" element={<LoginPage />} />
         </Route>
